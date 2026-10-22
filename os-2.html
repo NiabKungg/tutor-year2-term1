@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operating Systems (ต่อ): Memory, Virtual Memory, File System | ติวสอบ ปี 2 เทอม 1</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-subject="os">
+<header class="topbar">
+  <a class="brand" href="index.html">ติวสอบ <span>ปี 2 เทอม 1</span></a>
+  <nav class="subject-nav">
+    <a href="dsa.html">DSA</a>
+    <a href="os.html">OS</a>
+    <a href="os-2.html" class="active">OS (ต่อ)</a>
+    <a href="os-quiz.html">OS ควิซ</a>
+    <a href="oslab.html">OS Lab</a>
+    <a href="bpm.html">BA/BPM</a>
+    <a href="linear.html">พีชคณิตเชิงเส้น</a>
+    <a href="seminar.html">Seminar</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="toc">
+    <div class="toc-title">สารบัญหน้านี้</div>
+    <a href="#sec1">Memory Management</a>
+    <a href="#sec2">Virtual Memory</a>
+    <a href="#sec3">File System</a>
+    <a href="#sec4">การติดตั้ง WSL2</a>
+    <a href="#links">ลิงก์ทบทวนต่อ</a>
+  </aside>
+  <main>
+    <article>
+      <h1>Operating Systems (ต่อ)</h1>
+      <p class="page-sub">ครึ่งหลังของวิชา: Memory Management, Virtual Memory, File System และการติดตั้ง WSL2 รวมตัวอย่างคำนวณที่อาจารย์ลงลึกในคลิปทุกตัว</p>
+
+      <section id="sec1" class="card">
+        <h2>Memory Management (No.08 + คลิป 12.1 ถึง 12.4)</h2>
+        <p>หัวข้อนี้ตอบคำถามว่า OS วางโปรแกรมลง RAM อย่างไร ตั้งแต่การแปลง address, การจัดสรรแบบต่อเนื่อง (รุ่นเก่า) ไปจนถึง paging และ segmentation ที่ OS ปัจจุบันใช้</p>
+        <div class="keypoints"><div class="kp-title">ประเด็นสำคัญ</div>
+          <ul>
+            <li>CPU ใช้ logical (virtual) address แต่ RAM ใช้ physical address, ตัวแปลงคือ MMU ด้วย relocation register</li>
+            <li>fixed partition เกิด internal fragmentation, variable partition เกิด external fragmentation</li>
+            <li>Placement: first-fit เร็ว, best-fit ประหยัดสุดแต่ช้า, worst-fit เหลือช่องใหญ่ไว้ใช้ต่อ</li>
+            <li>Paging แก้ปัญหา fragmentation ด้วยการกระจาย page ลง frame, แลกกับการ access memory 2 ครั้ง จึงต้องมี TLB</li>
+            <li>Segmentation จัดตามมุมมองผู้ใช้ ใช้ &lt;segment-number, offset&gt; กับ base/limit</li>
+          </ul>
+        </div>
+
+        <h3>Logical address, Physical address และ MMU</h3>
+        <p><strong>Logical (virtual) address</strong> คือ address ที่ CPU generate ออกมา ส่วน <strong>physical address</strong> คือตำแหน่งจริงที่ memory unit เห็น โปรแกรมไม่ได้ถูกโหลดเริ่มที่ไบต์ 0 ของ RAM แต่ถูก OS จัดสรรไปตามที่ว่าง</p>
+        <p>ตัวแปลง logical เป็น physical คือฮาร์ดแวร์ที่เรียกว่า <strong>MMU (Memory-Management Unit)</strong> แบบง่ายใช้ <strong>relocation register</strong>: ค่าใน register ถูกบวกเข้าทุก address ที่ user process generate และ user program เห็นแต่ logical address เท่านั้น</p>
+        <div class="example"><div class="ex-title">ตัวอย่าง: แปลง address ด้วย relocation register (คลิป 12.1)</div>
+          <ol>
+            <li>โปรแกรมถูกโหลดลง RAM ที่ address 14,000, ค่านี้เก็บใน relocation register</li>
+            <li>CPU ต้องการไบต์ที่ 346 (logical address)</li>
+            <li>MMU บวกเลย: physical = 14,000 + 346 = 14,346</li>
+          </ol>
+          <p>อาจารย์ย้ำว่านี่เป็น concept ง่าย ๆ เพื่อเห็นภาพ ของจริงยุ่งยากกว่านี้</p>
+        </div>
+        <p>ตอนป้องกัน process แทรกแซงกัน (คลิป 12.2) ใช้ 2 register ช่วยกัน: <strong>Limit register</strong> เก็บขนาดของพื้นที่, <strong>Relocation register</strong> เก็บตำแหน่งเริ่มต้น logical address ต้องน้อยกว่า limit ถ้าไม่ใช่ให้ error ทันที ถ้าผ่านจึงบวกกับ relocation register</p>
+
+        <h3>Static Linking กับ Dynamic Linking</h3>
+        <p><strong>Static link</strong> คือเอา library (เช่น printf ของ C) มารวมกับโปรแกรมตอน compile เลย <strong>Dynamic linking</strong> เลื่อนการ link ไปจนถึง execution time โดยใส่ <strong>stub</strong> (โค้ดเล็ก ๆ ตัวแทนของ library) เข้าไปแทน หน้าที่ stub คือตอนรันไปค้นว่า library ถูกโหลดเข้า memory หรือยัง ถ้ายังก็โหลดเข้ามา ถ้าโหลดแล้วก็เรียกใช้เลย OS ต้องช่วยตรวจว่า routine อยู่ใน address space ของ process หรือไม่ เพราะเหมาะกับ library จึงเรียกอีกอย่างว่า <strong>shared libraries</strong></p>
+        <div class="example"><div class="ex-title">ตัวอย่าง: static กับ dynamic ประหยัดต่างกันเท่าไร (คลิป 12.1)</div>
+          <p>โปรแกรม A ตัวเอง 10 MB, โปรแกรม B ตัวเอง 20 MB, library กลาง 20 MB, stub ตัวละ 2 MB</p>
+          <ol>
+            <li>Static: A = 10 + 20 = 30 MB, B = 20 + 20 = 40 MB, รวม 70 MB โดยมี library 20 MB ถูกเก็บซ้ำ 2 ที่</li>
+            <li>Dynamic: A = 10 + 2 (stub) = 12 MB, B = 20 + 2 = 22 MB</li>
+            <li>รัน A ก่อน (12 MB), A เรียก library ผ่าน stub, stub พบว่ายังไม่ถูกโหลด จึงโหลด library 20 MB (รวม 32 MB)</li>
+            <li>รัน B (22 MB), B เรียก library ผ่าน stub พบว่าโหลดแล้ว ใช้ร่วมกับ A ไม่โหลดซ้ำ</li>
+            <li>รวมทั้งหมด = 12 + 20 + 22 = 54 MB เทียบกับ 70 MB ของ static จึงประหยัด memory</li>
+          </ol>
+        </div>
+
+        <h3>การจัดสรรแบบต่อเนื่อง: Fixed และ Variable Partition</h3>
+        <p>การจัดสรรให้ process แบ่งเป็น <strong>contiguous</strong> (โหลดลงพื้นที่ติดกันเป็นผืนเดียว) กับ <strong>non-contiguous</strong> (แบ่งเป็นส่วน ๆ วางช่องว่างที่ไม่ติดกันได้) อาจารย์บอกตรง ๆ ว่าแบบ contiguous ตกยุคแล้ว OS ปัจจุบันไม่ใช้ แต่เรียนเพื่อรู้ว่ามันมีปัญหาอะไร และเป็นรากของทั้ง internal และ external fragmentation</p>
+        <p><strong>Fixed partition</strong>: แบ่ง memory เป็น partition ขนาดคงที่ล่วงหน้า เปิดเครื่องแล้วใช้ตลอด จะเปลี่ยนต้องปิดเครื่องมา config ใหม่ Memory Manager ใช้ตารางติดตามว่า partition ไหนว่าง ถ้าแบ่ง 3 partitions ก็รันได้สูงสุด 3 processes พร้อมกัน วิธีจัดคิวแบบแรกคือทำ <strong>job queue ต่อ partition</strong> (job เล็กไม่เกิน P1 เข้าคิว 1 ฯลฯ) ปัญหาคือถ้ามีแต่ job ตัวเล็ก memory ส่วนใหญ่ว่างเปล่า จึงแก้ด้วยการรวมเหลือ <strong>คิวเดียว</strong> แล้วจัดสรร job ลง partition ว่างที่ลงได้</p>
+        <p>ปัญหาของ fixed partition คือ <strong>Internal fragmentation</strong>: เนื้อที่เหลือใน partition ที่ process ใช้ไม่หมด คนอื่นใช้ต่อไม่ได้ เช่น partition 5 MB แต่ process ใช้ 4 MB เหลือ 1 MB สูญเปล่า</p>
+        <div class="example"><div class="ex-title">ตัวอย่าง: internal fragmentation ของ fixed partition (คลิป 12.2)</div>
+          <p>memory แบ่ง 4 partitions: P1 = 100K, P2 = 25K, P3 = 25K, P4 = 50K</p>
+          <ol>
+            <li>Job1 30K ลง P1 (ใช้ 30K เหลือว่างใน partition นั้น 70K)</li>
+            <li>Job2 50K ลง P4 พอดีตัว</li>
+            <li>Job3 30K เหลือแต่ P2, P3 ที่มีแค่ 25K จึงลงไม่ได้ ต้องรอ</li>
+            <li>Job4 25K ลง P2 ได้พอดี</li>
+          </ol>
+          <p>สรุป: P1 ยังว่างอยู่ถึง 70K แต่ Job3 ที่ต้องการแค่ 30K กลับโหลดไม่ได้ นี่คือตำหนิของ fixed partition</p>
+        </div>
+        <p><strong>Variable partition</strong>: ไม่แบ่งล่วงหน้า จัดสรรตอนโหลดตามที่ process ขอ เช่น ขอ 15 MB ได้ 15 MB ตอนตั้งต้นไม่เสียเนื้อที่เลย (internal fragmentation เป็นไปไม่ได้) แต่พอ process จบและถอดออกไป เกิด <strong>External fragmentation</strong>: ช่องว่างกระจัดกระจาย รวมกันได้เยอะแต่ช่องเดียวไม่พอ</p>
+        <div class="example"><div class="ex-title">ตัวอย่าง: external fragmentation (คลิป 12.2)</div>
+          <ol>
+            <li>process เก่าจบไปเหลือช่องว่าง 5 MB, 2 MB และ 1 MB กระจายกัน รวม 8 MB</li>
+            <li>process ใหม่ต้องการ 7 MB ซึ่งน้อยกว่า 8 MB รวม</li>
+            <li>แต่ contiguous ต้องได้เนื้อที่ต่อเนื่องผืนเดียว ไม่มีช่องไหนพอ จึงโหลดเข้าไม่ได้</li>
+          </ol>
+        </div>
+        <p>วิธีรับมือ external fragmentation มี 2 ทาง:</p>
+        <ul>
+          <li><strong>Coalescing</strong>: รวม free block ที่อยู่ติดกันเป็นก้อนใหญ่ (ข้อจำกัด: รวมได้เฉพาะช่องที่ติดกันเท่านั้น มักไม่พอใช้)</li>
+          <li><strong>Compaction</strong> (garbage collection ของ memory): ย้าย process ที่รันอยู่ให้มาอยู่ติดกันเป็นผืนเดียว เหลือ free block ใหญ่ก้อนเดียวท้าย memory แต่ overhead สูง ต้องหยุด process และทำได้เฉพาะเมื่อ relocation เป็นแบบ dynamic ที่กำหนด address ใหม่ตอน execution time ได้</li>
+        </ul>
+
+        <h3>Placement: First Fit, Best Fit, Worst Fit</h3>
+        <p>เมื่อ process ใหม่มาขอพื้นที่แล้วมีหลาย hole ต้องเลือกว่าจะใส่ hole ไหน</p>
+        <table>
+          <tr><th>อัลกอริทึม</th><th>เลือก hole แบบไหน</th><th>ข้อดี</th><th>ข้อเสีย</th></tr>
+          <tr><td><strong>First-fit</strong></td><td>hole แรกที่พอ จากต้นไปหาท้าย</td><td>เร็ว, overhead ต่ำ</td><td>เปลือง memory ได้ เพราะไม่สนประสิทธิภาพการใช้พื้นที่</td></tr>
+          <tr><td><strong>Best-fit</strong></td><td>hole ที่เหลือน้อยสุด (ต้องไล่ดูทุกช่อง)</td><td>ใช้พื้นที่คุ้มสุด</td><td>ช้า เพราะต้องค้นทุกช่อง</td></tr>
+          <tr><td><strong>Worst-fit</strong></td><td>hole ที่เหลือมากสุด</td><td>เหลือช่องใหญ่ไว้ให้ process อื่นใช้ต่อ</td><td>โดยเฉลี่ยประสิทธิภาพสู้ best-fit ไม่ได้</td></tr>
+        </table>
+        <div class="example"><div class="ex-title">ตัวอย่าง: ช่องว่าง 16, 14, 5, 30 MB กับ process ใหม่ 13 MB (คลิป 12.2)</div>
+          <ol>
+            <li>First-fit: ไล่จากต้น เจอช่องแรกที่ลงได้คือ 16 MB, ใส่เลย เหลือว่าง 16 - 13 = 3 MB (ทั้งที่ถ้าลงช่อง 14 MB จะเหลือแค่ 1 MB แต่ first-fit ไม่สน)</li>
+            <li>Best-fit: ดูทุกช่อง (16, 14, 5, 30) ช่องที่เหมาะที่สุดกับ 13 MB คือ 14 MB, ใส่แล้วเหลือ 1 MB</li>
+            <li>Worst-fit: เลือกช่องใหญ่สุดคือ 30 MB, ใส่แล้วเหลือ 17 MB ซึ่งยังใหญ่พอให้ process อื่นใช้ต่อ</li>
+          </ol>
+          <p>อาจารย์เสริมว่าถ้ามี process ใหญ่มาถึง worst-fit อาจดีกว่า best-fit เพราะ best-fit มักเหลือแต่ช่องเล็ก ๆ ที่ใช้ต่อไม่ได้</p>
+        </div>
+
+        <h3>Paging: การจองแบบไม่ต่อเนื่อง</h3>
+        <p>รากของปัญหา fragmentation ทั้งสองแบบคือการจัดสรรแบบ contiguous ทางออกคือ non-contiguous ซึ่งก็คือ <strong>paging</strong> ที่ OS ปัจจุบันใช้ วิธีคือแบ่ง physical memory เป็นบล็อกขนาดเท่ากันเรียกว่า <strong>frame</strong> (ขนาดต้องเป็น power of 2, สไลด์ระบุช่วง 512 ถึง 8,192 bytes) แบ่ง logical memory เป็นบล็อกขนาดเท่ากันเรียกว่า <strong>page</strong> โปรแกรม n pages ใช้ frame ว่าง n อัน แต่ไม่จำเป็นต้องอยู่ติดกัน OS โหลด page ไหนลง frame ไหนก็ได้ แล้วตั้ง <strong>page table</strong> เป็นตัวจับคู่แปลง logical เป็น physical</p>
+        <p>ข้อแลกเปลี่ยน: paging ยังเกิด <strong>internal fragmentation</strong> ได้ที่ page สุดท้ายของโปรแกรม</p>
+        <div class="example"><div class="ex-title">ตัวอย่าง: internal fragmentation ใน paging (คลิป 12.3.1)</div>
+          <ol>
+            <li>page/frame size = 4 bytes, โปรแกรมขนาด 42 bytes</li>
+            <li>ถ้าตอบ 10 เพจจะได้แค่ 40 bytes ไม่พอ</li>
+            <li>ต้องใช้ 11 เพจ โดยเพจสุดท้ายใช้จริงแค่ 2 จาก 4 bytes เหลือ 2 bytes เป็น internal fragmentation</li>
+          </ol>
+        </div>
+        <h4>แบ่ง address เป็น page number กับ page offset</h4>
+        <p>address ยาว <strong>m bits</strong> ถูกแบ่งเป็น 2 ส่วน: <strong>page number (p)</strong> ใช้เป็น index เข้า page table หา frame, กับ <strong>page offset (d)</strong> บอกตำแหน่งในหน้า จำนวนบิต offset คือ n โดยที่ page size = 2^n (เช่น page 4 bytes ต้องใช้ n = 2, page 8 bytes ใช้ n = 3) และ page number เหลือ m - n bits</p>
+        <div class="example"><div class="ex-title">ตัวอย่าง: m = 5 bits, page size 4 bytes (สไลด์ + คลิป 12.3.1)</div>
+          <ol>
+            <li>address space = 2^5 = 32 bytes, offset n = 2 bits (2^2 = 4)</li>
+            <li>page number = 5 - 2 = 3 bits จึงมีได้ 2^3 = 8 เพจ เพจละ 4 bytes (8 x 4 = 32 พอดี)</li>
+            <li>วิธีอ้างเปลี่ยนจาก "ไบต์ที่ 0, 1, 2, 3 ไปตรง ๆ" เป็น "เพจที่เท่าไร + offset ที่เท่าไร"</li>
+            <li>อุปมาของอาจารย์: เก้าอี้ 32 ตัว จัดเป็น 8 ห้อง ห้องละ 4 ตัว ของก็บอกว่า "เก้าอี้ตัวที่ 3 ในห้องเบอร์ 1"</li>
+          </ol>
+        </div>
+        <div class="example"><div class="ex-title">ตัวอย่าง: แปลง logical เป็น physical, physical = (frame x page size) + offset (คลิป 12.3.1)</div>
+          <ol>
+            <li>ต้องการตัวอักษร C ซึ่งอยู่ page 0, offset 2: ค้น page table พบ page 0 อยู่ frame 5, physical = 5 x 4 + 2 = ไบต์ที่ 22</li>
+            <li>ต้องการตัวอักษร K ซึ่งอยู่ page 2, offset 2: ค้น page table พบ page 2 อยู่ frame 1, physical = 1 x 4 + 2 = ไบต์ที่ 6</li>
+            <li>เมื่อมี process ใหม่ 4 เพจเข้ามา OS หา frame ว่างแล้วอัปเดต page table เช่น page 0 ไป frame 14, page 1 ไป frame 13, page 2 ไป frame 18, page 3 ไป frame 20</li>
+          </ol>
+          <p><strong>หมายเหตุ:</strong> ภาพรวมในสไลด์หนึ่งแสดงเพจ 0 ถึง 3 โหลดลง frame 1, 4, 3, 7 ตามลำดับ ส่วนตัวอย่างคำนวณในคลิปใช้ page table อีกชุด (page 0 อยู่ frame 5) วิธีคิดเหมือนกันทั้งสองแบบ ให้ดูตาม page table ที่โจทย์กำหนดเสมอ</p>
+        </div>
+
+        <h3>Page Table อยู่ใน RAM: PTBR, PTLR, TLB และ EAT</h3>
+        <p>Page table เก็บใน <strong>main memory (RAM)</strong> OS ต้องกันเนื้อที่ไว้ให้ มี register คู่: <strong>PTBR</strong> (page-table base register) ชี้ตำแหน่งเริ่มต้นของตาราง, <strong>PTLR</strong> (page-table length register) บอกความยาวของตาราง ใช้เช็คก่อนได้เลยว่าการอ้างเกินหรือไม่ ถ้าเกินไม่ต้องเข้าถึงตารางเลย</p>
+        <p>ผลคือทุกครั้งที่อ่าน data/instruction 1 ครั้ง ต้องเข้าถึง memory <strong>2 ครั้ง</strong>: ครั้งแรกอ่าน page table เพื่อรู้ว่าเพจอยู่ frame ไหน, ครั้งที่สองไปที่ address จริง อาจารย์ย้ำหลายรอบว่านี่คือต้นเหตุที่ต้องมี <strong>TLB (translation look-aside buffer)</strong> ซึ่งเป็น hardware แบบ associative memory ค้นทุกช่องพร้อมกันได้ในครั้งเดียว</p>
+        <ul>
+          <li><strong>TLB hit</strong>: ค้นเจอ frame ใน TLB เอาไปคำนวณกับ offset ได้เลย เร็วมากเพราะไม่ต้องเข้าถึง memory</li>
+          <li><strong>TLB miss</strong>: ไปค้น page table จริงตามวิธีเดิม แล้วอัปเดต TLB (เต็มเมื่อไรต้องแทนที่รายการเก่า)</li>
+          <li>TLB เก็บได้แค่บางส่วนของ page table เพราะเป็น memory เล็ก ๆ ทำใหญ่เท่า RAM ไม่ได้</li>
+        </ul>
+        <p><strong>Effective Access Time (EAT)</strong>: ให้ memory cycle = 1 ไมโครวินาที, TLB lookup = ε, hit ratio = α สูตรตามสไลด์คือ EAT = (1 + ε)α + (2 + ε)(1 - α) = <strong>2 + ε - α</strong></p>
+        <div class="example"><div class="ex-title">ตัวอย่าง: คำนวณ EAT = 1.3 ไมโครวินาที (คลิป 12.3.1)</div>
+          <ol>
+            <li>กำหนด: memory access = 1 ไมโครวินาที, TLB access ε = 0.1 ไมโครวินาที, hit ratio α = 0.8 (80%)</li>
+            <li>แทนสูตร: EAT = 2 + ε - α = 2 + 0.1 - 0.8 = 1.3 ไมโครวินาที</li>
+            <li>เทียบกับกรณีไม่มี TLB ที่ต้อง access 2 ครั้ง = 2 ไมโครวินาที จึงเร็วขึ้น</li>
+            <li>วิธีทำให้ EAT ดีขึ้น: ลด ε (TLB เร็วขึ้น) และเพิ่ม α (hit ratio สูงขึ้น)</li>
+          </ol>
+        </div>
+
+        <h3>Memory Protection และ Shared Pages</h3>
+        <p>แต่ละ entry ของ page table มี protection bit กับ <strong>valid/invalid bit</strong>: valid = page อยู่ใน logical address space ของ process, invalid = ไม่อยู่ เช่น OS สร้างตาราง 8 ช่องให้โปรแกรมใหญ่สุด แต่โปรแกรมใช้จริง 6 เพจ (0 ถึง 5) ก็เซต valid ถึงเพจ 5 ที่เหลือ invalid ถ้า process อ้างเพจ 6 จะ error ทันที</p>
+        <p>ข้อจำกัดที่อาจารย์ชี้: valid/invalid bit ยังป้องกันไม่หมด เพราะถ้าเพจสุดท้ายใช้ไม่เต็ม (internal fragmentation) process อ้าง offset เกินที่โปรแกรมใช้จริงได้ทั้งเพจ และ valid/invalid bit จะเห็นประโยชน์จริง ๆ ตอนเรื่อง <a href="#sec2">Virtual Memory</a></p>
+        <p><strong>Shared pages</strong>: paging ทำให้แชร์เพจกันง่าย เช่น editor รัน 3 processes ส่วน code ที่ไม่มีการเปลี่ยนแปลงโหลดลง frame เดียวกันใช้ร่วมกันได้ (เพจ 0, 1, 2 ของทั้ง 3 process ชี้ไปที่ frame 3, 4, 6 หมด) ส่วน data แยกกันคนละ frame หลักการคือ "อะไรที่แน่ใจว่าไม่เปลี่ยนแปลง ใช้ร่วมกันได้"</p>
+
+        <h3>Page Table ใหญ่เกินไป: Multilevel (Hierarchical) Paging</h3>
+        <p>ทำไมตารางถึงใหญ่: OS 32 บิต, page size 4 KB = 12 bits (offset) เหลือ page number 20 bits จึงมีได้สูงสุด 2^20 = 1 ล้าน entry, 1 entry ขนาด 4 bytes รวมเป็น <strong>4 MB ต่อ process</strong> ปัญหาคือโปรแกรมปกติไม่ใหญ่ถึง 4 GB เช่นโปรแกรม 1 MB แต่ต้องสร้าง page table 4 MB ใหญ่กว่าตัวโปรแกรมเสียอีก (เทียบ: OS 64 บิตอ้างได้ถึง 2^64 ประมาณ 18.4 exabyte แต่ของจริงถูกจำกัดที่ประมาณ 48 bits คือราว 256 TB)</p>
+        <p>ทางแก้มี 3 แบบตามสไลด์: <strong>Hierarchical (multilevel)</strong>, <strong>Hashed</strong>, <strong>Inverted</strong> วิชานี้ลงลึกที่ hierarchical คือแบ่ง page table เป็นชั้น ๆ ชั้นนอกชี้ไปชั้นใน ชั้นในสุดเก็บเลข frame จุดสำคัญคือ <strong>Level 2 สร้างขึ้นเมื่อจำเป็นเท่านั้น</strong> ช่องไหนไม่ใช้ก็ไม่ต้องสร้างตารางให้ นี่คือที่มาของความประหยัด (ถ้านับจำนวนช่องรวมกันแล้วมันไม่ได้ประหยัดเลย)</p>
+        <div class="example"><div class="ex-title">ตัวอย่าง: two-level paging บน OS 32 บิต, page 4 KB (คลิป 12.3.2)</div>
+          <p>page number 20 bits แบ่งเป็น outer 10 + inner 10 bits, แต่ละตารางมี 2^10 = 1024 ช่อง (ตารางละ 4 KB)</p>
+          <ol>
+            <li>โปรแกรม 1 MB: จำนวนเพจ = 1024 K / 4 K = 256 เพจ ใช้ตาราง Level 2 แค่ 1 ตาราง (ใช้ 256 จาก 1024 ช่อง)</li>
+            <li>page table ที่ใช้ = 4 KB (Level 1) + 4 KB (Level 2) = 8 KB เทียบกับ 4 MB ของ single-level</li>
+            <li>โปรแกรม 8 MB: 8 x 1024 K / 4 K = 2048 เพจ ต้องใช้ตาราง Level 2 2 ตาราง (ใช้เต็ม 0 ถึง 1023 ทั้งคู่), Level 1 ใช้แค่ 2 ช่องแต่ยังต้องสร้างทั้งตาราง</li>
+            <li>page table ที่ใช้ = 4 KB + 2 x 4 KB = 12 KB สำหรับโปรแกรมขนาดเดียวกัน</li>
+            <li>การอ้างแบบ 2 ระดับ: (ตารางที่ 0, ช่องที่ 200, offset 500) outer ชี้เข้าตาราง Level 2 ที่ 0, หาช่องที่ 200 ได้เลข frame แล้วนำไปรวมกับ offset</li>
+          </ol>
+          <p>ข้อจำกัด: 2 ระดับไม่พอสำหรับ address space ใหญ่ (64 บิตต้อง 3 ถึง 4 ระดับ) แต่ยิ่งหลายระดับยิ่งช้าเพราะต้อง access ทีละชั้น space ใหญ่มากจึงไปใช้ hashed หรือ inverted page table เหมาะกว่า</p>
+        </div>
+
+        <h3>Segmentation</h3>
+        <p>Paging ไม่สอดคล้องกับมุมมองผู้ใช้ เพราะเราไม่เคยคิดว่า "จะแบ่งโปรแกรมเป็นกี่เพจ" แต่มองโปรแกรมเป็น main program, procedure, function, method, object, stack, symbol table, array, global variables <strong>Segmentation</strong> จึงจัด memory ตามมุมมองนี้ เช่น code segment กับ data segment โดยแต่ละ segment ขนาดไม่เท่ากัน กฎคือ segment เดียวต้องได้เนื้อที่ติดกัน (กระจายไม่ได้) แต่คนละ segment กระจายกันได้</p>
+        <ul>
+          <li>Logical address = <strong>&lt;segment-number, offset&gt;</strong></li>
+          <li>Segment table แต่ละ entry มี <strong>base</strong> (physical address เริ่มต้น) และ <strong>limit</strong> (ความยาว segment)</li>
+          <li><strong>STBR</strong> ชี้ตำแหน่งเริ่มต้นของ segment table, <strong>STLR</strong> บอก segment สูงสุดที่อ้างได้ segment number s ถูกต้องเมื่อ s &lt; STLR</li>
+          <li>ขั้นตอนแปลง: ค้น segment table เอา limit กับ base, เช็ค offset &lt; limit ถ้าไม่ผ่านเกิด trap/error, ถ้าผ่าน physical = base + offset</li>
+        </ul>
+        <div class="example"><div class="ex-title">ตัวอย่าง: แปลง address แบบ segmentation (คลิป 12.4)</div>
+          <p>Segment table: segment 0 base = 1400, segment 1 base = 6300, segment 2 base = 4300 (segment 2 มี limit = 400)</p>
+          <ol>
+            <li>อ้าง (segment 1, offset 300): 300 น้อยกว่า limit ผ่าน, physical = 6300 + 300 = 6600</li>
+            <li>อ้าง (segment 2, offset 400): 400 ไม่ได้น้อยกว่า limit 400 (ต้องน้อยกว่าเท่านั้น) จึงเกิด error/exception ว่าการอ้างหน่วยความจำผิด</li>
+          </ol>
+        </div>
+        <p>ข้อจำกัดของ segmentation คือกลับไปเจอ <strong>external fragmentation</strong> เพราะ segment เดียวต้องได้เนื้อที่ต่อเนื่อง ระบบเก่าจึงผสมทั้งสองแบบเป็น <strong>segmentation/paging</strong>: virtual address v = <strong>(s, p, d)</strong> คือ s ชี้ segment map table หา base ของ page table, p ชี้ PTE หา frame number, รวม frame + d เป็น real address อาจารย์สรุปว่า OS สมัยใหม่ใช้ paging เป็นหลัก ส่วน segmentation ที่โปรแกรมเมอร์เห็นเป็นเพียง logical segmentation เบื้องหลังเป็น paging ทั้งหมด</p>
+
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div>
+          <ul>
+            <li>แยก logical กับ physical address และหน้าที่ MMU/relocation register เช่น 14,000 + 346 = 14,346</li>
+            <li>stub ของ dynamic linking คืออะไร ทำไมจึงเรียก shared libraries พร้อมคำนวณ 70 MB (static) เทียบ 54 MB (dynamic)</li>
+            <li>Internal fragmentation (fixed partition) กับ external fragmentation (variable partition) ต่างกันอย่างไร พร้อมโจทย์ P1 = 100K, P2 = 25K, P3 = 25K, P4 = 50K ว่าทำไม Job3 30K ลงไม่ได้ทั้งที่เหลือ 70K</li>
+            <li>First-fit/best-fit/worst-fit: ช่องว่าง 16, 14, 5, 30 MB กับ process 13 MB ใครลงช่องไหน (16 / 14 / 30 MB) เหลือเท่าไร และ trade-off เร็วกับประหยัด</li>
+            <li>coalescing กับ compaction ต่างกัน และ compaction ทำได้เมื่อไร (dynamic relocation ตอน execution time)</li>
+            <li>Paging: frames กับ pages, address = (p, d), หา n จาก page size, physical = frame x page size + offset (C ที่ไบต์ 22, K ที่ไบต์ 6)</li>
+            <li>ทำไมต้องมี TLB (เพราะ access memory 2 ครั้ง) และสูตร EAT = 2 + ε - α พร้อมคำนวณ 1.3 ไมโครวินาที</li>
+            <li>Page table 32 บิตใหญ่ 4 MB ต่อ process, multilevel แบบ 10 + 10 bits ทำให้โปรแกรม 1 MB ใช้แค่ 8 KB และ 8 MB ใช้ 12 KB</li>
+            <li>Segmentation: &lt;segment#, offset&gt;, base/limit, STBR/STLR, ตัวอย่าง (1, 300) = 6600 และ (2, 400) = error</li>
+            <li>Segmentation/paging: v = (s, p, d)</li>
+          </ul>
+        </div>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div>
+          <ul>
+            <li>สลับ internal กับ external fragmentation: internal คือเสียใน partition/เพจที่จองไว้ (fixed, paging), external คือช่องว่างกระจัดกระจายรวมกันพอแต่ช่องเดียวไม่พอ (variable, segmentation)</li>
+            <li>เงื่อนไขตรวจ limit ต้องเป็น "น้อยกว่า" เท่านั้น offset = limit ถือว่าผิด เช่น (segment 2, offset 400) เมื่อ limit = 400 ต้อง error</li>
+            <li>Best-fit ไม่ได้แปลว่าเร็ว กลับกันคือต้องค้นทุกช่องจึงช้าที่สุดใน 3 แบบ</li>
+            <li>Compaction ไม่ได้ทำได้เสมอ ต้องมี dynamic relocation ที่กำหนด address ใหม่ตอน runtime ได้</li>
+            <li>อย่าสับสน Page (logical) กับ Frame (physical) และหน่วยของสูตร EAT ต้องเป็นไมโครวินาทีตัวเดียวกันทั้งสมการ</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec2" class="card">
+        <h2>Virtual Memory (No.09 + คลิป 13.1 ถึง 13.3)</h2>
+        <p>เรื่องต่อจาก real memory: ถ้า RAM เหลือน้อยกว่าขนาดโปรแกรม ยังรันได้ไหม คำตอบคือได้ ด้วยการโหลดเฉพาะบางเพจที่จำเป็น</p>
+        <div class="keypoints"><div class="kp-title">ประเด็นสำคัญ</div>
+          <ul>
+            <li>Virtual memory = แยก user logical memory ออกจาก physical memory โปรแกรมใหญ่กว่า RAM ที่มีจริงก็รันได้</li>
+            <li>Demand paging โหลดเพจเมื่อต้องใช้เท่านั้น, อ้างเพจที่ยังไม่อยู่ = page fault</li>
+            <li>Replacement: FIFO 15 / Optimal 9 / LRU 12 ครั้งบน reference string เดียวกันกับ 3 frame</li>
+            <li>Thrashing = วุ่นอยู่กับสลับเพจตลอด ตรวจด้วย working set: D = Σ WSSi ถ้า D &gt; m ต้อง suspend process</li>
+            <li>ลูปเดินตาม row-major เกิด 128 faults ส่วนเดินข้ามแถวตลอดเกิด 16,384 faults</li>
+          </ul>
+        </div>
+
+        <h3>Virtual Memory กับ Demand Paging</h3>
+        <p><strong>Virtual memory</strong> คือการนำพื้นที่ storage (disk/SSD) มาทำหน้าที่เป็นหน่วยความจำส่วนหนึ่ง แยก user logical memory ออกจาก physical memory ในช่วงเวลาหนึ่งมีเพียงบางเพจของโปรแกรมอยู่ใน memory จริง logical address space จึงใหญ่กว่า physical ได้ และ physical address (frame) ถูกแชร์ระหว่าง process ได้ การสร้าง process ก็เร็วขึ้นเพราะไม่ต้องโหลดทั้งตัว</p>
+        <p>Implement ได้ 2 แบบ: <strong>demand paging</strong> และ <strong>demand segmentation</strong> OS ปัจจุบันใช้ paging วิชานี้จึงเรียนเฉพาะ demand paging ข้อดีของการโหลดเฉพาะเมื่อต้องใช้: ใช้ I/O น้อยลง, ใช้ memory น้อยลง, ตอบสนอง user เร็วขึ้น, รองรับ user พร้อมกันได้มากขึ้น</p>
+        <ul>
+          <li><strong>Lazy swapper</strong> = ไม่ swap เพจเข้า memory จนกว่าจะต้องใช้จริง swapper ที่ทำงานระดับเพจเรียกว่า <strong>pager</strong></li>
+          <li><strong>Valid-invalid bit</strong> ใน page table: v = เพจอยู่ใน memory แล้ว, i = ยังไม่อยู่ (ตอนเริ่มต้นทุก entry = i)</li>
+          <li>อ้างเพจที่ invalid มี 2 เคส: อ้างเพจที่ไม่มีสิทธิ์เลย = invalid reference ต้อง abort, ส่วนเพจที่มีสิทธิ์แต่ยังไม่ถูกโหลด = <strong>page fault</strong> (เคสที่วิชานี้สนใจ)</li>
+        </ul>
+
+        <h3>Page Fault: 6 ขั้นตอนจัดการ</h3>
+        <div class="example"><div class="ex-title">ตัวอย่าง: โปรแกรม 8 เพจ มีอยู่ใน memory แค่ 3 เพจ (คลิป 13.1)</div>
+          <ol>
+            <li>โปรแกรมมี 8 เพจเก็บข้อมูล A ถึง H แต่มีเพียงเพจ 0, 2, 5 อยู่ใน memory (เพจ 0 = valid, เพจ 1 = invalid)</li>
+            <li>โปรแกรมอ้างเพจ 1 เข้า page table พบว่า invalid เกิด interrupt ขึ้น OS ลุกขึ้นมาทำงาน</li>
+            <li>OS ค้นใน storage ว่าเพจ 1 อยู่ตรงไหน แล้วดูว่ามี frame ว่างหรือไม่</li>
+            <li>โหลดเพจ 1 จาก storage เข้า frame ว่าง</li>
+            <li>อัปเดต page table: เก็บเลข frame และเปลี่ยน bit เป็น valid</li>
+            <li>ให้คำสั่งเดิมที่ทำให้เกิด page fault ทำงานอีกครั้ง คราวนี้จะไม่ fault อีก</li>
+          </ol>
+        </div>
+        <p>สรุปเป็น 6 ขั้นตอนตามสไลด์: (1) trap เข้า OS แล้วตรวจว่า reference ผิดหรือแค่ยังไม่อยู่ใน memory, (2) get empty frame, (3) swap page เข้า frame, (4) reset tables, (5) ตั้ง validation bit = v, (6) restart instruction ที่ทำให้เกิด fault ถ้าไม่มี free frame ต้องทำ <strong>page replacement</strong> ต่อ</p>
+
+        <h3>Page Replacement: FIFO, Optimal, LRU</h3>
+        <p>เมื่อเกิด fault แล้ว memory เต็ม ต้องเลือกว่าเพจใหม่จะแทนที่เพจไหน ความดีเลวของ algorithm วัดจาก <strong>อัตราการเกิด page fault ต้องน้อยที่สุด</strong> input คือ <strong>reference string</strong> = ลำดับเพจที่โปรแกรมอ้างตั้งแต่ต้นจนจบ ก่อนแทนที่ ถ้าเพจนั้นเป็น data ที่ถูกแก้หลังโหลดต้องเซฟลงไฟล์ก่อนกันข้อมูลหาย</p>
+        <table>
+          <tr><th>Algorithm</th><th>หลักการเลือกเพจที่จะไล่ออก</th><th>ข้อสังเกต</th></tr>
+          <tr><td><strong>FIFO</strong></td><td>เพจที่เข้ามาก่อนสุด</td><td>ง่าย แต่เกิด Belady's anomaly ได้ (ดูกล่องเตือนด้านล่าง)</td></tr>
+          <tr><td><strong>Optimal</strong></td><td>เพจที่จะไม่ถูกใช้อีกนานที่สุดในอนาคต</td><td>implement ไม่ได้จริงเพราะต้องรู้อนาคต ใช้เป็น benchmark อ้างอิงให้ algorithm อื่นเทียบ</td></tr>
+          <tr><td><strong>LRU</strong></td><td>เพจที่ไม่ถูกใช้มาแล้วนานที่สุด (มองย้อนอดีต)</td><td>implement ได้จริงเพราะ OS เก็บข้อมูลเพจไหนเพิ่งถูกอ้างได้</td></tr>
+        </table>
+        <div class="example"><div class="ex-title">ตัวอย่าง: FIFO กับ 3 frame, reference string 7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7, 0, 1 (คลิป 13.2)</div>
+          <p>คลิปเริ่มจาก 7, 0, 1, 2, 0, 3, 0, 4 แล้วไล่ต่อจนครบ ตารางนี้คือ FIFO ทีละครั้ง (H = hit ไม่เกิด fault, F = fault)</p>
+          <table>
+            <tr><th>อ้าง</th><th>ผล</th><th>Frame หลังจัดการ</th><th>เหตุผล</th></tr>
+            <tr><td>7</td><td>F (1)</td><td>7, -, -</td><td>frame ว่าง ใส่ได้เลย</td></tr>
+            <tr><td>0</td><td>F (2)</td><td>7, 0, -</td><td>frame ว่าง</td></tr>
+            <tr><td>1</td><td>F (3)</td><td>7, 0, 1</td><td>frame เต็มพอดี</td></tr>
+            <tr><td>2</td><td>F (4)</td><td>2, 0, 1</td><td>แทน 7 เพราะ 7 เข้ามาก่อนสุด</td></tr>
+            <tr><td>0</td><td>H</td><td>2, 0, 1</td><td>0 อยู่ใน memory แล้ว</td></tr>
+            <tr><td>3</td><td>F (5)</td><td>2, 3, 1</td><td>แทน 0 (ตัวเก่าสุดถัดมา)</td></tr>
+            <tr><td>0</td><td>F (6)</td><td>2, 3, 0</td><td>แทน 1</td></tr>
+            <tr><td>4</td><td>F (7)</td><td>4, 3, 0</td><td>แทน 2</td></tr>
+            <tr><td>2</td><td>F (8)</td><td>4, 2, 0</td><td>แทน 3</td></tr>
+            <tr><td>3</td><td>F (9)</td><td>4, 2, 3</td><td>แทน 0</td></tr>
+            <tr><td>0</td><td>F (10)</td><td>0, 2, 3</td><td>แทน 4</td></tr>
+            <tr><td>3</td><td>H</td><td>0, 2, 3</td><td>3 อยู่แล้ว</td></tr>
+            <tr><td>2</td><td>H</td><td>0, 2, 3</td><td>2 อยู่แล้ว</td></tr>
+            <tr><td>1</td><td>F (11)</td><td>0, 1, 3</td><td>แทน 2</td></tr>
+            <tr><td>2</td><td>F (12)</td><td>0, 1, 2</td><td>แทน 3</td></tr>
+            <tr><td>0</td><td>H</td><td>0, 1, 2</td><td>0 อยู่แล้ว</td></tr>
+            <tr><td>1</td><td>H</td><td>0, 1, 2</td><td>1 อยู่แล้ว</td></tr>
+            <tr><td>7</td><td>F (13)</td><td>7, 1, 2</td><td>แทน 0</td></tr>
+            <tr><td>0</td><td>F (14)</td><td>7, 0, 2</td><td>แทน 1</td></tr>
+            <tr><td>1</td><td>F (15)</td><td>7, 0, 1</td><td>แทน 2</td></tr>
+          </table>
+          <p>FIFO รวม <strong>15 faults</strong></p>
+        </div>
+        <div class="example"><div class="ex-title">ตัวอย่าง: Optimal และ LRU บนสตริงเดียวกัน (คลิป 13.2)</div>
+          <p>Optimal: 3 เพจแรก fault 3 ครั้งเหมือนเดิม จุดตัดสินใจสำคัญ</p>
+          <ol>
+            <li>อ้าง 2: ไล่ดูอนาคต 0 จะถูกใช้ก่อน ต่อด้วย 1 แล้วจึงถึง 7 ดังนั้น 7 ไม่ถูกใช้นานสุด จึงให้ 2 แทน 7</li>
+            <li>อ้าง 3: ระหว่าง 2, 0, 1 ตัวที่จะไม่ถูกใช้นานสุดคือ 1 จึงให้ 3 แทน 1</li>
+            <li>อ้าง 4: ระหว่าง 2, 0, 3 ตัวที่จะไม่ถูกใช้นานสุดคือ 0 จึงให้ 4 แทน 0</li>
+            <li>รวมทั้งไฟล์ <strong>9 faults</strong> (โปรแกรมเดียวกัน FIFO ต้อง 15) แต่ใช้จริงไม่ได้เพราะต้องมองอนาคต จึงใช้เป็น benchmark</li>
+          </ol>
+          <p>LRU: มองย้อนอดีตแทน</p>
+          <ol>
+            <li>อ้าง 2: ย้อนหลังระหว่าง 7, 0, 1 ตัวที่ไม่ถูกใช้มานานสุดคือ 7 จึงให้ 2 แทน 7</li>
+            <li>อ้าง 3: ระหว่าง 2, 0, 1 ตัวที่ไม่ถูกใช้มานานสุดคือ 1 จึงให้ 3 แทน 1</li>
+            <li>อ้าง 4: ระหว่าง 2, 0, 3 ตัวที่ไม่ถูกใช้มานานสุดคือ 2 จึงให้ 4 แทน 2</li>
+            <li>รวมทั้งไฟล์ <strong>12 faults</strong> ดีกว่า FIFO แต่แย่กว่า Optimal และ implement ได้จริง จึงเป็นตัวที่ OS นำไปใช้ได้</li>
+          </ol>
+          <p>สรุปเทียบบนโจทย์เดียวกัน: <strong>FIFO 15, Optimal 9, LRU 12 ครั้ง</strong> กราฟเพิ่มเติม: การเพิ่มจำนวน frame (= เพิ่ม RAM) ทำให้ page fault ลดลง แต่ถึงจุดหนึ่งแล้วการเพิ่มก็ไม่มีผล เครื่องช้าเติม RAM อย่างเดียวอาจแก้ได้แค่บางส่วน</p>
+        </div>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย: Belady's anomaly</div>
+          <ul>
+            <li><strong>Belady's anomaly</strong> = เพิ่มจำนวน frame แล้ว page fault กลับเพิ่มขึ้น อาจารย์เน้นว่าเกิดได้กับ FIFO จากการทดลองในคลิปมีบางจังหวะที่ "เพิ่ม frame แล้ว fault สูงขึ้น" แม้โดยทั่วไปยิ่งเพิ่ม frame ยิ่งลด</li>
+            <li>อย่าตอบว่า "เพิ่ม frame แล้ว fault ต้องลดเสมอ" ข้อสอบชอบดักประเด็นนี้กับ FIFO</li>
+            <li>Optimal ต้องมองอนาคต ถ้าโจทย์ให้เลือกแทนโดยดูเฉพาะอดีตแล้วตอบ Optimal คือผิด นั่นคือ LRU</li>
+            <li>ความต่าง LRU กับ FIFO อยู่ที่เกณฑ์ไล่: LRU ใช้ "ล่าสุดที่ถูกใช้" FIFO ใช้ "ลำดับที่เข้ามา" ผลลัพธ์ต่างกันเมื่อเพจถูกอ้างซ้ำแต่ไม่ถูกแทน</li>
+          </ul>
+        </div>
+        <h4>Global กับ Local allocation</h4>
+        <ul>
+          <li><strong>Global replacement</strong>: เลือกเพจจาก process ไหนไปแทนก็ได้ ข้อดีคือเหมือนแต่ละ process มี memory ใหญ่ข้อเสียคือ process อาจโดนเพจถูก process อื่นแทนที่จนเกิด fault โดยไม่รู้ตัว</li>
+          <li><strong>Local replacement</strong>: แทนที่เฉพาะ frame ที่จัดสรรให้ตัวเอง ข้อดีคืออัตรา fault ขึ้นกับตัว process เองเท่านั้น ข้อเสียคือเหมือนมี memory ให้ใช้น้อยลง</li>
+        </ul>
+
+        <h3>Thrashing</h3>
+        <p><strong>Thrashing</strong> = ปรากฏการณ์ที่ process ยุ่งอยู่กับ swap เพจเข้าออกระหว่าง storage กับ memory ตลอดเวลา อ้างเพจทีไรก็เกิด fault เพจเก่าถูกถอดไปเร็ว ๆ แล้วต้องเรียกคืน ผลคือ CPU ทำงานได้น้อยลงเพราะไปรอ I/O ตลอด ทำให้ <strong>CPU utilization ต่ำ</strong> เกิดได้ทั้งข้าม jobs (หลาย process แย่ง free frame ไม่กี่ frame) และภายใน job เดียว เช่น loop ที่ข้าม page boundary (cross page boundary)</p>
+        <div class="warn-box"><div class="kp-title">กับดักวงจร thrashing ที่อาจารย์เน้น</div>
+          <ul>
+            <li>ถ้า OS ไม่รู้ว่าเกิด thrashing จะเห็นแค่ CPU utilization ต่ำแล้วสรุปผิด ๆ ว่า "process น้อยไป" จึงเพิ่ม degree of multiprogramming โหลด process เข้ามาอีก ผลคือยิ่งแย่ เพราะ memory ยิ่งไม่พอ</li>
+            <li>อาการจริงคือ page-fault rate สูงมาก ไม่ใช่ CPU ขาดงาน ทางแก้จึงไม่ใช่เพิ่ม process</li>
+          </ul>
+        </div>
+
+        <h3>Working-Set Model</h3>
+        <p><strong>Working set</strong> = ชุดเพจของ process ที่เมื่ออยู่ใน memory พร้อมกันแล้วไม่ทำให้เกิด page fault อาศัยแนวคิด <strong>locality of reference</strong> (เพจที่ถูกเรียกใช้ซ้ำ ๆ บ่อย ๆ ในช่วงสั้น ๆ)</p>
+        <ul>
+          <li><strong>Δ (working-set window)</strong> = จำนวน page reference คงที่ที่ใช้พิจารณา (ตัวอย่างสไลด์: 10,000 instruction)</li>
+          <li><strong>WSSi</strong> = จำนวนเพจที่ Pi อ้างถึงใน Δ ล่าสุด เปลี่ยนตามเวลา เพราะขึ้นกับพฤติกรรมโปรแกรมช่วงนั้น</li>
+          <li>Δ เล็กไป = ไม่ครอบ locality ทั้งหมด, Δ ใหญ่ไป = ครอบหลาย locality โดยไม่จำเป็น, Δ = อนันต์ = ครอบทั้งโปรแกรม</li>
+          <li><strong>D = Σ WSSi</strong> = total demand frames ถ้า <strong>D &gt; m</strong> (จำนวน frame ทั้งระบบ) เกิด thrashing แนวทางแก้คือ suspend process หนึ่ง เพื่อคืน frame</li>
+        </ul>
+        <div class="example"><div class="ex-title">ตัวอย่าง: ตรวจ thrashing ด้วย D (คลิป 13.3)</div>
+          <p>กำหนด working set สูงสุดได้ 10 เพจต่อ process</p>
+          <ol>
+            <li>ที่เวลา T1: P1 อ้าง 10 เพจแต่มีเพจซ้ำ ต้องการจริงแค่ 5 เพจ, P2 ต้องการ 6 เพจ รวม D = 5 + 6 = 11</li>
+            <li>ถ้าระบบมี frame ว่างอย่างน้อย 11 frame ก็ไม่เกิด thrashing ถ้าน้อยกว่านั้นเกิด thrashing ต้อง suspend process สักตัว</li>
+            <li>ที่เวลา T2: P1 อ้าง 10 เพจแต่ของใหม่มีแค่เพจ 3 กับ 4 ต้องการจริงแค่ 2 เพจ, P2 ต้องการ 6 เพจ รวม D = 8 มี 8 frame ขึ้นไปก็พอ</li>
+            <li>ข้อสรุป: ขนาด working set เปลี่ยนแปลงตามเวลา ต้องเช็คทุกช่วง</li>
+          </ol>
+        </div>
+
+        <h3>Program Structure กับ Page Fault: array 128 x 128</h3>
+        <div class="example"><div class="ex-title">ตัวอย่าง: เติม 0 ลง array 2 มิติ 128 x 128 แบบไหนดีกว่า (สไลด์ + คลิป 13.3)</div>
+          <ol>
+            <li>กำหนด: int[128,128], แต่ละแถว (row) อยู่ใน 1 page, ภาษาส่วนใหญ่จัดเก็บแบบ row-major คือ fix แถวแล้วไล่คอลัมน์</li>
+            <li>โปรแกรม 1: ลูป j (คอลัมน์) นอก, i (แถว) ใน คือเดินข้ามแถวทุกครั้ง เข้าถึงแต่ละตัวเปลี่ยนเพจตลอด เกิด fault ทุกครั้ง = 128 คอลัมน์ x 128 แถว = <strong>16,384 page faults</strong></li>
+            <li>โปรแกรม 2: ลูป i (แถว) นอก, j (คอลัมน์) ใน คือเดินตาม row-major ภายในแถวเดียวกันไม่เกิด fault, fault เกิดเฉพาะตอนเปลี่ยนแถว = <strong>128 page faults</strong></li>
+            <li>สองโปรแกรมให้ผลลัพธ์เหมือนกันแต่ fault ต่างกัน 128 เท่า บทเรียน: ลำดับการเข้าถึงข้อมูลตาม layout ของ memory สำคัญมาก เชื่อมกับตัวอย่าง a[1024][1024] ในคาบแรก</li>
+          </ol>
+        </div>
+
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div>
+          <ul>
+            <li>นิยาม virtual memory + ประโยชน์ 4 ข้อ (I/O น้อย, memory น้อย, response เร็ว, รองรับ user มากขึ้น)</li>
+            <li>demand paging, lazy swapper/pager, valid-invalid bit ทำหน้าที่อะไร</li>
+            <li>ไล่ 6 ขั้นตอนจัดการ page fault ให้ครบ (trap, หา frame, swap in, reset tables, set valid, restart)</li>
+            <li>คำนวณจำนวน page fault ด้วย FIFO / Optimal / LRU จาก reference string กับ 3 frame: <strong>15 / 9 / 12</strong> และอธิบายได้ว่าทำไม Optimal ใช้จริงไม่ได้ (ต้องรู้อนาคต) จึงใช้เป็น benchmark</li>
+            <li>Belady's anomaly เกิดกับ algorithm ไหน (FIFO) และคืออะไร</li>
+            <li>global vs local replacement ข้อดีข้อเสีย</li>
+            <li>thrashing: นิยาม, สาเหตุ, วงจร CPU utilization ต่ำ, และเงื่อนไข D = Σ WSSi &gt; m แก้ด้วยการ suspend process</li>
+            <li>โจทย์ array 128 x 128: 128 faults กับ 16,384 faults ต่างกันตรงลำดับลูป</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec3" class="card">
+        <h2>File System (No.10 + คลิป 14.1 ถึง 14.3)</h2>
+        <p>OS จัดการทรัพยากรอีกอย่างคือไฟล์บน storage หัวข้อนี้ไล่ตั้งแต่ file system ยอดนิยม, วิธีจัดสรร block, directory และ link, การ mount จนถึง permission</p>
+        <div class="keypoints"><div class="kp-title">ประเด็นสำคัญ</div>
+          <ul>
+            <li>FAT32 จำกัดไฟล์ 4 GB, NTFS/ext4 มี journaling, exFAT ไม่มี journaling, APFS มี snapshot + encryption</li>
+            <li>Allocation 3 แบบ: contiguous เร็วแต่ external fragmentation, linked ยืดหยุ่นแต่ pointer overhead + ช้า, indexed = index block + random access</li>
+            <li>Hard link ชี้ inode, ห้ามข้าม file system และห้ามชี้ directory, symbolic link เก็บ path เป็น shortcut แตกได้ (broken)</li>
+            <li>Mount = แนบ storage เข้า mount point, unmount ก่อนถอดอุปกรณ์</li>
+            <li>Permission = RWX x 3 กลุ่ม (owner, group, public), 7 = 111, 6 = 110, 1 = 001</li>
+          </ul>
+        </div>
+
+        <h3>File System ทำหน้าที่อะไร</h3>
+        <p><strong>File system</strong> = component ของ OS ที่จัดการการเก็บ/ดึง/จัดระเบียบข้อมูลบน storage (HDD, SSD, USB) และซ่อนความต่างของ hardware ให้ผู้ใช้เข้าถึงด้วยวิธีเดียวกัน หน้าที่หลัก: ตั้งชื่อและจัดโครงสร้างไฟล์ (โฟลเดอร์), เก็บ/อ่าน/แก้ไขข้อมูล, ดูแล <strong>metadata</strong> (ขนาดไฟล์, วันเวลา, permission), และ security/ควบคุมการเข้าถึง</p>
+        <h4>File systems ที่ใช้บ่อย</h4>
+        <table>
+          <tr><th>File System</th><th>เปิดตัว</th><th>ไฟล์สูงสุด</th><th>Volume สูงสุด</th><th>จุดเด่น</th></tr>
+          <tr><td><strong>FAT32</strong></td><td>1996 (Microsoft)</td><td><strong>4 GB</strong></td><td>8 TB</td><td>compatible กว้างสุด นิยมกับ USB/memory card</td></tr>
+          <tr><td><strong>NTFS</strong></td><td>1993 (Windows NT)</td><td>16 TB</td><td>256 TB</td><td><strong>Journaling</strong>, permission/encryption/disk quota, compression, Windows อ่านอย่างเดียวบน Mac/Linux</td></tr>
+          <tr><td><strong>ext4</strong></td><td>2008 (Linux)</td><td>16 TB</td><td><strong>1 EB</strong></td><td>Journaling, default ของ Linux, ไม่ compatible กับ Windows/Mac</td></tr>
+          <tr><td><strong>exFAT</strong></td><td>2006 (Microsoft)</td><td>16 EB</td><td>128 PB</td><td><strong>ไม่มี journaling</strong>, ไฟล์ใหญ่กว่า FAT32 และ compatible กว้าง เหมาะกับ USB/SD card ไฟล์ใหญ่</td></tr>
+          <tr><td><strong>APFS</strong></td><td>2017 (Apple)</td><td>8 EB</td><td>8 EB</td><td><strong>Snapshots</strong>, full-disk encryption, ออกแบบสำหรับแฟลช</td></tr>
+        </table>
+        <p>แนวเทียบของอาจารย์: ดู 3 อย่างคือขนาดไฟล์/volume สูงสุด, มี journaling หรือไม่ (journaling ใช้ recover จาก error), และ compatible ข้าม OS แค่ไหน</p>
+
+        <h3>File Allocation Methods</h3>
+        <p>วิธีพื้นฐานมี 3 แบบ OS จริงเอาไปปรับปรุงหรือผสมกัน</p>
+        <table>
+          <tr><th>วิธี</th><th>หลักการ</th><th>ข้อดี</th><th>ข้อเสีย</th></tr>
+          <tr><td><strong>Contiguous</strong></td><td>ไฟล์อยู่ block ติดกันเป็นผืนเดียว เก็บแค่ block เริ่ม + length</td><td>ง่าย อ่านไล่ลำดับเร็ว (seek น้อย)</td><td><strong>External fragmentation</strong>, ขยายไฟล์ยาก อาจต้อง defragment</td></tr>
+          <tr><td><strong>Linked</strong></td><td>ไฟล์ = linked list ของ block แต่ละ block มี data + pointer ไป block ถัดไป เก็บ start/end block</td><td>ไม่มี external fragmentation, ขยายไฟล์ง่าย</td><td>เสียที่เก็บ pointer ต่อ block, เข้าถึงช้าต้องไล่ลูกโซ่, block กลางพัง = อ่านต่อทั้งไฟล์ไม่ได้</td></tr>
+          <tr><td><strong>Indexed</strong></td><td>รวมทุก pointer ไว้ใน <strong>index block</strong> (1 ช่องชี้ 1 data block, ช่องว่างใส่ -1 แทนจบไฟล์)</td><td><strong>Random access</strong> ได้, ไม่มี external fragmentation</td><td>เสีย storage ทำ index block</td></tr>
+        </table>
+        <p><strong>FAT (File-Allocation Table)</strong> คือ linked allocation ที่ดึง pointer ออกจาก data block มารวมไว้เป็นตาราง แก้ปัญหา pointer ปน data ของ linked แท้ ๆ</p>
+        <div class="example"><div class="ex-title">ตัวอย่าง: อ่านไฟล์ด้วย FAT (คลิป 14.2)</div>
+          <ol>
+            <li>ไฟล์ test เริ่มต้นที่บล็อก 217, อ่านข้อมูลบล็อก 217</li>
+            <li>วิ่งดู FAT ช่อง 217 บอกว่าบล็อกถัดไปคือ 618 จึงอ่านบล็อก 618</li>
+            <li>ดู FAT ช่อง 618 บอกต่อว่า 339 จึงอ่านบล็อก 339</li>
+            <li>FAT ช่อง 339 ไม่มีค่า = จบไฟล์</li>
+          </ol>
+          <p>ปัญหาของ FAT: FAT เก็บที่ sector ต้น ๆ ของ disk ต้องวิ่งไปกลับตลอด วิธีแก้คือ<strong>โหลด FAT เข้า memory (RAM)</strong> แลกกับเปลือง memory และ OS เก็บ FAT สำรองอีกชุด ถ้าเสียทั้งคู่อาจอ่านไฟล์ทั้ง disk ไม่ได้เลย</p>
+        </div>
+        <div class="example"><div class="ex-title">ตัวอย่าง: ที่มาของขีดจำกัด FAT32 ไฟล์ 4 GB และ volume 8 TB (คลิป 14.2)</div>
+          <ol>
+            <li>ขนาดไฟล์ถูกจำกัดโดย field "file size" ใน directory entry ซึ่งใหญ่ 4 bytes จึงเก็บได้สูงสุด 2^32 bytes = 4 GB</li>
+            <li>FAT table 1 entry มี 32 bits แต่ใช้จริงแค่ 28 bits อ้างเลขบล็อก (อีก 4 bits reserved) จึงอ้างได้สูงสุด 2^28 บล็อก</li>
+            <li>ถ้าใช้บล็อกขนาด 32 KB = 2^15: volume ใหญ่สุด = 2^15 x 2^28 = 2^43 = 8 TB</li>
+            <li>เกร็ด: ยิ่งใช้บล็อกใหญ่ (เช่น 32K) ยิ่งเกิด internal fragmentation มากขึ้น</li>
+          </ol>
+        </div>
+        <h4>ไฟล์ใหญ่จน index block เดียวไม่พอ และ combined scheme</h4>
+        <ul>
+          <li><strong>Single level (linked index blocks)</strong>: ช่องสุดท้ายของ index block ชี้ไป index block ถัดไปแทน data block ไฟล์ใหญ่ขึ้นได้เรื่อย ๆ แต่ไฟล์ใหญ่มากไม่มีประสิทธิภาพ</li>
+          <li><strong>Multi-level</strong>: คิดเหมือน hierarchical paging สมมติบล็อก 512 word, 1 word เก็บ 1 pointer: outer index 512 ช่อง แต่ละช่องชี้ index table 512 ช่อง ที่ชี้ data block 512 word แบบ 2-level รองรับไฟล์ได้ถึง <strong>512^3 word</strong> (ตรงกับเลข 512 ยกกำลังสามในสไลด์)</li>
+        </ul>
+        <div class="example"><div class="ex-title">ตัวอย่าง: combined scheme (ฐานของ NTFS, ext) คำนวณขนาดไฟล์สูงสุด (คลิป 14.2)</div>
+          <p>block ขนาด 4 KB, pointer 4 bytes, inode มี pointer 15 ตัว: 12 direct + 1 single indirect + 1 double indirect + 1 triple indirect, 1 index block มี 4K / 4 = 1,024 ช่อง</p>
+          <ol>
+            <li>Direct 12 ตัว: 12 x 4 KB = 48 KB (ไฟล์ไม่เกิน 48 KB ใช้ direct พอ ไม่ต้องผ่าน indirect เลย)</li>
+            <li>Single indirect: 1,024 ช่อง x 4 KB = 4 MB</li>
+            <li>Double indirect: 1,024^2 บล็อก x 4 KB = 4 GB</li>
+            <li>Triple indirect: 1,024^3 บล็อก x 4 KB = 4 TB</li>
+            <li>รวมไฟล์ใหญ่สุด = 48 KB + 4 MB + 4 GB + 4 TB ประมาณ <strong>4 TB กว่า ๆ</strong></li>
+          </ol>
+          <p>เหตุผลที่ใช้ combined แทน multi-level เดียว: ไฟล์เล็กไม่ควรผ่านหลาย level ทุกครั้งเพราะเข้าถึงช้าโดยไม่จำเป็น</p>
+        </div>
+
+        <h3>Directory และการแชร์ไฟล์</h3>
+        <p><strong>Directory (folder)</strong> มองได้ว่าเป็นตารางแปลงชื่อไฟล์ (symbol table) ไปสู่ directory entry operations ที่ทำได้: search, create, delete, list, rename, traverse โครงสร้างของ OS ปัจจุบันเป็น <strong>tree</strong> เริ่มจาก root ไล่ลงไป แต่ tree แชร์ไฟล์ร่วมกันไม่ได้ (ไฟล์เดียวมี parent ได้ตัวเดียว) เมื่อต้องอ้างไฟล์เดียวกันจากหลายที่ โครงสร้างจึงเปลี่ยนเป็น <strong>acyclic graph</strong> (กราฟไม่มีวงวน) โดยใช้ <strong>link</strong> (pointer ไปยังไฟล์/subdirectory อื่น) ซึ่งเป็นวิธีที่ unix ใช้</p>
+        <ul>
+          <li>ปัญหา aliasing: ไฟล์เดียวอ้างได้ด้วยหลาย absolute path เวลา traverse (นับไฟล์, copy, back up) ต้องไม่เข้าถึงไฟล์เดียวกันซ้ำ 2 ครั้ง</li>
+          <li>ปัญหาการลบ: ถ้าลบแล้วคืนพื้นที่ทันที link ที่เหลือกลายเป็น <strong>dangling pointer</strong> (ชี้ไฟล์ที่ไม่มีแล้ว และอาจชี้ทับไฟล์ใหม่โดยไม่ตั้งใจ)</li>
+          <li>ทางแก้คือ <strong>reference count</strong>: เพิ่ม link = +1, ลบ link = -1, count = 0 ค่อยลบไฟล์จริง unix implement ด้วย hard link</li>
+          <li>ถ้าโครงสร้างมี cycle (โฟลเดอร์ลิงก์วนกลับมาหาเดิม) traverse อาจวนติดรูป วิธีแก้ที่ง่ายกว่าคือตอนท่อง directory ให้ข้าม link ไปเลย (อีกทางคือ detect cycle แต่ช้า โดยเฉพาะบน disk)</li>
+        </ul>
+
+        <h3>Hard Link กับ Symbolic (Soft) Link</h3>
+        <table>
+          <tr><th>ประเด็น</th><th><strong>Hard Link</strong> (ln original hard_link)</th><th><strong>Symbolic Link</strong> (ln -s original sym_link)</th></tr>
+          <tr><td>ชี้ที่อะไร</td><td><strong>inode ของไฟล์โดยตรง</strong> (inode เก็บข้อมูลไฟล์ เช่น เจ้าของ, pointer แบบ direct/indirect)</td><td>เป็นไฟล์ที่เก็บ <strong>path</strong> ไปยังไฟล์/directory อื่น เหมือน shortcut</td></tr>
+          <tr><td>ต้นฉบับถูกลบ</td><td>ยังใช้ได้ เพราะการลบ = ลด reference count ข้อมูลหายเมื่อลบจน count = 0</td><td>กลายเป็น <strong>broken/dangling link</strong> (ลิงก์ยังอยู่แต่ใช้ไม่ได้)</td></tr>
+          <tr><td>แก้ไขผ่าน link ใด</td><td>เห็นผลทุก link เพราะ inode เดียวกัน</td><td>แก้ผ่านลิงก์ได้ ข้อมูลไปโผล่ที่ต้นทางด้วย (ระหว่างยังไม่ broken)</td></tr>
+          <tr><td>ข้าม filesystem/partition</td><td><strong>ไม่ได้</strong> เช่น SSD เป็น NTFS แต่ USB เป็น FAT32 ห้ามลิงก์ข้าม</td><td>ได้</td></tr>
+          <tr><td>ใช้กับ directory</td><td><strong>ไม่ได้</strong> เฉพาะไฟล์ เพื่อความปลอดภัย (กันเกิด cycle)</td><td>ได้ทั้งไฟล์และ directory</td></tr>
+          <tr><td>การลบ link</td><td>ลด reference count</td><td>ลบเฉพาะลิงก์ ไม่กระทบไฟล์ต้นทาง</td></tr>
+        </table>
+        <p>จากการสาธิตในคลิป 14.3: สร้าง hard link แล้ว ls จะเห็นเป็นไฟล์ปกติ แก้ผ่าน link ใส่ Hello World แล้ว cat ไฟล์ต้นทางก็เห็นข้อความเดียวกัน ลบต้นทางไปแล้ว link ยังอ่านข้อมูลครบ (counter ยังไม่ 0) ส่วน `ln` ไปที่ folder จะถูกปฏิเสธ ฝั่ง symbolic link จะ ls แล้วเห็นเป็น "ลิงก์" ถ้าลบโฟลเดอร์ต้นทางทิ้งทั้งตัว ลิงก์จะขึ้นสีแดงเตือนและแก้ไขไม่ได้อีก การลบลิงก์ของโฟลเดอร์ใช้ `rm mytest` ไม่ใช่ rmdir และโฟลเดอร์ต้นทางไม่กระทบ</p>
+
+        <h3>File System Mounting</h3>
+        <p><strong>Mounting</strong> = ทำให้ file system เข้าถึงได้ โดยแนบ storage เข้ากับ directory หนึ่งที่เรียก <strong>mount point</strong> ใน directory tree เช่น `/mnt/usb`, `/media/usb` ฝั่ง Windows ไดรฟ์ C:, D: ก็คือ mount point OS หนึ่งตัวใช้หลาย file system พร้อมกันได้ เช่น SSD เป็น NTFS แต่เสียบ USB ที่เป็น FAT32 ก็ copy ไฟล์ได้ตามปกติโดยผู้ใช้ไม่ต้องรู้ความต่าง</p>
+        <ul>
+          <li>คำสั่ง: `mount [OPTIONS] DEVICE MOUNT_POINT` เช่น `mount /dev/sdb1 /mnt/usb`, เลิกใช้: `umount /mnt/usb`</li>
+          <li>จากคลิป (บน Linux/WSL): `mkdir myd` แล้ว `sudo mount -t drvfs D: myd` (mount ต้องเป็น root จึงใช้ sudo, -t คือ file system type ที่นี่คือ drvfs) โฟลเดอร์ myd จะขึ้นสีเขียวและ ls myd เห็นไฟล์ของไดรฟ์ D ถอนด้วย `sudo umount myd`</li>
+          <li><strong>Unmount ก่อนถอดอุปกรณ์</strong> เพื่อให้ pending writes เสร็จและไม่มีไฟล์เปิดค้าง ยุคนี้ OS เก่งขึ้นถึงกับ mount ให้อัตโนมัติตอนเสียบ แต่หลักการยังเหมือนเดิม</li>
+        </ul>
+
+        <h3>Protection: Permission</h3>
+        <p>หลักการคือเจ้าของไฟล์ควบคุมได้ว่า "ใคร ทำอะไรได้" มี <strong>mode of access</strong> 3 แบบ: <strong>read, write, execute (RWX)</strong> กับ <strong>3 กลุ่มผู้ใช้</strong>: owner, group, public แปลงแต่ละกลุ่มเป็นเลขฐาน 8 ตัวอย่างจากสไลด์: <strong>7 = 111 = rwx, 6 = 110 = rw-, 1 = 001 = --x</strong></p>
+        <div class="example"><div class="ex-title">ตัวอย่าง: อ่านและตั้ง permission 755 และ 664 (คลิป 14.3)</div>
+          <ol>
+            <li>ไฟล์โปรแกรม client: เจ้าของ rwx = 1,1,1 กลุ่ม r-x = 1,0,1 คนอื่น r-x = 1,0,1</li>
+            <li>แปลงเป็นฐาน 8: 111 = 7, 101 = 5, 101 = 5 ได้ <strong>755</strong> ความหมายคือเจ้าของทำได้ทุกอย่าง ส่วนกลุ่มกับคนอื่นอ่านกับ execute เท่านั้น</li>
+            <li>เขียนเป็น <strong>0755</strong> ใส่ 0 นำหน้าเพื่อบอกว่าเป็นเลขฐาน 8 ไม่ใช่ฐาน 10 (เช่นใน `mkdir(ชื่อโฟลเดอร์, 0755)` ของ Standard C/POSIX)</li>
+            <li>ไฟล์ใหม่ปกติเป็น rw- r-- r-- ถ้าอยากให้กลุ่มเขียนได้ด้วยแต่คนอื่นยังอ่านอย่างเดียว: 110 / 110 / 100</li>
+            <li>แปลง: 110 = 6, 110 = 6, 100 = 4 ได้ <strong>664</strong> ใช้คำสั่ง `chmod 0664 ชื่อไฟล์` แล้วตรวจด้วย `ls -l`</li>
+          </ol>
+        </div>
+
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div>
+          <ul>
+            <li>ตาราง file system: FAT32 ไฟล์ 4 GB, ตัวไหนมี journaling (NTFS, ext4) ตัวไหนไม่มี (exFAT, FAT32), APFS = snapshot + encryption, ใคร compatible ข้าม OS</li>
+            <li>ที่มาของ 4 GB (field file size 4 bytes = 2^32) และ 8 TB (28 bits x บล็อก 32 KB = 2^28 x 2^15)</li>
+            <li>เทียบ allocation 3 แบบ + FAT แก้อะไร, ทำไมควรโหลด FAT ขึ้น RAM</li>
+            <li>combined scheme: บล็อก 4 KB, pointer 4 bytes = 1,024 ช่องต่อ index block, 12 direct = 48 KB, single = 4 MB, double = 4 GB, triple = 4 TB รวมประมาณ 4 TB</li>
+            <li>tree vs acyclic graph, ปัญหาลบไฟล์ที่ถูกแชร์ (dangling pointer, reference count)</li>
+            <li>hard link vs symbolic link: inode, ข้าม filesystem, directory, broken link พร้อมคำสั่ง ln / ln -s</li>
+            <li>mount/umount และ mount point เช่น mount /dev/sdb1 /mnt/usb</li>
+            <li>แปลงเลข permission 7/6/1 และอ่านความหมาย 755, 664 กับ chmod</li>
+          </ul>
+        </div>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div>
+          <ul>
+            <li>exFAT ไม่มี journaling อย่าตอบว่าเป็นรุ่นใหม่แล้วมีทุกอย่างเหมือน NTFS</li>
+            <li>hard link ห้ามข้าม filesystem และห้ามชี้ directory สองข้อนี้เป็นจุดต่างที่ข้อสอบชอบถามเทียบกับ symbolic link</li>
+            <li>ลบไฟล์ต้นทางเมื่อไร symbolic link ไม่ได้หายไปด้วย แต่กลายเป็น broken link</li>
+            <li>4 GB ของ FAT32 มาจาก field file size ใน directory entry ไม่ใช่จากความกว้างของ FAT entry (FAT entry จำกัดเรื่อง volume เป็น 8 TB)</li>
+            <li>linked allocation ถ้า block กลางไฟล์เสีย จะหา "block ถัดไป" ไม่เจอ อ่านส่วนที่เหลือทั้งไฟล์ไม่ได้</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec4" class="card">
+        <h2>การติดตั้ง WSL2 (คลิปท้ายชุด)</h2>
+        <p><strong>WSL2 (Windows Subsystem for Linux 2)</strong> ใช้ให้เรียกคำสั่ง Linux บน Windows ได้ โดยไม่ต้องติดตั้งโปรแกรมจัดการเครื่องเสมือน (VMware/VirtualBox) แล้วค่อยลง Linux ทีหลัง เป็นสภาพแวดล้อมที่วิชานี้ใช้ทดลองคำสั่งต่าง ๆ</p>
+        <div class="example"><div class="ex-title">ตัวอย่าง: ขั้นตอนติดตั้งตามที่อาจารย์สาธิต</div>
+          <ol>
+            <li>ตรวจสอบเวอร์ชัน Windows ก่อน: ต้องเป็น Windows 10 version 2004 ขึ้นไป หรือ Windows 11</li>
+            <li>เปิด PowerShell แบบ Run as Administrator (จะมีการยืนยันสิทธิ์)</li>
+            <li>รันคำสั่ง <code>wsl --install</code> ระบบจะติดตั้ง WSL และดาวน์โหลด WSL kernel</li>
+            <li>ระบบดาวน์โหลด <strong>Ubuntu</strong> มาให้เป็นค่าดีฟอลต์ แล้ว<strong>รีบูตเครื่อง</strong></li>
+            <li>หลังรีบูตระบบติดตั้ง Ubuntu ต่อให้อัตโนมัติ ให้ตั้ง username ใหม่กับ password (อาจารย์เน้น: ต้องจำ password ให้ได้)</li>
+            <li>ผลลัพธ์: ได้ WSL 2.0 พร้อม Ubuntu รุ่น LTS (long term support) ถ้าอยากใช้ distro อื่นมี option ให้เลือกติดตั้งได้</li>
+          </ol>
+        </div>
+        <p>เกร็ดท้ายจากคลิป: ถ้าติดตั้งไปแล้วต้องการแก้ไขหรือติดตั้งเพิ่ม ทำตามขั้นตอนในหน้าเว็บทางการได้เลย ยุคนี้ติดตั้งง่ายกว่าสมัยก่อนมาก และจากหัวข้อ File System ด้านบน คำสั่ง `sudo mount -t drvfs D: myd` ก็ทดลองบน WSL ได้</p>
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div>
+          <ul>
+            <li>เงื่อนไขเวอร์ชัน: Windows 10 version 2004 ขึ้นไป หรือ Windows 11</li>
+            <li>คำสั่งติดตั้งคือ <code>wsl --install</code> ใน PowerShell แบบ Administrator และต้องรีบูตหลังติดตั้ง</li>
+            <li>distro ดีฟอลต์ที่ได้คือ Ubuntu รุ่น LTS และต้องตั้ง username/password</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="links" class="card">
+        <h2>ลิงก์ทบทวนต่อ</h2>
+        <ul>
+          <li><a href="os-quiz.html">ทำแบบทดสอบรวมที่หน้า OS ควิซ</a></li>
+          <li><a href="os.html">ย้อนกลับ: Process ถึง Deadlock</a></li>
+        </ul>
+      </section>
+    </article>
+  </main>
+</div>
+<script src="assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Structures and Algorithms (05506006) | ติวสอบ ปี 2 เทอม 1</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-subject="dsa">
+<header class="topbar">
+  <a class="brand" href="index.html">ติวสอบ <span>ปี 2 เทอม 1</span></a>
+  <nav class="subject-nav">
+    <a href="dsa.html" class="active">DSA</a>
+    <a href="os.html">OS</a>
+    <a href="os-2.html">OS (ต่อ)</a>
+    <a href="os-quiz.html">OS ควิซ</a>
+    <a href="oslab.html">OS Lab</a>
+    <a href="bpm.html">BA/BPM</a>
+    <a href="linear.html">พีชคณิตเชิงเส้น</a>
+    <a href="seminar.html">Seminar</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="toc">
+    <div class="toc-title">สารบัญหน้านี้</div>
+    <a href="#sec1">ภาพรวมวิชา + ตาราง Big-O รวม</a>
+    <a href="#sec2">การวิเคราะห์อัลกอริทึม (L02)</a>
+    <a href="#sec3">Array (L03)</a>
+    <a href="#sec4">Linked List (L04)</a>
+    <a href="#sec5">Stack (L05)</a>
+    <a href="#sec6">Queue (L06)</a>
+    <a href="#sec7">Recursion, DP และ Divide &amp; Conquer</a>
+    <a href="#sec8">Sorting (L08)</a>
+    <a href="#sec9">Priority Queue และ Heap (L09)</a>
+    <a href="#sec10">Binary Search Tree (L10)</a>
+    <a href="#sec11">Advanced Tree: AVL, Red-Black, Splay (L11)</a>
+    <a href="#sec12">Graph (L12)</a>
+    <a href="#quiz">แบบทดสอบ</a>
+  </aside>
+  <main>
+    <article>
+      <h1>Data Structures and Algorithms (05506006)</h1>
+      <p class="page-sub">สรุปติวสอบ: วิเคราะห์ Big-O, โครงสร้างข้อมูลทุกแบบ, Sorting, BST, Graph พร้อมแบบทดสอบ 30 ข้อท้ายหน้า</p>
+
+      <section id="sec1" class="card">
+        <h2>ภาพรวมวิชา + ตาราง Big-O รวม</h2>
+        <p>ผลลัพธ์การเรียน (CLO) ของวิชานี้</p>
+        <ul>
+          <li><strong>CLO-1</strong> เข้าใจและใช้กระบวนการ abstraction ในการแก้ปัญหา</li>
+          <li><strong>CLO-2</strong> วิเคราะห์ทีละขั้นและพัฒนา algorithm แก้ปัญหาจริง</li>
+          <li><strong>CLO-3</strong> implement โครงสร้างข้อมูลและอัลกอริทึมพื้นฐาน</li>
+          <li><strong>CLO-4</strong> เข้าใจเทคนิค searching และ sorting ต่าง ๆ</li>
+        </ul>
+        <p>ลำดับหัวข้อ: Introduction, Analysis, Array, Linked List, Stack/Queue, Recursion &amp; Memoization, DP, Sorting, Heap &amp; Priority Queue, BST, Adv. BST, Graph, Hashing</p>
+
+        <h3>ADT และพื้นฐาน Java ที่ต้องรู้ (L01)</h3>
+        <ul>
+          <li><strong>ADT (Abstract Data Type)</strong>: โมเดลของชนิดข้อมูลที่สนใจ "ว่าทำอะไรได้" และ efficiency แต่ไม่สนว่า implement อย่างไร เช่น Stack, Queue, Heap, Tree, Graph</li>
+          <li><strong>Data vs Information</strong>: data คือข้อมูลดิบ, information คือข้อมูลที่พร้อมใช้; basic operations คือ CRUD (Create, Retrieve, Update, Delete)</li>
+          <li><strong>Class = blueprint, Object = instance</strong>; <code>main</code> เป็น static เพราะรันก่อนจะมี object ใด ๆ; เรียก static ผ่านชื่อ class เช่น <code>Counter.add(2,3)</code>, เรียก instance ผ่านชื่อ object เช่น <code>c.inc()</code></li>
+          <li><strong>Reference &amp; pass-by-value</strong>: primitive เก็บค่าจริง, object variable เก็บ reference; Java ส่งสำเนาของค่าเข้า method (สำหรับ object คือสำเนาของ reference) จึงแก้ข้างใน object เดิมได้ แต่ assign ตัวแปรใหม่ไม่มีผลกับผู้เรียก</li>
+          <li>เขียนแบบ "abstraction ซ้าย, implementation ขวา": <code>List&lt;String&gt; names = new ArrayList&lt;&gt;();</code>, <code>Queue&lt;Integer&gt; q = new ArrayDeque&lt;&gt;();</code>, Generics (<code>&lt;String&gt;</code>) ระบุชนิดข้อมูล</li>
+        </ul>
+        <div class="keypoints">
+          <div class="kp-title">ประเด็นสำคัญ: เลือก collection ให้ตรงงาน</div>
+          <ul>
+            <li><strong>ArrayList</strong>: indexed sequence, get/set เร็ว แต่แทรก/ลบต้น ๆ ต้อง shift</li>
+            <li><strong>HashSet</strong>: ไม่มีข้อมูลซ้ำ, contains/add/remove โดยปกติเร็ว, ไม่เรียงลำดับ</li>
+            <li><strong>TreeMap</strong>: key เรียงลำดับ, put/get/remove ~O(log n), เหมาะกับ ordered lookup / range query</li>
+            <li><strong>PriorityQueue</strong>: default ให้ตัวเล็กสุดก่อน, รับประกันแค่ poll() ได้ตัวที่ "ดีที่สุด" ไม่ได้เก็บเรียงทั้งก้อน</li>
+            <li><strong>Comparator</strong>: ค่า negative/zero/positive หมายถึง มาก่อน/เท่ากัน/มาหลัง เช่น <code>students.sort((a,b) -&gt; a.score - b.score);</code></li>
+          </ul>
+        </div>
+
+        <h3>ตาราง Big-O รวมทุกโครงสร้าง (แผนที่ทบทวนด่วน)</h3>
+        <table>
+          <tr><th>โครงสร้าง / หมวด</th><th>Operation</th><th>Big-O (เงื่อนไข)</th></tr>
+          <tr><td rowspan="9">Array</td><td>access (getAt/setAt)</td><td><strong>O(1)</strong></td></tr>
+          <tr><td>add ท้าย</td><td>O(1)</td></tr>
+          <tr><td>insert ลง unordered</td><td>O(1)</td></tr>
+          <tr><td>insert ลง ordered</td><td>O(n) worst/average, O(1) best</td></tr>
+          <tr><td>find (unordered, linear)</td><td>O(n)</td></tr>
+          <tr><td>binary search (ordered)</td><td><strong>O(log n)</strong></td></tr>
+          <tr><td>delete จาก unordered</td><td><strong>O(1)</strong></td></tr>
+          <tr><td>delete จาก ordered</td><td>O(n)</td></tr>
+          <tr><td>expand (เพิ่ม +M / เท่าตัว ×2)</td><td>expand เอง O(n); add เฉลี่ย <strong>O(n)</strong> แบบ +M, <strong>O(1) amortized</strong> แบบ ×2</td></tr>
+          <tr><td rowspan="6">Linked List</td><td>getAt/setAt</td><td>O(n)</td></tr>
+          <tr><td>addFirst</td><td><strong>O(1)</strong></td></tr>
+          <tr><td>addLast (ไม่มี tail)</td><td>O(n)</td></tr>
+          <tr><td>insert/delete หลัง node ที่รู้จัก</td><td><strong>O(1)</strong></td></tr>
+          <tr><td>find / delete by value</td><td>O(n)</td></tr>
+          <tr><td>delete ณ ตำแหน่งที่รู้ (doubly)</td><td>O(1)</td></tr>
+          <tr><td>Stack</td><td>push / pop / top</td><td><strong>O(1)</strong> ทั้งหมด</td></tr>
+          <tr><td>Queue</td><td>enqueue / dequeue / front</td><td><strong>O(1)</strong> (list + tail หรือ circular array)</td></tr>
+          <tr><td rowspan="5">Heap / Priority Queue</td><td>insert</td><td>O(log n)</td></tr>
+          <tr><td>remove (root)</td><td>O(log n)</td></tr>
+          <tr><td>peek</td><td>O(1)</td></tr>
+          <tr><td>heapify ทั้ง array</td><td><strong>O(n)</strong></td></tr>
+          <tr><td>heap sort</td><td>O(n log n)</td></tr>
+          <tr><td rowspan="2">BST</td><td>search / insert / delete</td><td>O(log n) ถ้า balance; <strong>O(n)</strong> ถ้า deformed</td></tr>
+          <tr><td>in-order traversal</td><td>O(n) (ได้ลำดับเรียง)</td></tr>
+          <tr><td>AVL Tree</td><td>search / insert / delete</td><td>O(log n), h &lt; 1.44 log₂n</td></tr>
+          <tr><td>Red-Black Tree</td><td>search / insert / delete</td><td>O(log n), h ≤ 2 log₂(n+1)</td></tr>
+          <tr><td>Splay Tree</td><td>search / insert / delete</td><td><strong>O(log n) amortized</strong></td></tr>
+          <tr><td rowspan="4">Sorting (comparison)</td><td>Bubble / Selection / Insertion</td><td>O(n²) (Insertion best O(n), Bubble improved best O(n))</td></tr>
+          <tr><td>Quick</td><td>avg O(n log n), worst O(n²), memory O(log n)</td></tr>
+          <tr><td>Merge</td><td>O(n log n) เสมอ, memory O(n), stable</td></tr>
+          <tr><td>Heap sort</td><td>O(n log n)</td></tr>
+          <tr><td rowspan="3">Sorting (non-comparison)</td><td>Radix</td><td>O(nd)</td></tr>
+          <tr><td>Counting</td><td>linear ตาม n + ช่วง key</td></tr>
+          <tr><td>Bucket</td><td>O(n) best, O(m+n)</td></tr>
+          <tr><td rowspan="2">Graph representation</td><td>matrix space / เช็ค edge</td><td>O(V²) / O(1)</td></tr>
+          <tr><td>list space / เช็ค edge</td><td>O(V+E) / O(deg(u))</td></tr>
+          <tr><td>Graph traversal</td><td>BFS / DFS</td><td><strong>O(V+E)</strong></td></tr>
+          <tr><td rowspan="4">Graph algorithms</td><td>Prim (lazy)</td><td>O(E log V)</td></tr>
+          <tr><td>Dijkstra (lazy, น้ำหนัก ≥ 0)</td><td>O(E log V) (รวม init O(V + E log V))</td></tr>
+          <tr><td>Kruskal</td><td>O(E log E) (โดน sort ครอง)</td></tr>
+          <tr><td>Union-Find (rank + compression)</td><td>O(α(n)) ≈ O(1) ต่อ find/union</td></tr>
+          <tr><td>Expression</td><td>RPN evaluation / Shunting-yard</td><td>O(n) ต่อ token</td></tr>
+        </table>
+        <div class="exam-box">
+          <div class="kp-title">มักออกสอบ</div>
+          <ul>
+            <li>กลุ่มคู่ที่มักถูกถามเทียบกัน: Array vs Linked List (random access vs แทรก/ลบตรงจุด), Stack vs Queue (LIFO vs FIFO), Memoization vs Bottom-up DP, D&amp;C vs DP (independent vs repeated), AVL vs Red-Black vs Splay, Prim vs Dijkstra, Adjacency matrix vs list</li>
+            <li>เลือก collection ให้ตรงโจทย์: ต้องการ index, ไม่ซ้ำ/เช็ค membership, key เรียงลำดับ, "ตัวที่ดีที่สุดก่อน"</li>
+            <li>ผลของ pass-by-value เมื่อส่ง array/object เข้า method (แก้ข้างในได้, assign ใหม่ไม่มีผล)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec2" class="card">
+        <h2>การวิเคราะห์อัลกอริทึม (L02)</h2>
+        <ul>
+          <li><strong>ลักษณะของ DS/Algorithm ที่ดี</strong>: Correctness, Efficiency (Time/Space), Readability</li>
+          <li><strong>Correctness</strong> พิสูจน์ได้ 2 ทาง: formal/mathematical proof (รับประกัน 100%: ทางตรง, ขัดแย้ง, contraposition, mathematical induction) และ empirical analysis (test) ที่ต้องมี test case ครบและระวัง confirmation bias</li>
+          <li><strong>Efficiency</strong> วัดได้ 2 วิธี: <strong>Benchmark</strong> (เหมาะกับชิ้นงานจบแล้ว, ต้องคุม environment/hardware/language ให้เหมือนกัน; benchmark ที่ดี: Relevance, Representativeness, Equity, Repeatability, Cost-effectiveness, Scalability, Transparency) และ <strong>Asymptotic analysis</strong> (สนใจ growth rate เมื่อ n ใหญ่มาก, system-independent)</li>
+          <li><strong>Operation counting</strong>: สมมติ 1 statement ใช้เวลาคงที่เท่ากัน เช่น <code>int m = n/2;</code> นับ 3 operations (declaration + assignment + division) แล้วสร้าง operation function ของโค้ด</li>
+        </ul>
+        <div class="example">
+          <div class="ex-title">ตัวอย่าง: นับ operation ของ isPrime 3 เวอร์ชัน</div>
+          <ol>
+            <li>f0(n) = 2n + 5 (isPrime0, loop วนถึง n/2 ครั้ง) ตัดพจน์คงที่และ coefficient เหลือ <strong>O(n)</strong></li>
+            <li>f1(n) = 4√n + 6 (isPrime1, loop วนถึง √n ครั้ง) เหลือ <strong>O(√n)</strong></li>
+            <li>f2(n) = 7√(n/6) + 15 (isPrime2, step ทีละ 6) ยังเป็น <strong>O(√n)</strong> เพราะ 1/√6 เป็นค่าคงที่</li>
+            <li>สรุป: จำนวน operation ไม่ขึ้นกับเครื่อง จึงเทียบ algorithm กันโดยตรงได้ (isPrime1/isPrime2 เร็วกว่า isPrime0 มาก)</li>
+          </ol>
+        </div>
+        <h3>Asymptotic Notation</h3>
+        <ul>
+          <li><strong>Big-O</strong>: g(n) เป็น <strong>upper bound</strong> ของ f(n), f โต "ไม่เร็วกว่า" g (ไม่แย่กว่า)</li>
+          <li><strong>Big-Omega (Ω)</strong>: g(n) เป็น <strong>lower bound</strong>, f โต "เร็วกว่า"/ไม่ดีกว่า g</li>
+          <li><strong>Big-Theta (Θ)</strong>: f และ g โต <strong>ด้วยอัตราเดียวกัน</strong> (tight bound)</li>
+          <li>เทียบด้วย limit ที่ n → ∞: lim f1/f2 = ค่าคงที่บวก → Θ; = ∞ → f1 ใหญ่กว่า (Ω); = 0 → f2 เล็กกว่า (O)</li>
+          <li><strong>ในทางปฏิบัติ</strong>: คนมักพูด Big-O แต่คาดหวังค่าที่แคบที่สุด (เทียบเท่า Θ) เช่น 4√n + 6 ∈ O(n) ถูกทางเทคนิคแต่ที่คาดหวังคือ O(√n)</li>
+        </ul>
+        <div class="example">
+          <div class="ex-title">ตัวอย่าง: เทียบ growth rate ด้วย limit</div>
+          <ol>
+            <li>ให้ f(n) = 4n² + 3n + 4 และ g(n) = n²</li>
+            <li>หารทุกพจน์ด้วย n²: f/g = 4 + 3/n + 4/n²</li>
+            <li>เมื่อ n → ∞ ได้ limit = 4 (ค่าคงที่บวก)</li>
+            <li>ตอบ: f โตด้วยอัตราเดียวกับ n² → <strong>f(n) ∈ Θ(n²)</strong></li>
+          </ol>
+        </div>
+        <ul>
+          <li><strong>O vs Θ จากโค้ด</strong>: ถ้ามี <strong>early exit</strong> (เช่น <code>linearSearch</code>) best case O(1), worst O(n), bound ต่างกันจึงรายงานด้วย <strong>O(n)</strong> (worst case); ถ้า <strong>ไม่มี early exit</strong> (เช่น <code>findMax</code> loop ต้องรันครบเสมอ) best = worst = <strong>Θ(n)</strong></li>
+          <li>วิธีหา Big-O จากโค้ด: ดู <strong>most frequently executed line</strong> เช่น loop ใน partition (Lomuto/Hoare) วน ~N รอบ → O(N)</li>
+        </ul>
+        <h3>Big-O ของ loop รูปแบบต่าง ๆ</h3>
+        <table>
+          <tr><th>โค้ด</th><th>เหตุผล</th><th>Big-O</th></tr>
+          <tr><td><code>for (i=1; i*i&lt;=n; i++)</code></td><td>วนจน i² เกิน n, i รอบ</td><td>O(√n)</td></tr>
+          <tr><td><code>for (i=2; i&lt;n; i*=2)</code></td><td>i คูณ 2 ทุกรอบ</td><td>O(log n)</td></tr>
+          <tr><td>loop นอก n รอบ × loop ใน j*=2</td><td>n × log n</td><td>O(n log n)</td></tr>
+          <tr><td>nested สองชั้นแบบ j*j &lt; n</td><td>n × √n</td><td>O(n√n)</td></tr>
+          <tr><td>สอง loop แบบ i*=2, j*=2 ซ้อนกัน</td><td>log n × log n</td><td>O(log²n)</td></tr>
+          <tr><td><code>i = pow(i,2)</code> (2, 4, 16, 256, ...)</td><td>โตแบบสองชั้น</td><td><strong>O(log log n)</strong></td></tr>
+          <tr><td><code>for (i=n; i&gt;0; i/=2) for (j=0; j&lt;i; j++)</code></td><td>n + n/2 + n/4 + ... = 2n</td><td><strong>O(n)</strong></td></tr>
+          <tr><td>triple nested ทั้งหมด i*=2, j*=2</td><td>n × log log n</td><td>O(n log log n) เชิง quasilinear</td></tr>
+        </table>
+        <ul>
+          <li><strong>ลำดับ Typical Big-O</strong>: O(1) &lt; O(log n) &lt; O(n) &lt; O(n log n) &lt; O(n²) &lt; O(nᵏ) &lt; O(cⁿ) &lt; O(n!) &lt; O(nⁿ)</li>
+        </ul>
+        <details class="more"><summary>อ่านเพิ่ม: P vs NP</summary><div>ปัญหาที่แก้ได้ใน polynomial O(nᵏ) อยู่ใน P class; NP-complete คือกลุ่มที่ยังไม่มี polynomial solution; ปัจจุบันยังไม่มีใครพิสูจน์ P ≠ NP</div></details>
+        <div class="exam-box">
+          <div class="kp-title">มักออกสอบ</div>
+          <ul>
+            <li>นับ operation ของโค้ดสั้น ๆ แล้วสรุปเป็น Big-O</li>
+            <li>จำแนก O / Ω / Θ และอ่าน limit เทียบ growth rate</li>
+            <li>บอก best/worst/average ของโค้ดที่มี/ไม่มี early exit และเลือกใช้ O หรือ Θ ให้เหมาะ</li>
+            <li>หา Big-O ของ loop รูปแบบต่าง ๆ (i*=2, i=i², halving กับ linear inner)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec3" class="card">
+        <h2>Array (L03)</h2>
+        <ul>
+          <li>Array คือข้อมูลชนิดเดียวกันเรียง <strong>ติดกันใน memory (contiguous)</strong> อ้างด้วยชื่อเดียว; ใน Java array เป็น object อยู่ใน heap; <code>byte[] b, d;</code> ทำให้ทั้งคู่เป็น array แต่ <code>byte a[], c;</code> จะทำให้ c เป็นแค่ byte</li>
+          <li><strong>Random access O(1)</strong>: คำนวณจาก "ตำแหน่งเริ่มต้น + index" ได้โดยตรง; ควรห่อหุ้มด้วย <code>getAt()/setAt()</code> เพื่อควบคุมการเข้าถึง</li>
+          <li><strong>add ไม่สนลำดับ</strong>: วางท้าย array เป็น O(1); ตรวจ error ด้วย <code>isFull()/isEmpty()</code> (O(1) ทั้งคู่) ได้ 3 แบบ: เช็คก่อนเรียก (v1) / เช็คใน method แล้ว return -1 หรือ boolean (v2) / throw exception (v3, ช้าสุด)</li>
+          <li><strong>find ใน unordered</strong>: linear search, best O(1), worst/average O(n)</li>
+          <li><strong>binarySearch ใน ordered</strong>: ตัดครึ่งทุกรอบ, worst O(log n), average ก็ O(log n)</li>
+        </ul>
+        <pre><code>// add ไม่สนลำดับ: วางท้าย
+data[size++] = d;
+
+// insert ลง unordered: ย้ายค่าเดิมที่ index ไปท้ายแล้ววางใหม่
+data[size++] = data[index];
+data[index] = d;
+
+// insert ลง ordered: shift ข้อมูลที่มากกว่าไปทางขวา 1 ช่องแล้ววาง
+for (int i = size; i &gt; index; i--) data[i] = data[i-1];
+data[index] = d;
+
+// delete จาก unordered: ก๊อบตัวท้ายมาแทน จึงเป็น O(1)
+data[index] = data[--size];</code></pre>
+        <div class="example">
+          <div class="ex-title">ตัวอย่าง: average case ของ ordered insert และจำนวนรอบของ binary search</div>
+          <ol>
+            <li>Ordered insert: แทรกที่ index ต้อง shift ได้ 1, 2, ..., n ช่อง รวม 1+2+...+n = n(n+1)/2</li>
+            <li>หารด้วย n ตำแหน่ง: เฉลี่ย (n+1)/2 ช่อง → <strong>Average O(n)</strong> (best คือแทรกปลายทาง O(1), worst คือ index 0)</li>
+            <li>Binary search: รอบที่ 1 เหลือ n, รอบที่ 2 เหลือ n/2, ..., รอบที่ k เหลือ 1</li>
+            <li>k = log n + 1 รอบ → <strong>worst O(log n)</strong>; average ก็ O(log n) (จาก Σ i·2^(i-1) = (k-1)2^k + 1)</li>
+          </ol>
+        </div>
+        <h3>ข้อจำกัด + Expanding Array</h3>
+        <ul>
+          <li>Array <strong>ขยายขนาดไม่ได้</strong> และต้องการ memory ต่อเนื่อง: อาจมี memory เหลือพอแต่จอง block ใหญ่ไม่ได้</li>
+          <li>ทางแก้: สร้าง array ใหม่ → copy ทั้งหมด → ชี้ไปที่ใหม่ → เก่าถูก GC; <code>expands()</code> เองเป็น O(n) เสมอ; add with expand: best O(1), worst O(n)</li>
+          <li><strong>Version A: <code>MAX_SIZE = MAX_SIZE + M</code></strong> (เพิ่มคงที่): ต้นทุน copy สะสมเป็น arithmetic series = <strong>O(n²)</strong> รวม, เฉลี่ยต่อ insertion = <strong>O(n)</strong> (M เป็นแค่ constant factor)</li>
+          <li><strong>Version B: <code>MAX_SIZE = 2*MAX_SIZE</code></strong> (เท่าตัว): n = 2^k·S, ผลรวม operation = 2n − S → <strong>average/amortized O(1) ต่อ add</strong> เป็นตัวอย่างคลาสสิกของ amortized analysis</li>
+        </ul>
+        <div class="example">
+          <div class="ex-title">ตัวอย่าง: copy cost ของ expand แบบ +M (S=10, M=10, ใส่ 100 ตัว)</div>
+          <ol>
+            <li>เริ่มความจุ S = 10, ทุกครั้งที่เต็มจะขยายเพิ่ม M = 10: 10 → 20 → 30 → ... → 100 (expand 9 ครั้ง)</li>
+            <li>copy cost แต่ละครั้ง = ขนาด array เดิม: 10 + 20 + 30 + ... + 90 = <strong>450 writes</strong></li>
+            <li>total writes = 100 (insert เอง) + 450 (copy) = <strong>550 writes</strong></li>
+            <li>ต้นทุน copy สะสมเป็น arithmetic series → รวม O(n²), เฉลี่ยต่อ add = O(n)</li>
+          </ol>
+        </div>
+        <h3>สรุป Big-O ของ Array (ตารางสไลด์)</h3>
+        <table>
+          <tr><th>Operation</th><th>Best</th><th>Worst</th><th>Average</th></tr>
+          <tr><td>Add (ท้าย array)</td><td>O(1)</td><td>O(1)</td><td>O(1)</td></tr>
+          <tr><td>Insert ลง unordered</td><td>O(1)</td><td>O(1)</td><td>O(1)</td></tr>
+          <tr><td>Insert ลง ordered</td><td>O(1)</td><td>O(n)</td><td>O(n)</td></tr>
+          <tr><td>Find ใน unordered</td><td>O(1)</td><td>O(n)</td><td>O(n)</td></tr>
+          <tr><td>Binary search (ordered)</td><td>O(1)</td><td>O(log n)</td><td>O(log n)</td></tr>
+          <tr><td>Delete จาก unordered</td><td>O(1)</td><td>O(1)</td><td>O(1)</td></tr>
+          <tr><td>Delete จาก ordered</td><td>O(1)</td><td>O(n)</td><td>O(n)</td></tr>
+          <tr><td>Expand</td><td>-</td><td>O(n)</td><td>-</td></tr>
+          <tr><td>Add with expand (ver.B)</td><td>O(1)</td><td>O(n)</td><td><strong>O(1) amortized</strong></td></tr>
+        </table>
+        <details class="more"><summary>อ่านเพิ่ม: Example challenge ในสไลด์</summary><div>removeDuplicates บน sorted array และ sortColors (Dutch national flag ด้วยตัวชี้ low/mid/high)</div></details>
+        <div class="exam-box">
+          <div class="kp-title">มักออกสอบ</div>
+          <ul>
+            <li>ตาราง Big-O ข้างบน (ออกบ่อยมาก) โดยเฉพาะ delete แบบ unordered เป็น O(1)</li>
+            <li>วิธีคิด average case ของ ordered insert (ผลรวม 1..n หาร n)</li>
+            <li>เทียบ expand แบบ +M (avg O(n)) กับแบบ ×2 (amortized O(1)) พร้อมพิสูจน์สั้น ๆ</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec4" class="card">
+        <h2>Linked List (L04)</h2>
+        <ul>
+          <li>เก็บข้อมูลเป็น <strong>node แยกกัน</strong> เชื่อมด้วย reference: node = <code>data + next</code>; ตัว list เก็บแค่ <code>head</code> (และ <code>size</code>); node สุดท้ายชี้ <code>null</code></li>
+          <li>เก็บแบบ <strong>non-contiguous</strong> ได้ (ต่างจาก array) แต่ <strong>random access เป็น O(n)</strong> เพราะต้องเดินตาม next</li>
+          <li><strong>Invariants</strong>: head == null → list ว่าง; ทุก node ยกเว้นตัวสุดท้ายชี้ node อื่น; <strong>เสีย head = เสียทั้ง chain</strong></li>
+          <li><strong>Traversal มาก่อนเสมอ</strong>: เช็ค <code>p != null</code> ก่อนใช้ <code>p.data</code>/<code>p.next</code> ทุกครั้ง</li>
+        </ul>
+        <pre><code>// traversal พื้นฐาน
+Node p = head;
+while (p != null) {
+    // ทำงานกับ p.data
+    p = p.next;
+}
+
+// insert ระหว่าง node: p = node ก่อนจุดแทรก, n = node ใหม่
+n.next = p.next;   // ต่อ n เข้ากับส่วนท้ายเดิมก่อน (ไม่งั้นเสีย chain)
+p.next = n;        // ค่อยเชื่อม p ไปที่ n
+
+// insert ลง list ที่เรียงอยู่แล้ว (insertSort): เดินหา node "ก่อนจุดแทรก"
+while (p.next != null &amp;&amp; p.next.data &lt; d) p = p.next;
+n.next = p.next;
+p.next = n;
+
+// delete ต้องมี previous node
+p.next = p.next.next;</code></pre>
+        <div class="warn-box">
+          <div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div>
+          <ul>
+            <li>สลับลำดับคำสั่งเป็น <code>p.next = n;</code> ก่อน <code>n.next = p.next;</code> จะทำให้เสีย reference ไปหา node ถัดไป (chain ขาด)</li>
+            <li>ลบ head โดยลืมว่า head ไม่มี previous node ต้องแก้ด้วย dummy node</li>
+          </ul>
+        </div>
+        <ul>
+          <li><strong>Operations</strong>: <code>getAt(i)/setAt(i,d)</code> เดิน i ครั้ง → O(i), worst <strong>O(n)</strong>; <code>addFirst(d)</code>: <code>p.next = head; head = p;</code> → <strong>O(1)</strong>; <code>addLast(d)</code> เดินหา tail (ไม่มีตัวแปร tail) → O(n); <code>find(d)</code> sequential → average/worst <strong>O(n)</strong>, <code>isFound(d)</code> = <code>find(d) &gt;= 0</code></li>
+          <li><strong>Dummy node</strong>: สร้าง <code>dummy</code> นำหน้า head ชั่วคราว ทำให้ลบ head เหมือนลบ node ทั่วไป จบแล้วตั้ง <code>head = dummy.next</code></li>
+          <li><strong>Doubly linked list</strong>: node มี <code>prev</code> ด้วย, ไปหน้า/หลังได้ (undo/redo), <strong>ลบตำแหน่งที่รู้อยู่แล้วได้ O(1)</strong>: <code>p.next.prev = p.prev; p.prev.next = p.next;</code></li>
+          <li><strong>Circular linked list</strong>: node สุดท้ายชี้กลับ node แรก (round-robin); deque (push_front/push_back/pop_front/pop_back) มัก implement ด้วย circular doubly linked list + sentinel/dummy node ช่วยให้โค้ดสะอาด</li>
+          <li><strong>Edge cases checklist</strong>: list ว่าง, list มี node เดียว, add/delete ที่ head/tail, ค่าไม่พบ, ค่าซ้ำ, index ไม่ถูกต้อง</li>
+        </ul>
+        <h3>Array vs Linked List (ตารางสไลด์)</h3>
+        <table>
+          <tr><th>Operation</th><th>Array</th><th>Linked List</th></tr>
+          <tr><td>getAt / setAt</td><td>O(1)</td><td>O(n)</td></tr>
+          <tr><td>find</td><td>O(n)</td><td>O(n)</td></tr>
+          <tr><td>addFirst</td><td>O(n)</td><td><strong>O(1)</strong></td></tr>
+          <tr><td>Insert/delete หลัง node ที่รู้จักแล้ว</td><td>O(n)</td><td><strong>O(1) relink</strong></td></tr>
+          <tr><td>Insert/delete by value</td><td>O(n)</td><td>O(n) find + O(1) relink</td></tr>
+        </table>
+        <p>Linked list ไม่เหมาะกับ binary search หรือ random access แต่เป็น implement ธรรมชาติของ stack/queue</p>
+        <div class="example">
+          <div class="ex-title">ตัวอย่าง: trace slow/fast pointer หาค่ากลาง list</div>
+          <ol>
+            <li>List: 1 → 2 → 3 → 4 → 5, ให้ slow กับ fast เริ่มที่ node 1 (slow ไป 1 node, fast ไป 2 node ต่อรอบ)</li>
+            <li>รอบที่ 1: slow = 2, fast = 3</li>
+            <li>รอบที่ 2: slow = 3, fast = 5</li>
+            <li>fast ไปต่อไม่ได้ (ไม่มี node ถัดไปครบ 2 ช่อง) จบ loop: slow อยู่ที่ node 3 = ค่ากลาง</li>
+          </ol>
+        </div>
+        <div class="exam-box">
+          <div class="kp-title">มักออกสอบ</div>
+          <ul>
+            <li>ลำดับคำสั่ง pointer เวลา insert/delete (ทำลาย chain ถ้าสลับลำดับผิด)</li>
+            <li>ตารางเทียบ Array vs Linked List</li>
+            <li>หลักการ dummy node และ edge cases</li>
+            <li>trace slow/fast pointer หา middle</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec5" class="card">
+        <h2>Stack (L05)</h2>
+        <ul>
+          <li><strong>Stack</strong> = collection ที่ add/remove ที่ "top" ทางเดียว → <strong>LIFO (Last In, First Out)</strong></li>
+          <li>Operations หลัก: <strong>push</strong> (ใส่), <strong>pop</strong> (หยิบ) ต้องเป็น <strong>O(1)</strong>; สะดวกเพิ่ม: <strong>top/peek</strong> (มอง); utility: isFull, isEmpty, toString</li>
+          <li><strong>Stack overflow</strong> = error เมื่อ push ลง stack ที่เต็ม</li>
+        </ul>
+        <pre><code>// MyStackA: array + ตัวแปร top
+push:    stack[top++] = d;
+pop:     return stack[--top];
+top():   return stack[top-1];
+isFull:  top == MAX_SIZE
+isEmpty: top == 0
+
+// MyStackL: linked list, push/pop ที่หัว
+push:    p.next = top; top = p;        // เหมือน addFirst
+pop:     d = top.data; top = top.next;
+isFull:  return false;                 // ไม่มีขีดจำกัด
+isEmpty: top == null</code></pre>
+        <ul>
+          <li>Lab: <code>MyStack&lt;T&gt;</code> ต้อง <strong>ห่อ (wrap) ArrayList ไม่ใช่ extends</strong>: push = <code>items.add</code>, pop = <code>items.remove(size-1)</code>, peek = <code>items.get(size-1)</code></li>
+          <li><strong>Decimal → Binary</strong>: หาร 2 เก็บเศษใส่ stack แล้ว pop ออกมาพิมพ์ ได้บิตจากหลังไปหน้าโดยไม่ต้อง reverse (<code>decimal &gt;&gt;= 1</code> ก็คือหาร 2)</li>
+          <li><strong>RPN (postfix)</strong>: เขียน operator หลัง operand เช่น <code>3 * (10 + 5)</code> → <code>3 10 5 + *</code>; Polish (prefix) เก่ากว่า ของ Jan Łukasiewicz (1924), RPN (1954); postfix/prefix ไม่ต้องใช้วงเล็บ (expression tree)</li>
+          <li><strong>คิดค่า RPN ด้วย stack หนึ่งอัน</strong>: token เป็นเลข → push; เป็น operator → <code>b = pop(); a = pop(); push(a opr b)</code>; จบแล้วต้องเหลือค่าเดียวใน stack</li>
+          <li><strong>Infix → Postfix แบบ visual</strong>: (1) ใส่วงเล็บครบตาม precedence (2) ย้าย operator ไปขวาของ operand คู่นั้นแล้วตัดวงเล็บ; only infix needs parentheses</li>
+        </ul>
+        <div class="example">
+          <div class="ex-title">ตัวอย่าง: คิดค่า RPN "8 5 - 4 2 + 3 / *" ด้วย stack</div>
+          <ol>
+            <li>push 8 → [8], push 5 → [8, 5]</li>
+            <li>เจอ "-": b = 5, a = 8 → push 8 - 5 = 3 → [3]</li>
+            <li>push 4 → [3, 4], push 2 → [3, 4, 2]</li>
+            <li>เจอ "+": b = 2, a = 4 → push 4 + 2 = 6 → [3, 6]</li>
+            <li>push 3 → [3, 6, 3]</li>
+            <li>เจอ "/": b = 3, a = 6 → push 6 / 3 = 2 → [2]</li>
+            <li>เจอ "*": b = 2, a = 3 → push 3 × 2 = 6 → [6]</li>
+            <li>จบ token เหลือค่าเดียว = <strong>6</strong></li>
+          </ol>
+        </div>
+        <div class="example">
+          <div class="ex-title">ตัวอย่าง: แปลง infix → postfix ด้วยวิธีใส่วงเล็บ (A + B * C)</div>
+          <ol>
+            <li>ใส่วงเล็บครบตาม precedence: <code>(A + (B * C))</code></li>
+            <li>ย้าย operator ไปขวาของ operand คู่: <code>(B * C)</code> → <code>B C *</code></li>
+            <li>ชั้นนอก: <code>(A + B C *)</code> → <code>A B C * +</code></li>
+            <li>ตอบ: <strong>A B C * +</strong></li>
+          </ol>
+        </div>
+        <details class="more"><summary>อ่านเพิ่ม: Example challenge Leetcode 20 Valid Parentheses</summary><div>เมื่อเจอวงเล็บเปิด ให้ push "วงเล็บปิดที่คาดหวัง" ลง stack แล้วเช็คว่าตอนเจอวงเล็บปิด pop ออกมาตรงกับตัวที่เจอ</div></details>
+        <div class="exam-box">
+          <div class="kp-title">มักออกสอบ</div>
+          <ul>
+            <li>push/pop/top ทั้งสอง implementation ต้อง O(1) และเขียนโค้ดได้</li>
+            <li>trace การคิดค่า RPN ทีละ token (สถานะ stack)</li>
+            <li>แปลง infix → postfix ด้วยวิธีใส่วงเล็บ</li>
+            <li>เงื่อนไขสำคัญ: ต้องกลับลำดับ a, b ให้ถูกสำหรับ operator "-" และ "/"</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec6" class="card">
+        <h2>Queue (L06)</h2>
+        <ul>
+          <li><strong>Queue</strong> = คิวจริง ๆ: เข้าหาง ออกหัว → <strong>FIFO (First In, First Out)</strong></li>
+          <li>Operations: <strong>enqueue</strong> (เข้าท้าย), <strong>dequeue</strong> (ออกหัว) ต้องเป็น <strong>O(1)</strong>; nice-to-have: <strong>front</strong>; utility: isFull/isEmpty/toString</li>
+        </ul>
+        <pre><code>// MyQueueL: linked list ต้องมีทั้ง head และ tail
+enqueue: tail.next = p; tail = tail.next;   // ต่อท้าย O(1)
+dequeue: d = head.data; head = head.next;   // หั่นหัว O(1)
+isFull:  return false;
+isEmpty: head == null
+// edge case: ถ้า dequeue จน head = null ต้องตั้ง tail ด้วย
+
+// Circular array: เลื่อน index แบบวนกลับ
+enqueue: queue[tail] = d; tail = (tail + 1) % MAX_SIZE;
+dequeue: d = queue[head]; head = (head + 1) % MAX_SIZE;
+isFull:  ((tail + 1) % MAX_SIZE) == head   // เว้นช่องว่าง 1 ช่อง
+isEmpty: head == tail</code></pre>
+        <ul>
+          <li>Array ธรรมดาที่ dequeue แบบขยับทั้งแถวเป็น O(n) → แก้ด้วย <strong>circular array</strong>; การเว้นช่องว่าง 1 ช่องเป็นวิธีแยกสภาวะ "เต็ม" ออกจาก "ว่าง" (empty คือ <code>head == tail</code>)</li>
+          <li>ถ้า linked-list queue ไม่มี tail enqueue จะต้องเดินหาท้ายกลายเป็น O(n)</li>
+        </ul>
+        <h3>Shunting-yard Algorithm (Dijkstra, 1961)</h3>
+        <ul>
+          <li>แปลง <strong>infix → postfix</strong> โดยใช้ <strong>queue เป็น output + stack เก็บ operator</strong></li>
+        </ul>
+        <pre><code>เลข       -&gt; enqueue เข้า queue
+operator  -&gt; pop operator บน stack ที่มี precedence มากกว่าหรือเท่ากับ
+             ออกไปก่อน แล้ว push ตัวปัจจุบัน
+(         -&gt; push ลง stack
+)         -&gt; pop จนเจอ ( แล้วทิ้งวงเล็บทั้งคู่
+จบ token  -&gt; pop ที่เหลือทั้งหมดเข้า queue</code></pre>
+        <div class="example">
+          <div class="ex-title">ตัวอย่าง: shunting-yard กับ "3 + 4 * ( 7 - 5 )"</div>
+          <ol>
+            <li>3 → queue: [3]</li>
+            <li>+ → stack ว่าง push: stack [+]</li>
+            <li>4 → queue: [3, 4]</li>
+            <li>* → precedence มากกว่า + → push: stack [+, *]</li>
+            <li>( → push: stack [+, *, (]</li>
+            <li>7 → queue: [3, 4, 7]</li>
+            <li>- → top เป็น ( → push: stack [+, *, (, -]</li>
+            <li>5 → queue: [3, 4, 7, 5]</li>
+            <li>) → pop จนเจอ (: นำ - ออกเข้า queue แล้วทิ้ง ( → queue: [3, 4, 7, 5, -]</li>
+            <li>จบ token: pop ที่เหลือทั้งหมด ตอบ: <strong>3 4 7 5 - * +</strong></li>
+          </ol>
+        </div>
+        <ul>
+          <li><strong>วิเคราะห์ complexity</strong>: n tokens → n รอบ, ทุก operator เข้า/ออก stack รอบละครั้ง → <strong>O(n)</strong></li>
+          <li><strong>สายการผลิตคำนวณสมการ</strong>: infix → (shunting-yard) → postfix → (RPN evaluation ด้วย stack) → ค่าตอบ ทั้งหมด O(n)</li>
+          <li><strong>Queue กับ BFS</strong>: Flood Fill และ Exit detection ใน grid ใช้ Queue (BFS) เดิน 4 ทิศ พร้อม <code>visited</code>/เช็คสีปลายทางกันเดินวน</li>
+          <li>Lab queue ใช้ <code>enqueue(T)</code>, <code>dequeue()</code>, <code>peek()</code>, <code>isEmpty()</code>, <code>iterator()</code> และเรียกด้วยคำว่า front/back ไม่ใช่ top/bottom</li>
+        </ul>
+        <div class="example">
+          <div class="ex-title">ตัวอย่าง: คำนวณสมการครบวงจร (lab) "( 4 + 2 ) / 3 * ( 8 - 5 )"</div>
+          <ol>
+            <li>Shunting-yard แปลงเป็น postfix: <strong>4 2 + 3 / 8 5 - *</strong></li>
+            <li>RPN evaluation: 4 + 2 = 6 → 6 / 3 = 2 → 8 - 5 = 3 → 2 × 3 = <strong>6</strong></li>
+          </ol>
+        </div>
+        <div class="exam-box">
+          <div class="kp-title">มักออกสอบ</div>
+          <ul>
+            <li>เงื่อนไข full/empty ของ circular array (ออกบ่อย)</li>
+            <li>ทำไม linked-list queue ต้องมี tail (ไม่งั้น enqueue เป็น O(n))</li>
+            <li>แปลง infix → postfix ด้วย shunting-yard และบอกบทบาท stack/queue</li>
+            <li>complexity รวม infix → postfix → ค่าตอบ = O(n)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec7" class="card">
+        <h2>Recursion, DP และ Divide &amp; Conquer</h2>
+        <h3>Part 1: Recursion</h3>
+        <ul>
+          <li><strong>นิยาม</strong>: แก้ปัญหาโดยเรียก method เดิมกับปัญหาที่ <strong>เล็กลง</strong>; ต้องมี <strong>base case</strong> และ <strong>progress</strong> เข้าหา base case ทุก call ไม่งั้นเกิด infinite/stack overflow</li>
+          <li><strong>3 คำถามหลัก</strong>: <strong>State</strong> (พารามิเตอร์ใดบรรยาย subproblem), <strong>Recurrence</strong> (state นี้พึ่ง state เล็กกว่าอย่างไร), <strong>Base case</strong> (state ใดตอบได้ทันที)</li>
+          <li><strong>Factorial</strong>: <code>n! = 1 if n=0; (n-1)! * n if n&gt;0</code>: Time O(n), <strong>Memory O(n)</strong> เพราะ call รออยู่บน stack</li>
+          <li>ชนิด recursion: <strong>single</strong> (factorial, เรียกตัวเองครั้งเดียว) vs <strong>multiple</strong> (fibonacci); recursion เขียนด้วย stack แทนได้; <strong>tail recursion</strong> เขียนเป็น loop แทนได้; ตัวอย่าง GCD แบบ Euclidean</li>
+          <li><strong>Subset generation</strong> (decision-tree recursion): ที่ position i เลือก "ใส่/ไม่ใส่" A[i] → candidate space <strong>2ⁿ</strong>; ใช้เทคนิค <strong>backtracking</strong>: include → recurse → <strong>undo</strong> (deleteCharAt/เคลียร์ค่า) → exclude → recurse; ห้ามสร้าง placeholder ใหม่ทุก call ต้องเปลี่ยน state ของตัวเดิม</li>
+          <li><strong>Permutation</strong>: loop หาตัวที่ยังไม่ใช้ (<code>used[i]</code>), choose → explore → un-choose; รวม <strong>n!</strong> แบบ</li>
+          <li><strong>C(n,k) / P(n,k)</strong>: ปรับ base case เป็น <code>ele.size() == k</code> (หรือ level == k) + <strong>pruning</strong> ถ้าเหลือตัวไม่พอ</li>
+        </ul>
+        <pre><code>long fact(int n) {
+    if (n == 0) return 1;      // base case
+    return fact(n - 1) * n;    // progress: ปัญหาเล็กลงทุก call
+}</code></pre>
+        <ul>
+          <li><strong>Algorithm Paradigms</strong>: Brute Force (ลองทุก candidate), Decrease &amp; Conquer (ลดทีละปัญหาเดียว: by one = factorial, by constant = insertion sort, by factor = binary search), <strong>Divide &amp; Conquer</strong> (แบ่งเป็น subproblem อิสระ เช่น Merge Sort), <strong>DP</strong> (reuse คำตอบ subproblem ที่ซ้ำ), Greedy, Transform &amp; Conquer, Backtracking/Branch-and-Bound</li>
+          <li><strong>กุญแจ</strong>: DP ต้องมี repeated states; D&amp;C ต้องมี independent branches</li>
+        </ul>
+        <h3>Fibonacci: Memoization → DP</h3>
+        <ul>
+          <li>Naive <code>fib</code>: F(n) = F(n-1) + F(n-2) เป็น <strong>exponential O(2ⁿ)</strong> เพราะ subproblem (เช่น fib(3), fib(2)) ถูกคำนวณซ้ำ ๆ ทั้งที่มีแค่ n+1 states</li>
+          <li><strong>Memoization (Top-Down DP)</strong>: เก็บคำตอบใน <code>memo[]</code>, เจอซ้ำตอบทันที → <strong>Time O(n), Memory O(n)</strong> โครง recursion ยังอยู่; top-down อาจ cache miss = ดี เพราะไม่คำนวณ state ที่ไม่จำเป็น</li>
+          <li><strong>Bottom-Up DP</strong>: เลิก recursion ไปเติมตารางตาม <strong>dependency order</strong> (เล็ก → ใหญ่) เติมทุกช่อง</li>
+          <li><strong>Space optimization</strong>: Fibonacci ต้องการแค่ 2 ค่าก่อนหน้า → <strong>O(1) space</strong> (ตัวแปร n_2, n_1, my_fib)</li>
+          <li><strong>ขั้นออกแบบ DP</strong>: (1) นิยาม state (2) เขียน recurrence (3) base cases (4) เลือกลำดับประเมิน top-down/bottom-up (5) เช็ค complexity = (#states) × (งานต่อ state)</li>
+        </ul>
+        <pre><code>// Memoization (top-down)
+long fib(int n) {
+    if (n &lt;= 1) return n;
+    if (memo[n] != 0) return memo[n];   // เจอซ้ำ ตอบทันที
+    return memo[n] = fib(n-1) + fib(n-2);
+}
+
+// Bottom-up DP
+dp[0] = 0; dp[1] = 1;
+for (int i = 2; i &lt;= n; i++)
+    dp[i] = dp[i-1] + dp[i-2];</code></pre>
+        <h3>ชุดตัวอย่าง DP</h3>
+        <div class="example">
+          <div class="ex-title">ตัวอย่าง: 1D Counting, Count Ways ก้าว 1, 3, 4 จนถึง N = 8</div>
+          <ol>
+            <li>Recurrence: <code>ways[i] = ways[i-1] + ways[i-3] + ways[i-4]</code> (เฉพาะ i-step ≥ 0), base <code>ways[0] = 1</code> (ยืนนิ่ง 1 วิธี)</li>
+            <li>ways[1] = 1, ways[2] = 1</li>
+            <li>ways[3] = ways[2] + ways[0] = 1 + 1 = 2</li>
+            <li>ways[4] = ways[3] + ways[1] + ways[0] = 2 + 1 + 1 = 4</li>
+            <li>เติมต่อ: ตาราง i = 0..8 ได้ 1, 1, 1, 2, 4, 6, 9, 15, <strong>25</strong></li>
+            <li>ways[8] = ways[7] + ways[5] + ways[4] = 15 + 6 + 4 = <strong>25 วิธี</strong>; O(N) time/memory</li>
+          </ol>
+        </div>
+        <div class="example">
+          <div class="ex-title">ตัวอย่าง: 1D Optimization, House Robber (งับบ้านติดกันไม่ได้)</div>
+          <ol>
+            <li>Recurrence: <code>dp[i] = max(skip = dp[i-1], take = money[i] + dp[i-2])</code>; base dp[0] = money[0], dp[1] = max(money[0], money[1])</li>
+            <li>ให้ money = 2, 7, 9, 3, 1: dp[0] = 2, dp[1] = max(2, 7) = 7</li>
+            <li>dp[2] = max(7, 9 + 2) = 11, dp[3] = max(11, 3 + 7) = 11, dp[4] = max(11, 1 + 11) = <strong>12</strong></li>
+            <li>dp = 2, 7, 11, 11, 12 → ตอบ 12 (เลือกบ้าน 0, 2, 4); ปรับ space เหลือ 2 ตัวแปรได้</li>
+          </ol>
+        </div>
+        <ul>
+          <li><strong>Target-table DP, Subset Sum</strong>: T[i][j] = "ใช้ item 0..i ทำ sum j ได้ไหม"; transition = <code>T[i-1][j] (skip) OR T[i-1][j-x] (use)</code>; base T[i][0] = true; ยุบเป็น 1D ได้โดย <strong>loop j จากหลังมาหน้า (B → x)</strong> เพื่อไม่ให้ใช้ x ซ้ำ</li>
+          <li><strong>2D Counting, Unique Paths</strong>: robot เดินขวา/ลง: <code>dp[r][c] = dp[r-1][c] + dp[r][c-1]</code> (ระวัง out-of-bound); ทำ bottom-up ย้อนจากปลายทางก็ได้ (symmetric); O(mn)</li>
+          <li><strong>2D Optimization, Min Path Sum</strong>: <code>dp[r][c] = cost[r][c] + min(dp[r-1][c], dp[r][c-1])</code>; O(mn)</li>
+          <li><strong>Rod Cutting</strong>: <code>dp[i] = max(price[j-1] + dp[i-j])</code> for j = 1..i; O(n²) time, O(n) memory (ขายความยาวซ้ำได้)</li>
+          <li>DP ใช้จริง: Unix diff (LCS), Viterbi, Smith-Waterman, Bellman-Ford, CKY; แพตเทิร์นร่วม: "ปัญหาใหญ่ประกอบด้วยปัญหาเล็กที่ซ้ำกัน"</li>
+        </ul>
+        <details class="more"><summary>อ่านเพิ่ม: Example challenge ต้นไม้ + recursion</summary><div>buildTree จาก array (level-order ด้วย Queue), preOrder traversal แบบ recursive (N-L-R ใช้ "#" เป็น null marker) และแบบ iterative ด้วย Stack (push right ก่อน left)</div></details>
+        <h3>Part 2: Divide &amp; Conquer</h3>
+        <ul>
+          <li><strong>3 ขั้น</strong>: Divide (แบ่ง) → Conquer (แก้ subproblem, recursive จน base case) → Combine (รวมคำตอบ)</li>
+          <li><strong>findMax</strong>: แบ่งครึ่ง หา max แต่ละฝั่ง เทียบกัน, recurrence <strong>T(n) = 2T(n/2) + O(1)</strong></li>
+          <li><strong>Maximum Subarray</strong> (subarray = ต่อเนื่อง ต่างจาก subset ที่เลือก/ไม่เลือกอิสระ): brute force มี n(n+1)/2 candidates = O(n²); แนว D&amp;C คำตอบอยู่ได้ 3 แบบ: <strong>leftBest, rightBest, crossBest</strong></li>
+          <li><strong>crossBest</strong> ต้องคลุมกลาง: = <strong>max suffix ของครึ่งซ้าย (จบที่ mid) + max prefix ของครึ่งขวา (เริ่มที่ mid+1)</strong> หาด้วยการ scan สองทาง O(n)</li>
+          <li>recurrence <strong>T(n) = 2T(n/2) + O(n) → O(n log n)</strong> (log n ระดับ × งาน O(n) ต่อระดับ)</li>
+        </ul>
+        <div class="example">
+          <div class="ex-title">ตัวอย่าง: trace D&amp;C Max Subarray 2 กรณี</div>
+          <ol>
+            <li>[4, -1, 2, -7, 5, 3]: leftBest ไม่ชนะ, crossBest = 6, rightBest = 8 (จาก [5, 3]) → ตอบ <strong>8</strong></li>
+            <li>[-2, -5, 6, -2, -3, 1, 5, -6]: LB = 6, RB = 6, CB = 7 (max suffix ฝั่งซ้าย = 4 จาก [6, -2], max prefix ฝั่งขวา = 3 จาก [-3, 1, 5]) → crossBest ชนะ ตอบ <strong>7</strong></li>
+          </ol>
+        </div>
+        <div class="example">
+          <div class="ex-title">ตัวอย่าง: DP view ของ Max Subarray (Kadane)</div>
+          <ol>
+            <li>Recurrence: <code>B[i] = max(B[i-1] + A[i], A[i])</code> (ต่อยู่ vs เริ่มใหม่ที่ i), ตอบ = max(B)</li>
+            <li>A = [1, -5, 2, -1, 3]: B[0] = 1, B[1] = max(1-5, -5) = -4, B[2] = max(-4+2, 2) = 2, B[3] = max(2-1, -1) = 1, B[4] = max(1+3, 3) = 4</li>
+            <li>B = 1, -4, 2, 1, <strong>4</strong> → ตอบ 4; Kadane เก็บแค่ 2 ตัวแปร → <strong>O(n) time, O(1) space</strong></li>
+          </ol>
+        </div>
+        <h3>Recurrence Analysis + Master Theorem</h3>
+        <ul>
+          <li>วิธีวิเคราะห์: iteration/expansion, recursion tree, substitution (ไม่สอน), Master Theorem</li>
+          <li><strong>T(n) = T(n/2) + Θ(1) → Θ(log n)</strong> (binary search); <strong>T(n) = 2T(n/2) + Θ(n) → Θ(n log n)</strong> (merge sort)</li>
+          <li>Recursion tree ของ T(n) = 2T(n/2) + n: ทุกระดับมีงาน Θ(n), มี Θ(log n) ระดับ</li>
+          <li>iteration method = การ expand recurrence ออกไปเรื่อย ๆ แล้วหา pattern</li>
+        </ul>
+        <table>
+          <tr><th>Case</th><th>เงื่อนไข (T(n) = aT(n/b) + f(n), critical term = n^(log_b a))</th><th>ผลลัพธ์</th><th>ตัวอย่าง</th></tr>
+          <tr><td>1</td><td>f(n) เล็กกว่า critical term แบบ polynomial</td><td>Θ(n^(log_b a))</td><td>T(n) = 4T(n/2) + Θ(n) → Θ(n²)</td></tr>
+          <tr><td>2</td><td>f(n) เท่ากับ critical term</td><td>Θ(n^(log_b a) · log n)</td><td>T(n) = 9T(n/3) + Θ(n²) → Θ(n² log n)</td></tr>
+          <tr><td>3</td><td>f(n) ใหญ่กว่า + regularity condition</td><td>Θ(f(n))</td><td>T(n) = 2T(n/2) + Θ(n²) → Θ(n²)</td></tr>
+        </table>
+        <ul>
+          <li><strong>Master Theorem ใช้ไม่ได้ถ้า</strong>: T(n) = 2T(n-1) (ไม่ใช่รูป n/b), subproblem หลายขนาด, จำนวน subproblem ไม่คงที่</li>
+        </ul>
+        <div class="example">
+          <div class="ex-title">ตัวอย่าง: times1 vs times2</div>
+          <ol>
+            <li>times1: ลด b ทีละ 1 จนหมด (b, b-1, b-2, ...) → วน ~b รอบ → <strong>O(n)</strong></li>
+            <li>times2: b คู่หาร 2, b คี่ลด 1 → ลดลงแบบ halving ส่วนใหญ่ → <strong>O(log b)</strong></li>
+          </ol>
+        </div>
+        <div class="exam-box">
+          <div class="kp-title">มักออกสอบ</div>
+          <ul>
+            <li>นิยาม state/recurrence/base case ของโจทย์ใหม่</li>
+            <li>ทำไม naive fib เป็น O(2ⁿ) และ memoization ช่วยให้เหลือ O(n) time / O(n) memory</li>
+            <li>เติมตาราง DP: count ways, house robber, subset sum (รวมเหตุผลที่ loop j ต้องย้อนหลังใน 1D subset sum)</li>
+            <li>3 cases ของ D&amp;C max subarray, วิธีหา crossBest และ Kadane</li>
+            <li>Master Theorem ทั้ง 3 cases + โจทย์ที่ใช้ไม่ได้; recursion tree</li>
+            <li>ความต่าง DP กับ D&amp;C: repeated states vs independent branches</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec8" class="card">
+        <h2>Sorting (L08)</h2>
+        <ul>
+          <li>เหตุผลของการ sort: ทำให้ search/merge มีประสิทธิภาพ และ process ข้อมูลตามลำดับที่กำหนด</li>
+          <li><strong>Comparison-based sort ที่ดีที่สุดได้ O(n log n)</strong> (แต่ละการจัดวางตรวจได้ O(n), ต้องเทียบอย่างน้อย O(log n) ครั้ง)</li>
+          <li><strong>Internal/in-place sort</strong> = ไม่ต้องใช้ memory เพิ่ม (space O(1))</li>
+          <li><strong>Stable sort</strong> = ข้อมูลที่ key เท่ากัน <strong>ไม่สลับลำดับเดิม</strong> จำเป็นเมื่อ sort ซ้อนหลาย key (primary/secondary)</li>
+          <li>ตัวชี้วัดแยกเป็น 2 อย่าง: จำนวนเทียบ (comparisons) กับ จำนวนสลับ (swaps)</li>
+        </ul>
+        <h3>ตารางสรุปทุกอัลกอริทึม (ค่าจากสไลด์)</h3>
+        <table>
+          <tr><th>Algorithm</th><th>Best</th><th>Worst</th><th>Average</th><th>Memory</th><th>Stable</th></tr>
+          <tr><td>Bubble</td><td>O(n) เทียบ, O(1) สลับ (improved: วนจนไม่มีสลับ)</td><td>O(n²) / O(n²)</td><td>O(n²) / O(n²)</td><td>ไม่ใช้</td><td><strong>ใช่</strong></td></tr>
+          <tr><td>Selection</td><td>O(n²) เทียบ, O(1) สลับ</td><td>O(n²) / O(n)</td><td>O(n²) / O(n)</td><td>ไม่ใช้</td><td><strong>ไม่</strong></td></tr>
+          <tr><td>Insertion</td><td>O(n) เทียบ, O(1) สลับ</td><td>O(n²) / O(n²)</td><td>O(n²) / O(n²)</td><td>ไม่ใช้</td><td><strong>ใช่</strong></td></tr>
+          <tr><td>Quick</td><td>O(n log n)</td><td><strong>O(n²)</strong> (pivot แย่; pivot ดีสุด = median)</td><td>O(n log n)</td><td>O(log n)</td><td>ไม่</td></tr>
+          <tr><td>Merge</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td><strong>O(n)</strong></td><td><strong>ใช่</strong></td></tr>
+          <tr><td>Radix</td><td>O(nd)</td><td>O(nd)</td><td>O(nd), d = log₁₀n</td><td>O(n+d)</td><td>ใช่</td></tr>
+          <tr><td>Counting</td><td colspan="3">เชิงเส้นตาม n และช่วง key</td><td>-</td><td>stable เมื่อวางจากขวาไปซ้าย</td></tr>
+          <tr><td>Bucket</td><td>O(n) (m=n)</td><td>O(m+n)</td><td>O(m+n)</td><td>O(m)</td><td>ใช่</td></tr>
+          <tr><td>Shell</td><td colspan="4">insertion sort ที่กระโดด h: ลด disorder ไกล ๆ ก่อน จบที่ h=1</td><td>-</td></tr>
+          <tr><td>Heap</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td>ไม่</td></tr>
+        </table>
+        <ul>
+          <li><strong>Bubble</strong>: naive สแกนเทียบคู่ติดกันแล้วสลับ; improved = วนซ้ำจนไม่มีการสลับ (best O(n)); "academic only อย่าใช้จริง"</li>
+          <li><strong>Selection</strong>: เลือกค่าเล็กสุดไปวางหน้า, สลับน้อย (ไม่เกิน n ครั้ง)</li>
+          <li><strong>Insertion</strong>: หยิบ key ถัดไปไปแทรกใน sorted prefix ใช้ key + shift แทน swap; <strong>มีใช้จริงเพราะเร็วพอกับข้อมูลเล็ก</strong></li>
+          <li><strong>Quick</strong> (Hoare 1959): เลือก pivot แบ่ง lower/higher (partition) แล้ว recurse; partition แบบ Lomuto/Hoare เห็นใน L02 ด้วย</li>
+          <li><strong>Merge</strong>: แบ่งเป็น n sublist แล้ว merge ทีละคู่; โค้ดใช้ tmp array รีใช้; T(n) = 2T(n/2) + cn → Θ(n log n)</li>
+        </ul>
+        <pre><code>// จุดที่ทำให้ merge sort เป็น stable คือเครื่องหมาย &lt;=
+if (arr[i] &lt;= arr[j]) tmp[k++] = arr[i];
+else                  tmp[k++] = arr[j];</code></pre>
+        <ul>
+          <li><strong>Counting sort</strong>: นับจำนวน key แต่ละค่า + prefix sum หาตำแหน่ง; เหมาะเมื่อช่วง key (max − min) ไม่ใหญ่กว่า n มาก; <strong>stable เมื่อวางจากขวาไปซ้าย</strong>; ใช้เป็น subroutine ของ radix</li>
+          <li><strong>Radix</strong>: ใช้ "หลัก digit" เป็น bucket ลดผลของ m</li>
+          <li><strong>Bucket</strong>: หย่อน key ลง bucket ตามช่วงแล้วอ่านรวดเดียว; non-comparison จึงหักละ O(n log n) lower bound ได้</li>
+          <li><strong>Shell</strong>: insertion sort บน h-interleaved lists ลด h จนถึง 1; ใช้ในระบบ embedded (uClibc qsort, Linux kernel) เพราะโค้ดสั้น ไม่ใช้ call stack; ใช้ใน bzip2/introsort สำหรับ subarray สั้น</li>
+          <li>Food of thought: แบ่งครึ่งก่อน sort เพราะ 2(n/2)² + n น้อยกว่า n² มาก ("two halves are better than whole"); แบ่งไม่สมดุลก็ยังดีกว่าเดิมแต่ได้ประโยชน์น้อยกว่า</li>
+        </ul>
+        <div class="exam-box">
+          <div class="kp-title">มักออกสอบ</div>
+          <ul>
+            <li>ตาราง best/worst/average/memory/stable ของทุกตัว (ออกแน่)</li>
+            <li>stable คืออะไร ตัวไหน stable: bubble, insertion, merge และ counting แบบวางขวา → ซ้าย</li>
+            <li>ทำไม comparison sort ไปต่ำกว่า O(n log n) ไม่ได้ / non-comparison ทำลาย bound ได้อย่างไร</li>
+            <li>เงื่อนไขที่ quick เป็น O(n²), ที่ insertion ดีสุด O(n)</li>
+            <li>วิธีทำ counting sort (prefix sum, ทิศทางการวาง)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec9" class="card">
+        <h2>Priority Queue และ Heap (L09)</h2>
+        <ul>
+          <li><strong>Priority Queue</strong>: ADT ที่ element มี priority, ตัว priority สูงถูก serve ก่อน; ถ้า priority เท่ากันบาง implementation ก็ FIFO (แต่ <strong>heap ไม่รับประกัน FIFO ในกรณี priority เท่ากัน</strong>)</li>
+          <li>ไม่สน internal structure สนแค่ลำดับ dequeue ตาม priority</li>
+          <li><strong>การใช้งาน</strong>: OS scheduling, interrupt handling, graph algorithm (Dijkstra/Prim/Huffman), load balancing, router, customer service</li>
+          <li>Implement ด้วย array/linked list ได้แต่ไม่ optimal → <strong>binary heap</strong> เป็นมาตรฐาน (มี binomial/Fibonacci heap ที่ดีกว่าเชิง amortized แต่เกินขอบเขต)</li>
+        </ul>
+        <div class="example">
+          <div class="ex-title">ตัวอย่าง: ลำดับ dequeue ของ priority queue</div>
+          <ol>
+            <li>Enqueue 7, 3, 5, 4, 2 พร้อม priority ของแต่ละตัว (ตามสไลด์)</li>
+            <li>ตอน dequeue ต้องได้ลำดับตาม priority เสมอ: <strong>4, 2, 7, 5, 3</strong> ไม่ใช่ลำดับที่ใส่เข้าไป</li>
+          </ol>
+        </div>
+        <h3>Binary Tree ศัพท์ที่เกี่ยว + Heap Property</h3>
+        <ul>
+          <li><strong>Perfect</strong>: internal ทุก node มี 2 ลูก, leaf อยู่ระดับเดียวกัน</li>
+          <li><strong>Complete</strong>: ทุกระดับเต็มยกเว้นระดับสุดท้าย และ leaf เอียงซ้าย</li>
+          <li><strong>Balanced</strong>: height เป็น O(log n) (ต่าง height ซ้ายขวาไม่เกิน 1); (Full = ทุก node มี 0 หรือ 2 ลูก)</li>
+          <li><strong>Heap property</strong>: <strong>max heap</strong> คือ parent ≥ ลูก, <strong>min heap</strong> คือ parent ≤ ลูก; root คือค่าสุดขีด</li>
+        </ul>
+        <h3>Array Representation + Operations</h3>
+        <ul>
+          <li>Heap เป็น complete tree จึงเก็บใน array ได้: <strong>ลูกซ้าย = 2p+1, ลูกขวา = 2p+2, parent = (p-1)/2</strong></li>
+          <li><strong>insert(d) O(log n)</strong>: วางที่ตำแหน่งสุดท้าย (<code>p = size++</code>) แล้ว <strong>percolate up</strong> สลับกับ parent ในขณะที่ heap[p] &lt; heap[parent] (min heap); สลับได้ไม่เกินความสูงต้นไม้</li>
+          <li><strong>remove() O(log n)</strong>: เอา root ออก (<code>d = heap[0]</code>), ยกตัวสุดท้ายขึ้นมาแทน (<code>heap[0] = heap[--size]</code>) แล้ว <strong>percolate down</strong>: เลือกลูกที่ "ดีที่สุด" (min heap → ลูกที่น้อยกว่า) มาสลับจนถึงดุล; จบด้วยเคส: ไม่มีลูก / ลูกเดียว / สองลูก</li>
+          <li><strong>Heapify</strong>: แทรก n ครั้งทีละตัว = O(n log n); แต่ <strong>heapify ทั้ง array จากล่างขึ้นบน = O(n)</strong> เพราะ node ส่วนใหญ่อยู่ตื้น</li>
+          <li><strong>Heap sort</strong>: ดึง root (poll) ซ้ำจนหมด → ได้ลำดับเรียง O(n log n)</li>
+          <li>Java <code>PriorityQueue</code> default = min-heap; ใช้ Comparator ถ้าต้องการกลับเกณฑ์</li>
+          <li>Lab: <code>MyPQueue</code> เป็น wrapper ของ MyMinHeap: enqueue → heap.insert, dequeue → heap.remove, front → heap.peek</li>
+        </ul>
+        <pre><code>// min heap: insert ท้ายแล้ว percolate up
+heap[p = size++] = d;
+while (p &gt; 0 &amp;&amp; heap[p] &lt; heap[(p-1)/2]) {
+    swap(heap[p], heap[(p-1)/2]);
+    p = (p-1)/2;
+}</code></pre>
+        <details class="more"><summary>อ่านเพิ่ม: มุมสนุกเรื่อง swap</summary><div>สลับค่าได้หลายแบบ: ใช้ +/-, ใช้ ×/÷ หรือใช้ XOR แต่ต้องระวังกรณี overflow ของตัวเลข</div></details>
+        <div class="exam-box">
+          <div class="kp-title">มักออกสอบ</div>
+          <ul>
+            <li>สูตร index ลูก/พ่อ และ trace insert/remove ทีละขั้น (วาด array)</li>
+            <li>O(log n) ของ insert/remove เพราะสลับไม่เกินความสูง</li>
+            <li>heapify O(n) กับแทรกสะสม O(n log n) ต่างกันอย่างไร</li>
+            <li>heap ไม่การันตี FIFO เมื่อ priority เท่ากัน (และคิดวิธีแก้)</li>
+            <li>Example challenge: Kth Largest จาก stream (maintain heap ขนาด k)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec10" class="card">
+        <h2>Binary Search Tree (L10)</h2>
+        <ul>
+          <li><strong>Tree</strong>: ADT ที่ข้อมูลเชื่อมแบบต้นไม้; <strong>Root</strong> (reference หัวต้นไม้), <strong>Node</strong> (data + links ลูก บางที parent), <strong>Parent/children/ancestor</strong>, <strong>Siblings</strong>, <strong>Leaf</strong> (ไม่มีลูก), <strong>Depth ของ node</strong> = จำนวน edge จาก root, <strong>Height ของ tree</strong> = depth มากสุด, <strong>Subtree</strong></li>
+          <li><strong>Balance</strong>: ถ้า balance แล้ว height = <strong>O(log n)</strong>; ถ้าบิดเบี้ยว (deformed) height เข้าใกล้ <strong>O(n)</strong> เคสแย่สุดคือกลายเป็น linked list</li>
+          <li><strong>Representation</strong>: heap ใช้ array ได้เพราะ complete; ทั่วไปใช้ Node + references (<code>TreeNode { int data; TreeNode left, right; }</code>)</li>
+          <li><strong>Traversal</strong>: สถานะ node มี 3 แบบ: undiscovered, discovered, processed; binary tree มี 3 ลำดับ เขียน recursive ง่าย ๆ (เช็ค node == null แล้ว return)</li>
+        </ul>
+        <ul>
+          <li><strong>Pre-order</strong>: Root → Left → Right</li>
+          <li><strong>In-order</strong>: Left → Root → Right (ใช้ได้กับ binary tree เท่านั้น) บน BST จะได้ <strong>ลำดับเรียง</strong></li>
+          <li><strong>Post-order</strong>: Left → Right → Root</li>
+        </ul>
+        <div class="example">
+          <div class="ex-title">ตัวอย่าง: traversal ของ binary tree เล็ก ๆ</div>
+          <ol>
+            <li>Tree: root 2, ลูกซ้าย 1, ลูกขวา 3</li>
+            <li>Pre-order (Root-L-R): 2, 1, 3</li>
+            <li>In-order (L-Root-R): 1, 2, 3</li>
+            <li>Post-order (L-R-Root): 1, 3, 2</li>
+          </ol>
+        </div>
+        <ul>
+          <li><strong>BST property</strong>: ที่ทุก node ค่าของ node <strong>ไม่น้อยกว่า</strong>ลูกซ้าย และ <strong>ไม่มากกว่า</strong>ลูกขวา → binary search ทำได้; search/insert/delete <strong>O(log n)</strong> เมื่อ balance, <strong>O(n)</strong> เมื่อบิดเบี้ยว</li>
+          <li><strong>insert(d)</strong>: เดินจาก root เทียบค่าไปซ้าย/ขวาจนช่องว่าง แล้วผูก node ใหม่ (ตั้ง parent ด้วย); มีทั้งแบบ iterative (while) และ recursive (<code>searchRecurse</code>)</li>
+          <li><strong>findMax</strong>: เดิน right จนสุด</li>
+        </ul>
+        <pre><code>// delete(d) เคสที่ 3: node มีลูกสองฝั่ง
+q = findMaxFrom(node.left);    // predecessor: ค่ามากสุดใน left subtree
+delete(q.data, node.left);     // ลบ candidate ออกจากตำแหน่งเดิม
+// แล้วผูก q เข้า parent เดิม + แนบลูกซ้าย/ขวาของ node ให้ q
+// (อัปเดต parent pointer ให้ครบ)
+// อีกแนว: swap ค่า candidate เข้า node แล้วลบ candidate ที่ตำแหน่งเดิม</code></pre>
+        <ul>
+          <li><strong>delete(d) 3 เคส</strong>: (1) <strong>Leaf</strong>: ตัดออกเลย (2) <strong>One-child</strong>: แทนที่ด้วยลูกของมัน (3) <strong>Two-children</strong>: แทนที่ด้วย <strong>ค่ามากสุดใน left subtree (predecessor)</strong> หรือ <strong>ค่าน้อยสุดใน right subtree (successor)</strong> เพื่อรักษา BST property ทั้งสองฝั่ง</li>
+        </ul>
+        <div class="example">
+          <div class="ex-title">ตัวอย่าง: rangeSumBST รวมค่าในช่วง [low, high]</div>
+          <ol>
+            <li>ถ้า node &lt; low → เดินขวาอย่างเดียว; ถ้า node &gt; high → เดินซ้ายอย่างเดียว (pruning)</li>
+            <li>ถ้าอยู่ในช่วง → รวมค่า + recurse ทั้งสองฝั่ง</li>
+            <li>Trace จากสไลด์: BST root 5, ค้นช่วง [4, 8] → ได้ 4 + 5 + 7 + 8 = <strong>24</strong></li>
+          </ol>
+        </div>
+        <div class="exam-box">
+          <div class="kp-title">มักออกสอบ</div>
+          <ul>
+            <li>วาด BST จากลำดับ insert และเขียน traversal ทั้ง 3 แบบ (in-order = sorted)</li>
+            <li>delete 3 เคส โดยเฉพาะ two-children: ใครมาแทน และทำไม</li>
+            <li>ผลของการ insert ลำดับเรียงแล้วได้ deformed tree → O(n)</li>
+            <li>depth/height/sibling/leaf: นิยาม + หาค่าจากรูป</li>
+            <li>โครงสร้าง TreeNode ที่มี parent pointer และเหตุผล</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec11" class="card">
+        <h2>Advanced Tree: AVL, Red-Black, Splay (L11)</h2>
+        <p>3 กลยุทธ์ทำให้ BST balance: balance เป๊ะ (sort ก่อนสร้าง), balance พอประมาณ (<strong>AVL, Red-Black</strong>), ยก node ที่เพิ่งใช้ขึ้นบน (<strong>Splay</strong>)</p>
+        <h3>AVL Tree</h3>
+        <ul>
+          <li><strong>นิยาม</strong>: height ของ left/right subtree ต่างกันได้ <strong>ไม่เกิน 1</strong> เก็บ height ซ้าย/ขวาไว้ที่ node (bookkeeping)</li>
+          <li><strong>balance factor = h_left − h_right</strong> (ซ้ายหนักเป็นบวก, ขวาหนักเป็นลบ; empty = -1, leaf h = 0)</li>
+          <li>ความสูงว่ายังไงก็ <strong>h &lt; 1.44·log₂n</strong> เรียกว่า "pretty balance"</li>
+          <li><strong>Rotation 4 แบบ</strong>: single: <strong>RR imbalance → Left rotation</strong>, <strong>LL imbalance → Right rotation</strong>; double: <strong>LR imbalance</strong> (หมุนซ้ายก่อนแล้วขวา), <strong>RL imbalance</strong> (หมุนขวาก่อนแล้วซ้าย)</li>
+          <li><strong>Insert</strong>: ancestor อาจมี BF = ±2 → ไต่ขึ้นหา unbalance node แล้วหมุน, <strong>หมุนได้มากสุด 1 ครั้ง</strong>; <strong>ต้อง recompute height ทุกครั้งหลัง insert/delete/rotate เพื่อให้ height() เป็น O(1)</strong></li>
+          <li><strong>Delete</strong>: ยุ่งกว่า insert อาจต้อง rotate/double-rotate ที่ node และ <strong>ancestors ต่อเนื่อง</strong> หมุนได้ถึง ~1.44 log₂n ครั้ง + อัปเดต height/BF ตลอดเส้นทาง</li>
+          <li><strong>ต้นทุน</strong>: insert/delete/access O(log n) แต่ค่าคงที่แพง</li>
+          <li><strong>Parent pointer</strong>: มี → ไต่ขึ้นง่าย (successor/predecessor/transplant, iterator) แต่ memory เพิ่ม + rotation ต้องอัปเดต parent เยอะ bug-prone; ไม่มี → โค้ดสะอาด; <strong>AVL นิยมแบบไม่มี parent, Red-Black (TreeMap) นิยมมี parent</strong></li>
+        </ul>
+        <pre><code>// recompute height ให้เป็น O(1) เสมอ
+n.height = 1 + max(height(n.left), height(n.right));
+
+// เงื่อนไขหมุนของ delete (ฝั่งซ้ายหนัก, bf = balance factor)
+if (bf(n) &gt; 1 &amp;&amp; bf(n.left) &gt;= 0)      rightRotate(n);                       // LL
+if (bf(n) &gt; 1 &amp;&amp; bf(n.left) &lt; 0)       { leftRotate(n.left); rightRotate(n); } // LR
+// ฝั่งขวาหนักทำสมมาตรกัน (RR, RL)</code></pre>
+        <h3>Red-Black Tree</h3>
+        <ul>
+          <li><strong>Invariants 5 ข้อ</strong>: (1) เป็น BST (2) ทุก node มีสี red/black (3) <strong>root เป็น black</strong> (4) node red ต้องมีลูก black ทั้งคู่ (<strong>ห้าม red ติดกัน</strong>) (5) ทุก path จาก node ลง NIL มี<strong>จำนวน black เท่ากัน</strong> (black-height เท่ากัน); NIL leaf ถือเป็น black</li>
+          <li>path ยาว/สั้นต่างกันได้ (ยาวสุด B-R-B-R-...B) แต่ black-height เท่ากัน</li>
+          <li><strong>Height bound</strong>: longest ≤ 2 × shortest → <strong>h ≤ 2·log₂(n+1)</strong> สูงกว่า AVL ได้แต่ยัง O(log n)</li>
+          <li><strong>Insertion</strong>: ใส่เป็น <strong>red</strong> เสมอ (ไม่เปลี่ยน black-height) แล้วซ่อมเฉพาะเมื่อพังกฎ</li>
+          <li><strong>Parent black</strong> → จบ</li>
+          <li><strong>Parent red + uncle red</strong> → <strong>recolor</strong> (parent &amp; uncle เป็น black, grandparent เป็น red) แล้วไต่ต่อที่ grandparent: เป็น "ปัญหาสี"</li>
+          <li><strong>Parent red + uncle black/NIL</strong> → <strong>rotate + recolor</strong> ("ปัญหารูปทรง"): LL → right rotation ที่ grandparent, RR → left rotation, LR/RL → double rotation; node ที่ถูกเลื่อนขึ้นเป็น black, grandparent เป็น red</li>
+          <li>ถ้า root กลายเป็น red → recolor root เป็น black (เพิ่ม black ทุก path เท่ากัน จึงยัง balance)</li>
+          <li><strong>Complexity</strong>: search/insert/delete ล้วน <strong>O(log n)</strong> งานซ่อมต่อระดับเป็น O(1); <strong>หมุนได้มากสุด 2 ครั้งต่อ operation</strong></li>
+          <li>Java <strong>TreeMap/TreeSet ใช้ Red-Black</strong>; TreeSet: ค่าไม่ซ้ำ, เรียง ascending, ไม่ thread-safe, มี first()/last()</li>
+        </ul>
+        <div class="example">
+          <div class="ex-title">ตัวอย่าง: trace RB insert 10, 20, 30, 15, 25, 27, 5, 1, 7 (จุดสำคัญจากสไลด์)</div>
+          <ol>
+            <li>แทรก 10, 20 ปกติ; แทรก 30 → เกิด RR imbalance → rotate left ที่ 10</li>
+            <li>แทรก 15 → parent/uncle เป็น red → recolor แล้วไต่ตรวจต่อ</li>
+            <li>แทรก 27 → เคส LR: rotate left ที่ 25 แล้ว right ที่ 30, 27 ขึ้นเป็น black</li>
+            <li>แทรก 1 → uncle red → recolor + propagate หยุดเพราะ parent เป็น black</li>
+          </ol>
+        </div>
+        <h3>Splay Tree</h3>
+        <ul>
+          <li><strong>แนวคิด</strong>: ทุกครั้งที่ access → <strong>splay (ยก node นั้นขึ้นเป็น root)</strong> โดยยังคง BST invariant; ของที่ใช้บ่อยรวมอยู่บน ๆ, ของที่ไม่ค่อยใช้จมลงล่าง</li>
+          <li><strong>ไม่ bookkeeping height เลย</strong> ยอมให้ unbalance ชั่วคราว; linear time เกิดได้แต่นาน ๆ ครั้ง</li>
+          <li><strong>Amortized O(log n)</strong> ต่อ operation (M operations บน tree ขนาด N รวม O(M log N))</li>
+          <li><strong>6 เคส rotation</strong>: <strong>Zig/Zag</strong> (parent เป็น root, หมุนครั้งเดียว), <strong>Zig-zig/Zag-zag</strong> (หมุนที่ grandparent ก่อน แล้ว parent), <strong>Zig-zag/Zag-zig</strong> (หมุนที่ parent ก่อน แล้ว grandparent)</li>
+          <li><strong>Delete</strong>: search + splay ตัวที่ลบขึ้น root → splay max ของ left subtree ขึ้น → ต่อ right ของเดิมเข้ากับ root ใหม่</li>
+          <li>เหมาะกับ workload ที่ access กระจุกอยู่กับข้อมูลก้อนเล็ก (locality)</li>
+        </ul>
+        <h3>เทียบ AVL vs Red-Black vs Splay</h3>
+        <table>
+          <tr><th>Tree</th><th>จุดแข็ง</th><th>ข้อจำกัด</th><th>เหมาะเมื่อ</th></tr>
+          <tr><td>AVL</td><td>BF ∈ {-1, 0, 1} สูงเข้มกว่า (h &lt; 1.44 log₂n), ค้นเร็วกว่าเล็กน้อย</td><td>ซ่อมแพง (delete หมุนหลายครั้ง), ซับซ้อนกว่า</td><td>search ถี่</td></tr>
+          <tr><td>Red-Black</td><td>h ≤ 2 log₂(n+1) ยัง O(log n) เสมอ, <strong>หมุนมากสุด 2 ครั้งต่อ operation</strong>, implement ง่ายกว่า</td><td>สูงกว่า AVL ได้</td><td>insert/delete ถี่ (ใช้ใน library)</td></tr>
+          <tr><td>Splay</td><td>amortized O(log n), เอา frequent access ขึ้นบน</td><td>ไม่มี height guarantee ต่อ operation เดี่ยว</td><td>access มี locality</td></tr>
+        </table>
+        <div class="exam-box">
+          <div class="kp-title">มักออกสอบ</div>
+          <ul>
+            <li>balance factor และ 4 แบบ rotation ของ AVL: ระบุเคสจากรูป + หมุนให้ถูก</li>
+            <li>AVL: insert หมุน ≤ 1 ครั้ง, delete อาจหมุนหลายครั้ง; h &lt; 1.44 log₂n</li>
+            <li>RB invariants ทั้ง 5 ข้อ + ตรวจว่าต้นไม้ valid ไหม (root สี, red-red, black-height, BST order)</li>
+            <li>RB insert: uncle red → recolor / uncle black → rotate (รู้ทั้ง LL, RR, LR, RL)</li>
+            <li>เทียบ AVL vs RB vs Splay (จุดแข็ง/เงื่อนไขใช้)</li>
+            <li>Splay: 3 กลุ่มเคส (zig, zig-zig, zig-zag) และ amortized O(log n)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec12" class="card">
+        <h2>Graph (L12)</h2>
+        <h3>นิยามสำคัญ</h3>
+        <ul>
+          <li><strong>Graph G = (V, E)</strong>: vertex ชุดจุด, edge ชุดเส้นเชื่อม (คู่ (v,w)); directed เรียก edge ว่า arc; undirected ถ้า (x,y) บังคับ (y,x) ด้วย</li>
+          <li><strong>Loop</strong> (x,x), <strong>Multiedges</strong>, <strong>Simple graph</strong> = ไม่มี loop และ multiedge; <strong>Weighted</strong> = edge มีค่า (weight/cost/label)</li>
+          <li><strong>Adjacent</strong>: w อยู่ติด v ถ้า (v,w) ∈ E; <strong>Degree</strong> = จำนวนเพื่อนบ้าน (directed แยก indegree/outdegree)</li>
+          <li><strong>Sparse</strong> (|E| = O(|V|)) กับ <strong>Dense</strong> (|E| = O(|V|²))</li>
+          <li><strong>Path</strong>: ลำดับ vertex ที่ติดกันทุกคู่; <strong>length</strong> = จำนวน edge (จากตัวเองถึงตัวเอง = 0); <strong>Simple path</strong> = vertex ไม่ซ้ำ; <strong>Cycle</strong> = path ที่ w1 = wn (≥ 2 vertex, ไม่ backtrack edge เดิม); <strong>DAG</strong> = directed ไม่มี cycle</li>
+          <li><strong>Connected component</strong>: เซตใหญ่สุดที่ไปถึงกันได้ เป็น partition ของกราฟ undirected; <strong>Forest</strong> = กราฟที่ component เป็น tree</li>
+          <li><strong>Bipartite</strong>: แบ่ง vertex เป็น V1, V2 โดย edge ข้ามฝั่งเท่านั้น (เช่น stable matching)</li>
+          <li><strong>Subgraph</strong> H = (V′, E′) ของ G: <strong>V′ ⊆ V และ E′ ⊆ E</strong> (quick check: edge ต้องมี endpoint อยู่ใน V′ ด้วย)</li>
+          <li><strong>Tree</strong> = connected, undirected, ไม่มี cycle; <strong>Spanning tree</strong> = subgraph ที่มี vertex ครบ + connected + ไม่มี cycle; <strong>MST</strong> = spanning tree ผลรวมน้ำหนักน้อยสุด (อาจไม่ unique; <strong>ถ้าน้ำหนักไม่ซ้ำกัน MST unique</strong>)</li>
+          <li><strong>Graph ADT</strong>: <code>getDegree(u)</code>, <code>getAdjacent(u)</code>, <code>isAdjacentTo(u,v)</code></li>
+        </ul>
+        <h3>Representation</h3>
+        <table>
+          <tr><th></th><th>Adjacency List</th><th>Adjacency Matrix</th></tr>
+          <tr><td>Space</td><td><strong>O(V+E)</strong> (sparse คุ้ม)</td><td><strong>O(V²)</strong></td></tr>
+          <tr><td>เช็ค (u,v) มีไหม</td><td>O(deg(u))</td><td><strong>O(1)</strong></td></tr>
+          <tr><td>เพิ่ม edge</td><td>O(1)</td><td>O(1)</td></tr>
+          <tr><td>ลบ edge</td><td>O(deg(u)) / O(E)</td><td>O(1)</td></tr>
+          <tr><td>เพิ่ม vertex</td><td>O(1)</td><td>O(V²) (resize)</td></tr>
+          <tr><td>ลบ vertex</td><td>O(E)</td><td>O(V²)</td></tr>
+          <tr><td>หา degree</td><td>O(1)* (ถ้า list เก็บ size)</td><td>O(V)</td></tr>
+          <tr><td>Traverse</td><td><strong>O(V+E)</strong></td><td>O(V²)</td></tr>
+        </table>
+        <ul>
+          <li>Matrix เหมาะกับ <strong>dense</strong>; List เหมาะกับ <strong>sparse</strong> (โจทย์ส่วนใหญ่); ตัวอย่างสไลด์: แผนที่ถนน 3000 แยก → matrix ต้องใช้ 9,000,000 ช่อง แต่จริงมี TRUE แค่ 12,000</li>
+        </ul>
+        <h3>Traversal: BFS และ DFS</h3>
+        <ul>
+          <li>สถานะ vertex: <strong>unvisited → discovered (frontier) → explored</strong>; queue/stack เก็บ discovered ที่ยังไม่ explored; ต้อง mark ตอน "เข้า queue/stack" ไม่ใช่ตอน pop</li>
+          <li><strong>BFS = Queue (FIFO)</strong>: สำรวจตัวที่ค้นพบก่อนก่อน ระดับแล้วระดับ; pseudocode ใช้ <code>d[]</code> (ระยะ) และ <code>path[]</code> (มาจากไหน); ในกราฟไร้น้ำหนัก BFS หา shortest path (น้อย edge สุด) ได้</li>
+          <li><strong>DFS = Stack (LIFO)</strong>: สำรวจตัวที่ค้นพบล่าสุดก่อน ลึกก่อน; มีทั้งแบบ recursive และ iterative (pre-order)</li>
+          <li>traverse ทุก edge อย่างน้อยที่สุด: เยี่ยมแต่ละ edge ≤ 2 ครั้ง</li>
+          <li>อื่น ๆ: <strong>Best-First Search</strong> (เลือก node ที่ "ดีที่สุด" ตาม heuristic), Restricted BFS</li>
+        </ul>
+        <h3>MST: Prim's Algorithm</h3>
+        <ul>
+          <li>ปลูก <strong>tree เดียว</strong>จาก vertex เริ่ม: ซ้ำ ๆ เลือก edge น้ำหนักน้อยสุดที่ <strong>ปลายใน tree 1 ข้าง + ปลายนอก 1 ข้าง</strong> จนครบทุก vertex</li>
+          <li>Pseudocode: <code>key[v]</code> = น้ำหนัก edge ถูกสุดที่เชื่อม v เข้า tree, <code>parent[v]</code> = เส้นที่เลือก; priority queue เลือก key น้อยสุด</li>
+          <li>adjacency list + PQ → <strong>O((V+E) log V)</strong>; แบบ lazy คือ <strong>O(E log V)</strong></li>
+        </ul>
+        <h3>Shortest Path: Dijkstra's Algorithm</h3>
+        <ul>
+          <li>Single-source shortest path เมื่อ <strong>น้ำหนักไม่ติดลบ</strong>; output <code>dist[v]</code>, <code>prev[v]</code></li>
+          <li><strong>Lazy queue</strong>: library ไม่มี decreaseKey → push ซ้ำทุกครั้งที่ดีขึ้น แล้วเจอของเก่า (<code>du &gt; dist[u]</code>) ข้าม ทำหน้าที่แทน visited; ค้น s→t สามารถ break เมื่อ u == t</li>
+          <li>Complexity: insert ได้มากสุด O(E) ครั้ง × heap O(log E) = <strong>O(E log V)</strong> (รวม init: O(V + E log V))</li>
+        </ul>
+        <pre><code>// Relax
+alt = dist[u] + w(u,v)
+if alt &lt; dist[v]:
+    dist[v] = alt
+    prev[v] = u
+    decreaseKey(v)</code></pre>
+        <h3>Prim vs Dijkstra (ตารางสไลด์)</h3>
+        <table>
+          <tr><th></th><th>Prim</th><th>Dijkstra</th></tr>
+          <tr><td>เป้าหมาย</td><td>MST เชื่อมทั้งกราฟ</td><td>ระยะสั้นสุดจาก source s</td></tr>
+          <tr><td>priority</td><td><code>key[v]</code> (edge ถูกสุดเข้า tree)</td><td><code>dist[v]</code> (ระยะจาก source)</td></tr>
+          <tr><td>เงื่อนไขกราฟ</td><td>connected undirected</td><td>directed/undirected น้ำหนัก ≥ 0</td></tr>
+          <tr><td>เหมือนกัน</td><td colspan="2">greedy + priority queue + extract best + update priority</td></tr>
+        </table>
+        <ul>
+          <li><strong>MST ไม่จำเป็นต้องมี shortest path จาก source</strong></li>
+        </ul>
+        <h3>Union-Find (Disjoint Set) + Kruskal</h3>
+        <ul>
+          <li><code>makeSet(v)</code> (parent[v] = v), <code>find(v)</code> (รากของเซต: สองตัวอยู่ component เดียวกันเมื่อรากเท่ากัน), <code>union(u,v)</code> (รวมเซต)</li>
+          <li><strong>Path compression</strong> (เดินครั้งเดียวชี้ตรงราก) + <strong>Union by rank</strong> (ติดต้นเตี้ยใต้ต้นสูง, rank เท่ากันเพิ่ม rank รากใหม่ 1) → find/union amortized <strong>O(α(n)) ≈ O(1)</strong>; หมายเหตุ: ตอน path compression ค่า rank ไม่ได้อัปเดต (เป็น upper bound)</li>
+          <li><strong>Kruskal</strong>: เริ่มจาก forest (ทุก vertex เป็น tree ของตัวเอง) → เรียง edge ตามน้ำหนัก → edge ที่<strong>เชื่อมสอง tree ต่างกัน</strong>รับไว้ + union, ถ้าวนกลับ component เดิมทิ้ง → จบเมื่อได้ |V|-1 เส้น</li>
+          <li>ต้นทุน Kruskal ถูกครองโดยการ sort: <strong>O(E log E)</strong></li>
+        </ul>
+        <h3>สรุป 4 อัลกอริทึม (ตารางสไลด์)</h3>
+        <table>
+          <tr><th>ปัญหา</th><th>Algorithm</th><th>Key idea</th><th>Output</th></tr>
+          <tr><td>MST</td><td>Prim</td><td>ปลูก tree ด้วย key[v] น้อยสุด</td><td>MST (parent[])</td></tr>
+          <tr><td>SSSP</td><td>Dijkstra</td><td>relax ด้วย dist[v] น้อยสุด</td><td>dist, prev</td></tr>
+          <tr><td>Connected Component</td><td>Union-Find</td><td>disjoint sets ด้วย find/union</td><td>membership</td></tr>
+          <tr><td>MST</td><td>Kruskal</td><td>เรียง edge รับเฉพาะ edge ข้ามเซต</td><td>MST</td></tr>
+        </table>
+        <div class="exam-box">
+          <div class="kp-title">มักออกสอบ</div>
+          <ul>
+            <li>นิยาม: path/cycle/simple/DAG/degree/sparse-dense/subgraph/spanning tree</li>
+            <li>เลือก matrix vs list ตามสถานการณ์ + Big-O ของ operation แต่ละแบบ</li>
+            <li>BFS ใช้ queue, DFS ใช้ stack + trace ลำดับ vertex ที่ explore</li>
+            <li>trace Prim/Dijkstra (ตาราง key/dist + parent/prev) และเขียน relax</li>
+            <li>Union-Find พร้อม union by rank + path compression trace</li>
+            <li>Kruskal: เรียง edge, ตัดสินด้วย find, นับ |mst| = |V|-1</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="quiz" class="card quiz" data-quiz>
+        <h2>แบบทดสอบ</h2>
+        <div class="quiz-status"></div>
+        <p>ปรนัย 22 ข้อ (กดตัวเลือกตรวจคำตอบได้ทันที) + อัตนัย 8 ข้อ (กดดูเฉลยเอง) รวม 30 ข้อ</p>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">1) ต้องการเก็บรายชื่อที่ห้ามซ้ำกัน และเช็คว่า "เคยเจอชื่อนี้มาแล้วหรือยัง" ให้เร็ว ควรใช้คลาสใด</p>
+          <button class="choice" data-k="A">ArrayList&lt;String&gt;</button>
+          <button class="choice" data-k="B">HashSet&lt;String&gt;</button>
+          <button class="choice" data-k="C">LinkedList&lt;String&gt;</button>
+          <button class="choice" data-k="D">String[]</button>
+          <div class="q-explain">HashSet เก็บข้อมูลไม่ซ้ำ (add ตัวซ้ำถูก ignore) และ contains(x) ตอบ "เคยเห็นไหม" ได้โดยปกติเร็ว รวมทั้ง add/remove</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">2) จากโค้ดด้านล่าง ผลลัพธ์ที่พิมพ์ออกมาคืออะไร</p>
+          <pre><code>static void changeArray(int[] a) {
+    a[0] = 99;
+    a = new int[]{1, 2};
+}
+public static void main(String[] args) {
+    int[] nums = {5, 6, 7};
+    changeArray(nums);
+    System.out.println(nums[0]);
+}</code></pre>
+          <button class="choice" data-k="A">5</button>
+          <button class="choice" data-k="B">1</button>
+          <button class="choice" data-k="C">99</button>
+          <button class="choice" data-k="D">compile error</button>
+          <div class="q-explain">Java เป็น pass-by-value แต่ค่าที่ส่งสำหรับ object/array คือ reference: a[0] = 99 แก้ object เดิมที่ caller ชี้อยู่จึงมีผล ส่วน a = new int[]{1,2} เปลี่ยนแค่ตัวแปร local ไม่มีผลกับ nums</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">3) ความหมายของ f(n) ∈ O(g(n)) ตรงกับข้อใด</p>
+          <button class="choice" data-k="A">g(n) เป็น lower bound ของ f(n), f โตไม่ช้ากว่า g</button>
+          <button class="choice" data-k="B">g(n) เป็น upper bound ของ f(n), f โตไม่เร็วกว่า g</button>
+          <button class="choice" data-k="C">f(n) และ g(n) โตด้วยอัตราเดียวกันเท่านั้น</button>
+          <button class="choice" data-k="D">f(n) = g(n) สำหรับทุกค่า n</button>
+          <div class="q-explain">Big-O: g(n) เป็น upper bound ของ f(n) คือ f โตแบบ asymptotic ไม่เร็วกว่า g ("ไม่แย่กว่า") ส่วน Ω คือ lower bound และ Θ คือ tight bound (โตเท่ากัน)</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">4) การเข้าถึงข้อมูลใน array ตำแหน่งใด ๆ (เช่น getAt(i)) มี Big-O เท่าใด เพราะเหตุใด</p>
+          <button class="choice" data-k="A">O(n) เพราะต้องเดินหาทีละตัว</button>
+          <button class="choice" data-k="B">O(log n) เพราะใช้ binary search</button>
+          <button class="choice" data-k="C">O(1) เพราะคำนวณตำแหน่งจาก "จุดเริ่มต้น + index" ได้โดยตรง</button>
+          <button class="choice" data-k="D">O(n log n)</button>
+          <div class="q-explain">ข้อมูลใน array วางติดกันใน memory ตำแหน่ง = จุดเริ่มต้น + index จึงเข้าถึงได้ในขั้นเดียว</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">5) operation ใดของ singly linked list ที่ทำได้ใน O(1)</p>
+          <button class="choice" data-k="A">getAt(i): อ่านค่าที่ index i</button>
+          <button class="choice" data-k="B">addFirst(d): เพิ่ม node หน้าสุด</button>
+          <button class="choice" data-k="C">addLast(d): เพิ่ม node ท้ายสุด (ไม่มีตัวแปร tail)</button>
+          <button class="choice" data-k="D">find(d): หา node ที่มีค่า d</button>
+          <div class="q-explain">addFirst แค่เปลี่ยน pointer: p.next = head; head = p; ใช้เวลาคงที่ O(1) ส่วน getAt/addLast/find ต้องเดิน list เป็น O(n)</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">6) push A, B, C ลง stack ตามลำดับ แล้ว pop 3 ครั้ง จะได้ลำดับข้อมูลที่ pop ออกมาเป็นอย่างไร</p>
+          <button class="choice" data-k="A">A, B, C</button>
+          <button class="choice" data-k="B">C, B, A</button>
+          <button class="choice" data-k="C">A, C, B</button>
+          <button class="choice" data-k="D">C, A, B</button>
+          <div class="q-explain">Stack เป็น LIFO (Last In, First Out) ตัวที่ใส่ท้ายสุด (C) ออกก่อน</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-text">7) enqueue A, B, C เข้า queue ตามลำดับ แล้ว dequeue 3 ครั้ง จะได้ลำดับข้อมูลที่ออกจาก queue เป็นอย่างไร</p>
+          <button class="choice" data-k="A">A, B, C</button>
+          <button class="choice" data-k="B">C, B, A</button>
+          <button class="choice" data-k="C">B, A, C</button>
+          <button class="choice" data-k="D">C, A, B</button>
+          <div class="q-explain">Queue เป็น FIFO (First In, First Out) เข้าก่อนออกก่อน</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">8) "Memoization" หมายถึงอะไร</p>
+          <button class="choice" data-k="A">การแปลง recursion เป็น bottom-up DP ที่เติมตารางทั้งหมด</button>
+          <button class="choice" data-k="B">top-down DP: เก็บคำตอบของ state ที่เคยคำนวณแล้วไว้ในตาราง เจอซ้ำก็ดึงมาตอบทันที</button>
+          <button class="choice" data-k="C">การตัด branch ที่ไม่น่ามีคำตอบทิ้ง</button>
+          <button class="choice" data-k="D">การจำ input ทั้งหมดไว้ใน stack เพื่อกัน stack overflow</button>
+          <div class="q-explain">Memoization = top-down DP: ยังใช้ recursion เดิมแต่เพิ่มตารางเก็บคำตอบ state ที่คำนวณแล้ว เจอซ้ำตอบจาก cache ทันที (fib ลดจาก O(2ⁿ) เหลือ O(n)) ส่วน A คือ bottom-up DP, C คือ pruning</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-text">9) อัลกอริทึมเรียงข้อมูลกลุ่มใดทั้งหมดมี Big-O เชิงคร่าว ๆ เท่ากันที่ O(n²)</p>
+          <button class="choice" data-k="A">Bubble sort, Selection sort, Insertion sort</button>
+          <button class="choice" data-k="B">Quick sort, Merge sort, Heap sort</button>
+          <button class="choice" data-k="C">Merge sort, Radix sort, Counting sort</button>
+          <button class="choice" data-k="D">Quick sort, Heap sort, Counting sort</button>
+          <div class="q-explain">สไลด์ L08 ระบุว่า bubble, selection และ insertion เป็น intuitive sort ที่ share the same big-O of O(n²)</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">10) binary heap ถูกเก็บใน array โดย node อยู่ที่ index p ลูกซ้ายและลูกขวาของมันอยู่ที่ index ใด</p>
+          <button class="choice" data-k="A">2p และ 2p+1</button>
+          <button class="choice" data-k="B">p+1 และ p+2</button>
+          <button class="choice" data-k="C">2p+1 และ 2p+2</button>
+          <button class="choice" data-k="D">2^p และ 2^(p+1)</button>
+          <div class="q-explain">สูตร array representation ของ binary heap (parent = (p-1)/2) ใช้ในโค้ด insert()/remove() ของ MyMinHeap</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">11) BFS และ DFS จับคู่กับโครงสร้างข้อมูลใดถูกต้อง</p>
+          <button class="choice" data-k="A">BFS ใช้ Stack, DFS ใช้ Queue</button>
+          <button class="choice" data-k="B">BFS ใช้ Queue, DFS ใช้ Stack</button>
+          <button class="choice" data-k="C">ทั้งคู่ใช้ Queue</button>
+          <button class="choice" data-k="D">ทั้งคู่ใช้ Stack</button>
+          <div class="q-explain">สไลด์ L12: Breadth-First-Search ใช้ Queue (FIFO) สำรวจตัวที่ค้นพบก่อนก่อน, Depth-First-Search ใช้ Stack (LIFO) สำรวจตัวที่ค้นพบล่าสุดก่อน</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-text">12) ให้ f(n) = 4n² + 3n + 4 และ g(n) = n² ข้อใดถูกต้อง (พิจารณาจาก lim f(n)/g(n) เมื่อ n → ∞)</p>
+          <button class="choice" data-k="A">f(n) ∈ Θ(n²) เพราะ limit เท่ากับ 4 (ค่าคงที่บวก)</button>
+          <button class="choice" data-k="B">f(n) ∈ Θ(n³) เพราะมีพจน์ 4n²</button>
+          <button class="choice" data-k="C">f(n) ∈ O(n) เพราะ n² เล็กกว่าเมื่อ n น้อย</button>
+          <button class="choice" data-k="D">f(n) ∈ Ω(n²) เท่านั้น ไม่ใช่ Θ(n²)</button>
+          <div class="q-explain">lim (4n² + 3n + 4)/n² = lim (4 + 3/n + 4/n²) = 4 เป็นค่าคงที่บวก → f โตอัตราเดียวกับ n² → Θ(n²) (พจน์ย่อยกว่าและค่าคงที่ไม่มีผลต่อ asymptotic)</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">13) "Dummy node" ใน linked list ช่วยแก้ปัญหาอะไร</p>
+          <button class="choice" data-k="A">ทำให้ find(d) เร็วขึ้นเป็น O(1)</button>
+          <button class="choice" data-k="B">ทำให้การลบ node แรก (head) ทำได้เหมือนลบ node ทั่วไป ไม่ต้องเขียนกรณีพิเศษ จบแล้วตั้ง head = dummy.next</button>
+          <button class="choice" data-k="C">ทำให้ linked list เก็บข้อมูลติดกันใน memory ได้</button>
+          <button class="choice" data-k="D">ทำให้ addFirst กลายเป็น O(n)</button>
+          <div class="q-explain">ปัญหาเดิม: ลบ head ไม่มี previous node ให้ทำ p.next = p.next.next; dummy node วางนำหน้า head ชั่วคราวทำให้ head กลายเป็น "node ธรรมดาที่มีตัวก่อนหน้า" จบ operation แล้ว head = dummy.next</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">14) ให้ postfix expression: 8 5 - 4 2 + 3 / * ผลลัพธ์ของการคิดค่าด้วย stack คือเท่าใด</p>
+          <button class="choice" data-k="A">10</button>
+          <button class="choice" data-k="B">2</button>
+          <button class="choice" data-k="C">6</button>
+          <button class="choice" data-k="D">14</button>
+          <div class="q-explain">push 8, push 5 → "-" → 8-5=3 → push 4, push 2 → "+" → 6 → push 3 → "/" → 6/3=2 → "*" → 3×2 = 6 (จุดสำคัญ: ลำดับ b=pop(); a=pop(); push(a opr b))</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">15) ใน queue แบบ circular array ที่ใช้ head และ tail (เลื่อนด้วย (x+1)%MAX_SIZE) เงื่อนไข "queue เต็ม" ที่ใช้ในสไลด์คือข้อใด</p>
+          <button class="choice" data-k="A">head == tail</button>
+          <button class="choice" data-k="B">((tail+1)%MAX_SIZE) == head</button>
+          <button class="choice" data-k="C">tail == MAX_SIZE</button>
+          <button class="choice" data-k="D">head == 0 &amp;&amp; tail == MAX_SIZE-1</button>
+          <div class="q-explain">isFull: ((tail+1)%MAX_SIZE) == head เว้นช่องว่าง 1 ช่องไว้แยกสภาวะ "เต็ม" ออกจาก "ว่าง" (empty คือ head == tail)</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">16) "Stable sort" คือข้อใด และจาก bubble / selection / insertion sort ตัวใดบ้างที่เป็น stable</p>
+          <button class="choice" data-k="A">เรียงเสร็จเร็วที่สุด; ทั้งสามตัว stable</button>
+          <button class="choice" data-k="B">ข้อมูลที่ key เท่ากันคงลำดับเดิมไว้; bubble และ insertion stable แต่ selection ไม่ stable</button>
+          <button class="choice" data-k="C">ไม่ใช้ memory เพิ่ม; เฉพาะ selection sort stable</button>
+          <button class="choice" data-k="D">เรียงจากมากไปน้อยได้; ไม่มีตัวใด stable</button>
+          <div class="q-explain">Stable sort = ข้อมูลที่มี key เท่ากันไม่ถูกสลับลำดับเดิม (จำเป็นเวลา sort ซ้อนหลาย key) จากสไลด์: Bubble stable, Selection ไม่ stable, Insertion stable</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">17) เปรียบเทียบต้นทุนข้อใดถูกต้อง</p>
+          <button class="choice" data-k="A">แทรก n ตัวทีละตัวลง heap ว่าง = O(n); heapify array ขนาด n จากล่างขึ้นบน = O(n log n)</button>
+          <button class="choice" data-k="B">แทรก n ตัวทีละตัว = O(n log n); heapify จากล่างขึ้นบน = O(n) เพราะ node ส่วนใหญ่อยู่ตื้น จ่ายแพงเพียงไม่กี่ตัว</button>
+          <button class="choice" data-k="C">ทั้งสองวิธีเท่ากันที่ O(n²)</button>
+          <button class="choice" data-k="D">แทรก n ตัว = O(n); heapify = O(1)</button>
+          <div class="q-explain">แทรกทีละตัว n ครั้ง ครั้งละ O(log n) = O(n log n); ส่วน heapify (บังคับ heap property จากล่างขึ้นบน) node ส่วนใหญ่อยู่ตื้น ต้นทุนเฉลี่ยต่อ node เป็นคงที่ → O(n) รวม</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">18) เมื่อลบ node ใน BST ที่มีลูกสองฝั่ง สไลด์แนะนำให้แทนที่ node นั้นด้วยค่าใด</p>
+          <button class="choice" data-k="A">ค่าน้อยสุดใน left subtree เท่านั้น</button>
+          <button class="choice" data-k="B">ค่ามากสุดใน left subtree (หรือค่าน้อยสุดใน right subtree)</button>
+          <button class="choice" data-k="C">ลูกซ้ายของ node นั้นเสมอ</button>
+          <button class="choice" data-k="D">ค่า root ของต้นไม้</button>
+          <div class="q-explain">เคส two-children: แทนด้วย predecessor (max ของ left subtree) หรือ successor (min ของ right subtree) เพื่อรักษา BST property ทั้งสองฝั่ง (โค้ดสไลด์ใช้ findMaxFrom(node.left) แล้วลบ candidate ออกจากตำแหน่งเดิม)</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">19) ขณะ insert ใน Red-Black tree พบว่า node ใหม่ (สีแดง) มี parent เป็นสีแดง และ uncle เป็นสีแดงด้วย ขั้นตอนที่ถูกต้องคือ</p>
+          <button class="choice" data-k="A">หมุน (rotate) ที่ grandparent ทันทีแล้วจบ</button>
+          <button class="choice" data-k="B">recolor: parent กับ uncle เป็น black, grandparent เป็น red แล้วไต่ขึ้นตรวจต่อที่ grandparent (ไม่ต้องหมุน)</button>
+          <button class="choice" data-k="C">recolor node ใหม่เป็น black แล้วจบ</button>
+          <button class="choice" data-k="D">ลบ uncle ออกจากต้นไม้</button>
+          <div class="q-explain">Red uncle = "ปัญหาสี" → recolor parent/uncle เป็น black และ grandparent เป็น red (black-height ไม่เปลี่ยน) แล้วขยับไปตรวจต่อที่ grandparent เพราะอาจเกิด red-red ซ้ำขึ้นไป; การหมุนใช้เฉพาะเมื่อ uncle เป็น black/NIL ("ปัญหารูปทรง") ถ้า grandparent คือ root ให้ recolor กลับเป็น black</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">20) ข้อใดเปรียบเทียบ Prim's algorithm กับ Dijkstra's algorithm ได้ถูกต้อง</p>
+          <button class="choice" data-k="A">Prim ใช้ priority dist[v] เพื่อหา MST; Dijkstra ใช้ key[v] เพื่อหา shortest path</button>
+          <button class="choice" data-k="B">Prim ใช้ priority key[v] (น้ำหนัก edge ถูกสุดที่เชื่อม v เข้า tree) ต้องการ MST; Dijkstra ใช้ dist[v] (ระยะสั้นสุดจาก source) ต้องการ shortest path และต้องมีน้ำหนักไม่ติดลบ</button>
+          <button class="choice" data-k="C">ทั้งคู่หาสิ่งเดียวกัน ต่างกันแค่ implement</button>
+          <button class="choice" data-k="D">Dijkstra ใช้ได้กับน้ำหนักติดลบ แต่ Prim ใช้ไม่ได้</button>
+          <div class="q-explain">ทั้งคู่ greedy + priority queue แต่ priority คนละความหมาย: Prim ใช้ key[v] เพื่อ MST (connected undirected); Dijkstra ใช้ dist[v] เพื่อ single-source shortest path (น้ำหนัก ≥ 0) และ MST ไม่จำเป็นต้องมี shortest path จาก source</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">21) ขยาย array 2 เวอร์ชัน: A) MAX_SIZE += M (เพิ่มค่าคงที่) และ B) MAX_SIZE *= 2 (เท่าตัว) โดย add ข้อมูล n ตัว ข้อใดถูกต้อง</p>
+          <button class="choice" data-k="A">ทั้งสองเวอร์ชันเฉลี่ย O(n) ต่อการ add</button>
+          <button class="choice" data-k="B">A เฉลี่ย O(1) เพราะ copy ทีละน้อย; B เฉลี่ย O(n) เพราะ copy ทั้งก้อน</button>
+          <button class="choice" data-k="C">A ต้นทุน copy รวมเป็น O(n²) เฉลี่ย O(n) ต่อ add; B ผลรวม operation ≈ 2n-S เฉลี่ย O(1) (amortized) ต่อ add</button>
+          <button class="choice" data-k="D">B เร็วกว่าเสมอทุกกรณีเพราะ expand น้อยครั้งกว่า</button>
+          <div class="q-explain">Version A (+M): ต้นทุน copy สะสมเป็น arithmetic series = O(n²) → เฉลี่ยต่อ add = O(n) (M เปลี่ยนแค่ constant factor); Version B (×2): n = 2^k·S ผลรวม operation = 2n − S → เฉลี่ย = O(1) amortized (ตัวเลขจากไฟล์เสริม: S=10, M=10, ใส่ 100 ตัว version A มี copy cost 450 writes)</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">22) ให้ T(n) = 9T(n/3) + Θ(n²) โดย a = 9, b = 3 มี critical term = n^(log₃9) = n² จะได้ T(n) เป็นเท่าใด</p>
+          <button class="choice" data-k="A">Θ(n²)</button>
+          <button class="choice" data-k="B">Θ(n log n)</button>
+          <button class="choice" data-k="C">Θ(n² log n)</button>
+          <button class="choice" data-k="D">Θ(n³)</button>
+          <div class="q-explain">a = 9, b = 3 → critical term = n²; f(n) = Θ(n²) เท่ากับ critical term พอดี → Case 2 → T(n) = Θ(n^p · log n) = Θ(n² log n) (ทุกระดับมีงานเท่ากัน + log n ระดับ จึงเติม log เพิ่มหนึ่งตัว)</div>
+        </div>
+
+        <div class="q">
+          <p class="q-text">23) [L05] แปลง A + B * C + D เป็น postfix โดยวิธี "ใส่วงเล็บให้ครบตาม precedence แล้วย้าย operator ไปขวา" พร้อมแสดงขั้นตอนการใส่วงเล็บ</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <ol>
+              <li>ใส่วงเล็บตาม precedence: ( A + ( B * C ) + D ) → ให้ชัดเป็น ((A + (B * C)) + D)</li>
+              <li>ย้าย operator ไปขวาของ operand คู่แล้วตัดวงเล็บ: (B * C) → B C *</li>
+              <li>(A + (B C *)) → A B C * +</li>
+              <li>(((...)) + D) → A B C * + D +</li>
+            </ol>
+            ตอบ: <strong>A B C * + D +</strong>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">24) [L04] มี singly linked list: head -&gt; 3 -&gt; 5 -&gt; 1 -&gt; null ต้องการ add(4, 2) (แทรกค่า 4 ที่ index 2)<br>1) node p คือ node ใด, node q คือ node ใด<br>2) เขียนสองคำสั่ง pointer ที่ใช้แทรก n (node ใหม่ค่า 4) พร้อมอธิบายลำดับว่าทำไมต้องทำคำสั่งนั้นก่อน<br>3) วาด linked list หลังแทรกเสร็จ</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <ol>
+              <li>p = node <strong>ก่อนจุดแทรก</strong> = node ค่า 5 (index 1); q = p.next เดิม = node ค่า 1</li>
+            </ol>
+            <pre><code>n.next = p.next;   // 4 -&gt; 1  (ต่อ n เข้ากับท้ายเดิมก่อน)
+p.next = n;        // 5 -&gt; 4  (ค่อยต่อ p เข้า n)</code></pre>
+            ต้องทำ n.next = p.next ก่อน เพราะถ้าตั้ง p.next = n ก่อน จะเสีย reference ไปหา node 1 (chain หลังจาก 5 ขาด) ทำให้ node 1 ถูกทิ้ง
+            <ol start="3">
+              <li>ผลลัพธ์: <strong>head -&gt; 3 -&gt; 5 -&gt; 4 -&gt; 1 -&gt; null</strong></li>
+            </ol>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">25) [Recursion/DP] Count Ways: เดินไปตำแหน่ง N ได้โดยก้าวทีละ 1, 3 หรือ 4 ก้าว ให้ recurrence ways[i] = ways[i-1] + ways[i-3] + ways[i-4] (พจน์ที่ index ติดลบถือว่า 0) และ base case ways[0] = 1<br>จงเติมตาราง ways[i] สำหรับ i = 0..8 และระบุว่า N = 8 มีกี่วิธี พร้อมแสดงการคำนวณของ ways[8]</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <table>
+              <tr><th>i</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+              <tr><th>ways[i]</th><td>1</td><td>1</td><td>1</td><td>2</td><td>4</td><td>6</td><td>9</td><td>15</td><td><strong>25</strong></td></tr>
+            </table>
+            ตัวอย่างการคำนวณ: ways[3] = ways[2] + ways[0] = 1 + 1 = 2; ways[4] = ways[3] + ways[1] + ways[0] = 2 + 1 + 1 = 4<br>
+            ways[8] = ways[7] + ways[5] + ways[4] = 15 + 6 + 4 = <strong>25 วิธี</strong>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">26) [L09] แทรกตัวเลข 7, 3, 5, 4, 2 เข้า min-heap (เริ่มว่าง) ตามลำดับ จงแสดงสถานะ array หลังแทรกแต่ละตัว (แสดงขั้น percolate up ที่เกิดขึ้น) และเขียน array สุดท้าย</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <ol>
+              <li>แทรก 7 → [7]</li>
+              <li>แทรก 3 → [7, 3] → 3 &lt; 7 สลับ → [3, 7]</li>
+              <li>แทรก 5 → [3, 7, 5] → 5 &lt; 3? ไม่ → [3, 7, 5]</li>
+              <li>แทรก 4 → [3, 7, 5, 4] → 4 &lt; 7 สลับ → [3, 4, 5, 7] → 4 &lt; 3? ไม่ จบ</li>
+              <li>แทรก 2 → [3, 4, 5, 7, 2] → 2 &lt; 4 สลับ → [3, 2, 5, 7, 4] → 2 &lt; 3 สลับ → [2, 3, 5, 7, 4]</li>
+            </ol>
+            ตอบ: array สุดท้าย = <strong>[2, 3, 5, 7, 4]</strong> (ต้นไม้: root 2, ลูกซ้าย 3 มีลูก 7, 4 / ลูกขวา 5) ตรวจได้ว่าทุก parent ≤ ลูก
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">27) [L11] แทรก 10, 20, 30 ลง AVL tree (เริ่มว่าง) ตามลำดับ<br>1) หลังแทรก 30 ต้นไม้เสียสมดุลที่ node ใด balance factor เป็นเท่าใด และเป็นเคส RR / LL / LR / RL แบบใด<br>2) ใช้ rotation แบบใด และวาดต้นไม้หลังหมุนแล้ว</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <ol>
+              <li>แทรก 10 → root; แทรก 20 → ลูกขวาของ 10; แทรก 30 → ลูกขวาของ 20 → node 10 เสียสมดุล: BF = h_left − h_right = 0 − 2 = <strong>-2</strong> (ขวาหนัก) ทั้ง node ใหม่และลูกอยู่ฝั่งขวาของ node ที่เสียดุล → เคส <strong>RR imbalance</strong></li>
+              <li>แก้ด้วย <strong>single Left rotation</strong> ที่ node 10: node 20 ขึ้นเป็น root ใหม่</li>
+            </ol>
+            <pre><code>   20
+  /  \
+ 10    30</code></pre>
+            BF ทุก node กลับมาอยู่ใน {-1, 0, +1} (หมายเหตุ: RR → left rotation, LL → right rotation ตามสไลด์ L11)
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">28) [L10] แทรกตัวเลข 7, 20, 5, 15, 10, 4, 33, 2, 25, 6 ลง BST (เริ่มว่าง) ตามลำดับ<br>1) วาด BST ที่ได้<br>2) เขียนลำดับ traversal ทั้งสามแบบ: pre-order, in-order, post-order<br>3) จากผลข้อ (2) in-order ได้ลำดับอะไร และบ่งบอกคุณสมบัติอะไรของ BST</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p>1) BST ที่ได้ (7 เป็น root; 20 ขวาของ 7; 5 ซ้ายของ 7; 15 ซ้ายของ 20; 10 ซ้ายของ 15; 4 ซ้ายของ 5; 33 ขวาของ 20; 2 ซ้ายของ 4; 25 ซ้ายของ 33; 6 ขวาของ 5)</p>
+            <pre><code>            7
+         /     \
+        5       20
+      /   \    /  \
+     4     6  15   33
+    /           \  /
+   2            10 25</code></pre>
+            <p>2) Traversal</p>
+            <ul>
+              <li><strong>Pre-order (Root-L-R):</strong> 7, 5, 4, 2, 6, 20, 15, 10, 33, 25</li>
+              <li><strong>In-order (L-Root-R):</strong> 2, 4, 5, 6, 7, 10, 15, 20, 25, 33</li>
+              <li><strong>Post-order (L-R-Root):</strong> 2, 4, 6, 5, 10, 15, 25, 33, 20, 7</li>
+            </ul>
+            <p>3) In-order ได้ <strong>ลำดับเรียงจากน้อยไปมาก</strong> สะท้อนคุณสมบัติ BST ว่า in-order traversal ของ BST ให้ข้อมูลเรียงเสมอ (นี่คือเหตุผลที่ in-order ใช้กับ binary tree เท่านั้นและมีความหมายพิเศษกับ BST)</p>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">29) [L12] ให้กราฟ undirected น้ำหนัก 7 vertex (A-G) มี edge ดังนี้<br>A-B 7, B-C 8, A-D 5, B-D 9, B-E 7, C-E 5, D-E 15, D-F 6, E-F 8, F-G 11, E-G 9<br>จง run Kruskal's algorithm (เรียง edge ตามน้ำหนัก แล้วรับเฉพาะ edge ที่เชื่อม component ต่างกันโดยใช้ Union-Find)<br>1) เขียนลำดับ edge หลังเรียง และตารางตัดสินใจ รับ/ทิ้ง พร้อมเหตุผล<br>2) ระบุ edge ทั้งหมดของ MST และผลรวมน้ำหนักรวม</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p>1) เรียง edge ตามน้ำหนัก: A-D 5, C-E 5, D-F 6, A-B 7, B-E 7, B-C 8, E-F 8, E-G 9, B-D 9, F-G 11, D-E 15</p>
+            <table>
+              <tr><th>Edge</th><th>น้ำหนัก</th><th>find(u) ≠ find(v)?</th><th>การตัดสิน (component หลังรวม)</th></tr>
+              <tr><td>A-D</td><td>5</td><td>ใช่</td><td>รับ → {A, D}</td></tr>
+              <tr><td>C-E</td><td>5</td><td>ใช่</td><td>รับ → {C, E}</td></tr>
+              <tr><td>D-F</td><td>6</td><td>ใช่</td><td>รับ → {A, D, F}</td></tr>
+              <tr><td>A-B</td><td>7</td><td>ใช่</td><td>รับ → {A, B, D, F}</td></tr>
+              <tr><td>B-E</td><td>7</td><td>ใช่</td><td>รับ → {A, B, C, D, E, F}</td></tr>
+              <tr><td>B-C</td><td>8</td><td>ไม่ (อยู่เซตเดียวกัน)</td><td><strong>ทิ้ง (วน cycle)</strong></td></tr>
+              <tr><td>E-F</td><td>8</td><td>ไม่</td><td>ทิ้ง (cycle)</td></tr>
+              <tr><td>E-G</td><td>9</td><td>ใช่</td><td>รับ → ครบ 7 vertex, ครบ 6 edge → หยุด</td></tr>
+              <tr><td>B-D 9, F-G 11, D-E 15</td><td>-</td><td>-</td><td>ไม่ต้องพิจารณาต่อ (มีครบ |V|-1 = 6 เส้นแล้ว)</td></tr>
+            </table>
+            <p>2) MST = {A-D 5, C-E 5, D-F 6, A-B 7, B-E 7, E-G 9} → ผลรวม = 5+5+6+7+7+9 = <strong>39</strong><br>(จบเมื่อ |mst| == |V|-1 ตาม pseudocode; ต้นทุนถูกครองโดยการ sort = O(E log E))</p>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">30) [L11] กำหนดต้นไม้ (B = black, R = red) ด้านล่าง ต้นไม้นี้เป็น valid Red-Black tree หรือไม่ จงตรวจทีละกฎ (root เป็น black, ห้าม red ติดกัน, black-height ทุก path เท่ากัน, BST ordering) พร้อมระบุว่ากฎใดถูกละเมิดบ้างและเพราะ path ใด</p>
+          <pre><code>            40R
+           /
+        20R
+        /  \
+     10B    30B
+              \
+              60B
+             /   \
+          50R    70B</code></pre>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p><strong>ไม่เป็น valid Red-Black tree</strong> ตรวจทีละกฎ:</p>
+            <ul>
+              <li>BST ordering: <strong>ผ่าน</strong> (ทุก subtree เรียงถูกต้อง)</li>
+              <li>กฎ root ต้องเป็น black: <strong>ละเมิด</strong> (root 40 เป็นสีแดง 40R)</li>
+              <li>กฎห้าม red ติดกัน: <strong>ละเมิด</strong> (40R → 20R: parent แดงมีลูกแดง)</li>
+              <li>กฎ black-height เท่ากันทุก path: <strong>ละเมิด</strong> นับ black node รวม NIL ท้าย path:
+                <ul>
+                  <li>40R → 20R → 10B → NIL = 2 black</li>
+                  <li>40R → 20R → 30B → NIL = 2 black</li>
+                  <li>40R → 60B → 50R → NIL = 2 black</li>
+                  <li>40R → 60B → 70B → NIL = <strong>3 black</strong> ไม่เท่ากับ path อื่น (path ที่จบที่ 70B มี black มากกว่า)</li>
+                </ul>
+              </li>
+            </ul>
+            สรุป: ละเมิด 3 กฎ (root สีแดง, red-red, black-height ไม่เท่ากัน) ตามสไลด์ Case 6 ของ L11
+          </div></details>
+        </div>
+
+        <button class="quiz-reset">ลองทำใหม่ทั้งชุด</button>
+      </section>
+    </article>
+  </main>
+</div>
+<script src="assets/site.js"></script>
+</body>
+</html>

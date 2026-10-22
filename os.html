@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operating Systems (05506007) | ติวสอบ ปี 2 เทอม 1</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-subject="os">
+<header class="topbar">
+  <a class="brand" href="index.html">ติวสอบ <span>ปี 2 เทอม 1</span></a>
+  <nav class="subject-nav">
+    <a href="dsa.html">DSA</a>
+    <a href="os.html" class="active">OS</a>
+    <a href="os-2.html">OS (ต่อ)</a>
+    <a href="os-quiz.html">OS ควิซ</a>
+    <a href="oslab.html">OS Lab</a>
+    <a href="bpm.html">BA/BPM</a>
+    <a href="linear.html">พีชคณิตเชิงเส้น</a>
+    <a href="seminar.html">Seminar</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="toc">
+    <div class="toc-title">สารบัญหน้านี้</div>
+    <a href="#sec1">แนะนำวิชาและโครงสร้าง OS</a>
+    <a href="#sec2">Process</a>
+    <a href="#sec3">Thread</a>
+    <a href="#sec4">CPU Scheduling</a>
+    <a href="#sec5">IPC และ Signal</a>
+    <a href="#sec6">Pipe และ Shared Memory</a>
+    <a href="#sec7">Process Synchronization</a>
+    <a href="#sec8">Deadlock</a>
+  </aside>
+  <main>
+    <article>
+      <h1>Operating Systems (05506007)</h1>
+      <p class="page-sub">ครึ่งแรก: พื้นฐานและโครงสร้าง OS, Process, Thread, CPU Scheduling, IPC, Synchronization และ Deadlock (สไลด์ No.00-07 รวมกับคลิปบรรยาย 5.x-11.x)</p>
+
+      <section id="sec1" class="card">
+        <h2>แนะนำวิชาและโครงสร้างระบบปฏิบัติการ</h2>
+
+        <h3>วิชานี้เรียนอะไร</h3>
+        <p>เรียน <strong>หลักการทำงานภาพรวมของ OS</strong> ไม่ใช่วิธี "ใช้งาน" ระบบปฏิบัติการ เครื่องมือของวิชาคือ <strong>Java และ C เขียนบน Linux (Ubuntu)</strong></p>
+        <div class="keypoints"><div class="kp-title">ประเด็นสำคัญ</div><ul>
+          <li>OS ทำงานอย่างไรและควบคุมฮาร์ดแวร์/ซอฟต์แวร์อย่างไร, ทำไมเปิดหลายโปรแกรมพร้อมกันบนเครื่องเดียวได้</li>
+          <li>เราเขียนโปรแกรมติดต่อกับ OS อย่างไร (system call)</li>
+          <li>แนวคิด concurrent programming: หลายโปรแกรมเข้าไปแก้ข้อมูลตัวเดียวกันพร้อมกันแล้วข้อมูลเพี้ยน วิชานี้สอนปัญหาและวิธีแก้</li>
+          <li>เหตุผลเรียน: เป็น power user, เข้าใจความสัมพันธ์ Hardware (Computer Organization) กับ Software (OS), ฐานสำหรับงานผู้ดูแลระบบ/เครือข่าย และเป็นโปรแกรมเมอร์ที่ดีขึ้น</li>
+        </ul></div>
+        <div class="example"><div class="ex-title">ตัวอย่างโจทย์คลาสสิกของอาจารย์</div><ol>
+          <li>เติม 0 ลงอาร์เรย์ <code>int a[1024][1024]</code> 2 แบบ: ลูป <code>i</code> นอก-<code>j</code> ใน กับ ลูป <code>j</code> นอก-<code>i</code> ใน แบบไหนดีกว่า</li>
+          <li>คำตอบคือลำดับการเข้าถึงข้อมูลมีผลต่อประสิทธิภาพ เฉลยชัด ๆ อยู่ที่เรื่อง locality และ page fault (ด้านลังจัดการหน่วยความจำใน <a href="os-2.html">หน้า OS ต่อ</a>)</li>
+        </ol></div>
+
+        <h3>OS คืออะไร ประกอบด้วยอะไร</h3>
+        <p><strong>OS</strong> คือ software ที่จัดการ resources ของคอมพิวเตอร์และควบคุมว่าใครใช้ระบบอย่างไร เป้าหมายคือรันโปรแกรมผู้ใช้ให้ง่าย ทำระบบ user-friendly และเพิ่มประสิทธิภาพการใช้ฮาร์ดแวร์</p>
+        <ul>
+          <li><strong>Kernel</strong> = ส่วนแกนที่รับผิดชอบงานพื้นฐานของ OS เมื่อพูดถึง OS โดยพื้นฐานหมายถึง kernel</li>
+          <li>ส่วนที่เหลือคือ <strong>system programs</strong> และ <strong>application programs</strong></li>
+          <li>องค์ประกอบ OS: Memory Manager, Processor Manager, Device Manager, File Manager, User Command Interface, Network Manager, Security Manager</li>
+          <li>ทุก component ต้อง monitor resources ของตน ทำตามกฎ "who gets what, when, and how much", allocate เมื่อเหมาะสม และ <strong>deallocate</strong> เมื่อจำเป็น</li>
+        </ul>
+
+        <h3>Boot Process (การบูตเครื่อง)</h3>
+        <p><strong>Booting</strong> คือการเริ่มเครื่องโดยการโหลด kernel ลำดับคือ: Power On (CPU รันคำสั่งจาก BIOS/UEFI) → <strong>POST</strong> (Power-On Self-Test ตรวจฮาร์ดแวร์) → เลือก boot loader (BIOS มองหา <strong>MBR</strong>, UEFI มองหา <strong>ESP</strong> และอ่าน BCD) → รัน bootloader → โหลด OS kernel → OS initialization</p>
+        <table>
+          <tr><th>ประเด็น</th><th>BIOS</th><th>UEFI</th></tr>
+          <tr><td>Boot Mode</td><td>16-bit real mode</td><td>32/64-bit mode (เร็วกว่า, address memory ใหญ่กว่า)</td></tr>
+          <tr><td>Partition Table</td><td>MBR (จำกัดขนาด/จำนวน partition)</td><td>GPT (ยืดหยุ่น, รองรับดิสก์ใหญ่)</td></tr>
+          <tr><td>ที่เก็บ bootloader</td><td>MBR</td><td>ESP</td></tr>
+          <tr><td>Secure Boot</td><td>ไม่มี</td><td>มี (ตรวจ digital signature ของ bootloader)</td></tr>
+          <tr><td>ความเร็ว</td><td>ช้ากว่า</td><td>เร็วกว่า</td></tr>
+        </table>
+
+        <h3>Dual Mode Operation</h3>
+        <ul>
+          <li><strong>Mode bit</strong> = hardware flag บอกโหมดปัจจุบัน: <strong>0 = kernel (monitor) mode, 1 = user mode</strong></li>
+          <li>เกิด interrupt/fault เมื่อใด hardware จะสลับเข้า monitor mode ให้เอง</li>
+          <li><strong>Privileged instructions</strong> ใช้ได้เฉพาะใน monitor mode เท่านั้น</li>
+        </ul>
+
+        <h3>Computer-System Operation และ Interrupt</h3>
+        <ul>
+          <li>I/O devices กับ CPU ทำงานพร้อมกัน (concurrently) ได้ แต่ละ <strong>device controller</strong> ดูแล device ประเภทหนึ่ง เมื่อทำงานเสร็จจะ <strong>ขัดจังหวะ (interrupt)</strong> CPU</li>
+          <li>OS เป็น <strong>interrupt driven</strong>: save address ของคำสั่งที่ถูกขัด แล้วส่ง control ไปยัง interrupt service routine ผ่าน <strong>interrupt vector</strong> (เก็บ address ของทุก service routine)</li>
+          <li><strong>Trap</strong> = interrupt ที่เกิดจาก software ทั้งจาก program error (<strong>exception</strong>) และการขอบริการ OS ผ่าน <strong>system call</strong></li>
+        </ul>
+
+        <h3>ประเภทของ OS</h3>
+        <ul>
+          <li><strong>ตามวิธีป้อนข้อมูล:</strong> Batch (Single/Multi-programmed, jobs ประมวลผลตามลำดับ automatic job sequencing, ไม่มีปฏิสัมพันธ์กับผู้ใช้), Interactive (เกิดจากโปรแกรมเมอร์ต้องแก้ bug เร็ว ๆ ต้องมี time-sharing), Hybrid (ผสม รัน batch ตอน workload interactive ต่ำ)</li>
+          <li><strong>ตามจำนวน user/task:</strong> Single-user single-tasking (<strong>MS-DOS</strong>), Single-user multi-tasking (desktop/laptop), Multi-user multi-tasking (server)</li>
+          <li><strong>Special purpose:</strong> Hard real-time (secondary storage จำกัดหรือไม่มี เก็บข้อมูลใน short-term memory หรือ ROM, <strong>เข้ากันไม่ได้</strong>กับ time-sharing และ general-purpose OS, ตัวอย่าง <strong>VxWorks, RTXC</strong>), Soft real-time (multimedia, virtual reality), Embedded (คอมพิวเตอร์เฉพาะงาน resource จำกัด)</li>
+          <li><strong>ตามสถาปัตยกรรม:</strong> Single Processor, Parallel/Multiprocessor (tightly-coupled เช่น dual-core), Distributed (หลายเครื่องอิสระรวมกันเป็นระบบเดียว, loosely-coupled, ต้องมี network; แบ่งเป็น Network OS เช่น Windows Server, Ubuntu Server และ Distributed OS เช่น Sprite, Amoeba)</li>
+        </ul>
+
+        <h3>Virtual Machine และ Container</h3>
+        <p>ปัญหาคลาสสิกของการ deploy software คือ <strong>"It works on my machine"</strong> และ <strong>dependency hell</strong> แก้ด้วย container ซึ่งเป็นวิธีแพ็กแอป + dependencies เป็นหน่วยมาตรฐานเดียว (แพลตฟอร์มยอดนิยมคือ Docker) ตัวอย่าง VM ที่สไลด์ยกคือ Java Virtual Machine (JVM)</p>
+        <ul>
+          <li>ศัพท์ Docker: <strong>Docker Engine</strong> (แกนจัดการ container/image/network/volume), <strong>Dockerfile</strong> (ไฟล์คำสั่ง build image), <strong>Docker Image</strong> (read-only template ใช้สร้าง container), <strong>Docker Hub</strong> (registry แชร์ image), <strong>Docker Container</strong> (runnable instance ของ image แยกจากกันและจาก host), Volume (เก็บข้อมูลถาวร), Network</li>
+        </ul>
+        <table>
+          <tr><th>ปัจจัย</th><th>Containerization</th><th>Virtualization</th></tr>
+          <tr><td>OS factor</td><td>ทุก container ใช้ host OS เดียวกัน ไม่ต้องจำลองทั้งเครื่อง</td><td>แต่ละ VM มี OS ของตัวเอง ต้องจำลองทั้งเครื่อง</td></tr>
+          <tr><td>Portability</td><td>พกพากว่า</td><td>พกพาน้อยกว่า</td></tr>
+          <tr><td>น้ำหนัก</td><td>Light</td><td>Heavy</td></tr>
+          <tr><td>Booting time</td><td>Fast</td><td>Slow</td></tr>
+        </table>
+
+        <h3>OS Services และ System Call</h3>
+        <p>บริการของ OS ที่ต้องจำ: User interface (CLI/GUI/Batch), Program execution, I/O operations, File-system manipulation, Communications, Error detection, Resource allocation, Accounting, Protection and security (Protection = ควบคุมการเข้าถึง resource, Security = user authentication + ป้องกัน I/O ภายนอก)</p>
+        <ul>
+          <li>ช่องทาง communication มี 2 แบบ: <strong>shared memory</strong> หรือ <strong>message passing</strong> (เครื่องเดียวหรือข้ามเครือข่ายก็ได้)</li>
+          <li><strong>CLI / shell</strong>: หน้าที่หลักคือดึงคำสั่งจากผู้ใช้แล้วทำงานตาม implement ได้ทั้ง <strong>ใน kernel</strong> หรือเป็น <strong>external program</strong> (shell หลายรสชาติ) บางคำสั่ง built-in บางคำสั่งเป็นแค่ชื่อโปรแกรม</li>
+          <li><strong>System call</strong> = API ที่ให้เข้าถึงฟังก์ชัน/บริการของ OS โปรแกรมส่วนใหญ่ใช้ API ระดับสูงแทนการเรียก system call ตรง ๆ</li>
+          <li><strong>3 API ยอดนิยม:</strong> Win32 (Windows), POSIX (UNIX, Linux, Mac OS), Java API (สำหรับ JVM)</li>
+          <li><strong>6 ประเภทของ system calls:</strong> Process control, File management, Device management, Information maintenance, Communications, Protection</li>
+          <li>Kernel architectures: <strong>Monolithic</strong> กับ <strong>Microkernel</strong> (สไลด์นำเสนอเป็นแผนภาพเทียบสองแบบ)</li>
+        </ul>
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li>ความต่าง "การใช้ OS" กับ "หลักการทำงานของ OS" และตัวอย่างลูปอาร์เรย์ 2 แบบ เชื่อมกับ page fault/locality</li>
+          <li>kernel vs system/application programs, องค์ประกอบ OS 7 ส่วน</li>
+          <li>ลำดับ boot process, ตารางเทียบ BIOS/UEFI (MBR vs ESP/GPT, Secure Boot)</li>
+          <li>ค่า mode bit (0 = kernel, 1 = user), privileged instructions</li>
+          <li>trap vs interrupt, interrupt vector, ตาราง container vs VM</li>
+          <li>OS services, communication 2 แบบ, system call คืออะไร, 3 APIs หลัก, ประเภท system calls 6 อย่าง</li>
+          <li>ประเภท OS และตัวอย่าง: MS-DOS, VxWorks/RTXC, hard vs soft real-time, Network OS vs Distributed OS</li>
+        </ul></div>
+      </section>
+
+      <section id="sec2" class="card">
+        <h2>Process (กระบวนการ)</h2>
+
+        <h3>Program vs Process</h3>
+        <ul>
+          <li><strong>Program</strong> = inactive entity คือไฟล์เก็บบนดิสก์</li>
+          <li><strong>Process</strong> = <strong>program in execution</strong> เป็น active entity ต้องใช้ resources และมีข้อมูลของตัวเอง: <strong>program counter, stack, data section</strong></li>
+          <li>Process คือ single instance ของ executable; ใน time-sharing system เรียก <strong>Task</strong> ใน batch system เรียก <strong>Job</strong></li>
+          <li>สไลด์มีแผนภาพ Process State และ <strong>Seven-State Process Model</strong> (รุ่นสถานะ process 7 สถานะ)</li>
+        </ul>
+
+        <h3>Scheduling Queues</h3>
+        <ul>
+          <li><strong>Job queue</strong> = process ทั้งหมดในระบบ</li>
+          <li><strong>Ready queue</strong> = process ที่อยู่ใน main memory พร้อมรอรัน</li>
+          <li><strong>Device queues</strong> = process ที่รอ I/O device</li>
+          <li>Process ย้ายไปมาระหว่าง queues ได้เรื่อย ๆ</li>
+        </ul>
+
+        <h3>PCB, Context Switch และ Dispatcher</h3>
+        <ul>
+          <li><strong>PCB (Process Control Block)</strong> = โครงสร้างข้อมูลที่เก็บ context ของ process</li>
+          <li><strong>Context switch</strong>: เมื่อ CPU เปลี่ยนไปรัน process อื่น ต้อง save state เดิม + load state ใหม่ (อ้างอิงข้อมูลใน PCB) เป็น <strong>overhead</strong> เพราะระหว่างสวิตช์ระบบไม่ทำงานที่เป็นประโยชน์ ระยะเวลาขึ้นกับ <strong>hardware support</strong></li>
+          <li><strong>Dispatcher</strong> ส่ง CPU ให้ process ที่ short-term scheduler เลือก โดย: switch context → สลับเป็น user mode → jump ไปตำแหน่งเดิมของ user program</li>
+          <li><strong>Dispatch latency</strong> = เวลาที่ dispatcher ใช้หยุด process หนึ่งแล้วเริ่มอีก process หนึ่ง</li>
+        </ul>
+
+        <h3>Schedulers และชนิดของ Process</h3>
+        <table>
+          <tr><th>ประเด็น</th><th>Long-term (job scheduler)</th><th>Short-term (CPU scheduler)</th></tr>
+          <tr><td>หน้าที่</td><td>เลือก process เข้าสู่ ready queue</td><td>เลือก process ที่จะรันต่อไปและให้ CPU</td></tr>
+          <tr><td>ความถี่</td><td>นาน ๆ ครั้ง (วินาทีถึงนาที) ช้าได้</td><td>บ่อยมาก (มิลลิวินาที) ต้องเร็ว</td></tr>
+          <tr><td>ผลสำคัญ</td><td>ควบคุม <strong>degree of multiprogramming</strong></td><td>ต้องเลือกได้เร็ว ไม่งั้นเปลือง CPU</td></tr>
+        </table>
+        <ul>
+          <li><strong>I/O-bound process</strong>: ใช้เวลากับ I/O มากกว่าคำนวณ เกิด CPU burst สั้น ๆ หลายครั้ง</li>
+          <li><strong>CPU-bound process</strong>: ใช้เวลาคำนวณมาก เกิด CPU burst ยาว ๆ ไม่กี่ครั้ง</li>
+        </ul>
+
+        <h3>Process Creation: fork/exec/wait</h3>
+        <p>Parent process สร้าง child process ทำให้เกิด <strong>process tree</strong> กลไกหลักใน UNIX คือ <code>fork()</code> กับ <code>exec()</code></p>
+        <pre><code>pid_t pid = fork();
+if (pid &lt; 0) {                       /* ติดลบ = สร้างไม่สำเร็จ */
+    fprintf(stderr, "Fork failed");
+} else if (pid == 0) {               /* ใน child: pid == 0 */
+    execlp("/bin/ls", "ls", NULL);   /* exec: แทนที่ process image ด้วยโปรแกรมใหม่ */
+} else {                             /* ใน parent: pid = process id ของ child (&gt; 0) */
+    wait(NULL);                      /* รอลูกจบแล้วค่อยทำงานต่อ */
+}</code></pre>
+        <ul>
+          <li><strong>fork()</strong> สร้าง child โดย <strong>copy ตัวเอง</strong> แล้วทั้ง parent และ child รันต่อจากจุดเดียวกัน</li>
+          <li>ค่าที่คืน: <strong>child ได้ 0, parent ได้ process ID ของ child (&gt; 0), ติดลบ = สร้างไม่สำเร็จ</strong></li>
+          <li>ตัวแปร (เช่น <code>i</code>) ถูก copy แยกระหว่าง parent/child และลำดับ output เป็น <strong>non-deterministic</strong> ดูโค้ดแล้วเดาลำดับไม่ได้</li>
+          <li><strong>exec()</strong> = ครอบครัวฟังก์ชันที่แทนที่ process image เดิมด้วยโปรแกรมใหม่ทั้งหมด</li>
+          <li>แพตเทิร์นคลาสสิก: <code>fork()</code> → ลูก <code>execlp</code> → parent <code>wait(NULL)</code> แล้วค่อยทำงานต่อ</li>
+        </ul>
+
+        <h3>Process Termination</h3>
+        <ul>
+          <li>Process จบด้วยคำสั่งสุดท้าย + ขอให้ OS ทำลาย (<strong>exit</strong>), ส่ง output ไป parent ผ่าน <strong>wait</strong>, OS คืน resources</li>
+          <li>Parent อาจ <strong>abort</strong> child เมื่อ: child ใช้ resource เกินที่จัดสรร / งานที่มอบหมายไม่ต้องใช้แล้ว / parent กำลังจะจบ</li>
+          <li><strong>Cascading termination</strong>: บาง OS ไม่ให้ child อยู่ต่อถ้า parent จบ child ทั้งหมดจึงถูก terminate ตาม</li>
+        </ul>
+
+        <h3>Process ใน Java</h3>
+        <p>JVM เป็นแอปธรรมดาที่รันเป็น <strong>process เดียว</strong> บน host OS และ <strong>Java ไม่รองรับ process model</strong> (สร้างหลาย process ใน JVM เดียวไม่ได้) แต่ใช้ class <strong>ProcessBuilder</strong> สร้าง process ภายนอกของ OS ได้</p>
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li>นิยาม program vs process + สิ่งที่ process มี (PC, stack, data section)</li>
+          <li>ชื่อ queue 3 แบบ, หน้าที่ PCB, ทำไม context switch ถึงเป็น overhead</li>
+          <li>หน้าที่ dispatcher, dispatch latency</li>
+          <li>long-term vs short-term scheduler: ความถี่, degree of multiprogramming</li>
+          <li>I/O-bound vs CPU-bound</li>
+          <li>ค่า return ของ fork() ทั้ง 3 กรณี, exec() ทำอะไร, cascading termination</li>
+        </ul></div>
+      </section>
+
+      <section id="sec3" class="card">
+        <h2>Thread</h2>
+
+        <h3>นิยามและเทียบกับ Process</h3>
+        <p><strong>Thread</strong> คือส่วนของโปรแกรมที่รันได้อย่างอิสระจากส่วนอื่น คือลำดับคำสั่งที่ทำงานอยู่ <strong>ภายใน process</strong> เดิม ไม่ได้สร้าง process ใหม่เหมือน fork จึงเรียกว่า <strong>lightweight process</strong></p>
+        <ul>
+          <li>สิ่งที่ thread แต่ละตัวต้องมีเป็นของตัวเอง: <strong>program counter, registers, stack</strong></li>
+          <li>Thread ใน process เดียวกัน <strong>แชร์ code, data และ open files ร่วมกัน</strong> (fork แบบ process จะ copy ทุกอย่างจึงใช้ทรัพยากรเยอะกว่า)</li>
+          <li>เพราะฉะนั้น <strong>สลับ (swap) thread เร็วและถูกกว่าสลับ process</strong>, thread คือ element ที่ใช้ CPU และถูกจัดคิวรัน, multithreaded app มีหลาย thread รันพร้อมกันด้วย priority เท่ากันหรือต่างกันได้</li>
+        </ul>
+        <table>
+          <tr><th>ประเภท OS</th><th>ความหมาย</th><th>ตัวอย่าง</th></tr>
+          <tr><td>Single-process single-threaded</td><td>รันทีละ 1 process, 1 process มี 1 thread</td><td>DOS</td></tr>
+          <tr><td>Single-process multi-threaded</td><td>รันทีละ 1 process แต่มีหลาย thread</td><td>JVM</td></tr>
+          <tr><td>Multiprocessing single-threaded</td><td>หลาย process แต่ละตัวมี 1 thread</td><td>traditional UNIX</td></tr>
+          <tr><td>Multiprocessing multi-threaded</td><td>หลาย process + หลาย thread</td><td>modern OS (Windows, Linux, macOS)</td></tr>
+        </table>
+
+        <h3>Thread State และ TCB (จากคลิป 5.1)</h3>
+        <ul>
+          <li>Thread state: <strong>New → Runnable (เทียบเท่า Ready) → Running → Terminated</strong> มี Blocked กับ Timed waiting (waiting ที่แบ่งละเอียดขึ้น: timed waiting = sleep รอตามเวลา, blocked = รอทรัพยากร)</li>
+          <li>จุดที่อาจารย์เน้น: พอรอเสร็จทุกกรณี <strong>กลับไปที่ Runnable (Ready) เสมอ</strong> ไม่ได้กลับเข้า Running โดยตรง</li>
+          <li><strong>TCB (Thread Control Block)</strong> เก็บ: thread ID, สถานะ, program counter, ค่า register, priority และ pointer ชี้ไปยัง process ที่สร้างมัน</li>
+        </ul>
+
+        <h3>User-Level Thread vs Kernel-Level Thread และโมเดลการจับคู่</h3>
+        <ul>
+          <li><strong>ULT</strong>: จัดการด้วย thread library ฝั่งผู้ใช้ มี 3 libraries: <strong>POSIX Pthreads, Win32 threads, Java threads</strong></li>
+          <li><strong>KLT</strong>: OS สมัยใหม่ support โดย kernel ทั้งสองแบบต้องจับคู่กันในการทำงานจริง</li>
+        </ul>
+        <table>
+          <tr><th>โมเดล</th><th>ความหมาย</th><th>ข้อดี/ข้อเสีย (จากคลิป)</th><th>ตัวอย่าง</th></tr>
+          <tr><td>Many-to-One</td><td>user thread หลายตัว → kernel thread ตัวเดียว</td><td>ไม่ขนานจริง: ถ้า user thread หนึ่งไปรออะไรนาน ๆ thread ที่เหลือต้องพลอยรอหมด</td><td>Early UNIX / OS เก่าที่ไม่รองรับ kernel thread</td></tr>
+          <tr><td>One-to-One</td><td>user thread แต่ละตัว → kernel thread หนึ่งตัว</td><td>ขนานจริง ตัวที่ทำงานยาวไม่กระทบตัวอื่น แต่สร้างได้จำกัดตามที่ OS ยอมให้สร้าง kernel thread และเปลืองทรัพยากร</td><td><strong>Windows ตั้งแต่ NT, Linux, Solaris 9+</strong></td></tr>
+          <tr><td>Many-to-Many</td><td>user thread หลายตัว → kernel thread หลายตัว</td><td>ประนีประนอมดี แต่ implement ซับซ้อนจน Solaris 9 ย้ายกลับไป one-to-one</td><td>Solaris ก่อน 9, Tru64 UNIX</td></tr>
+        </table>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div><ul>
+          <li>Java thread อิง thread library บน host OS ที่มันรันอยู่ สโลแกน "Write once, run anywhere" ในเรื่อง thread พฤติกรรมอาจไม่เหมือนกันขึ้นกับ OS ที่รัน</li>
+          <li>อย่าเขียนโปรแกรมโดยสมมติลำดับการรันของ thread (ยืนยันอีกครั้งในหัวข้อ Java Scheduling ของ <a href="#sec4">CPU Scheduling</a>)</li>
+        </ul></div>
+
+        <h3>Pthreads: โปรแกรม multithread ด้วย C (คลิป 5.2)</h3>
+        <p>โจทย์ตัวอย่าง: ผู้ใช้ป้อนเลข n → thread ลูกหาผลรวม 1..n เก็บใน <code>sum</code> → thread แม่ (main) เป็นคนพิมพ์ค่าออกมา แสดงว่าแม่กับลูกใช้ข้อมูลร่วมกันได้จริง</p>
+        <pre><code>int sum;                      /* global variable: อยู่ใน Data section ที่เทรดแชร์กัน */
+
+void *runner(void *param);    /* prototype ตายตัว: คืนค่า void* รับพารามิเตอร์ void* 1 ตัว */
+
+int main(int argc, char *argv[]) {
+    pthread_t tid;                /* thread id ไม่ซ้ำกันแต่ละเทรด */
+    pthread_attr_t attr;          /* attribute ของเทรด */
+    pthread_attr_init(&amp;attr);     /* ตั้งค่า default attribute */
+    pthread_create(&amp;tid, &amp;attr, runner, argv[1]);
+    /* 4 พารามิเตอร์: (1) &amp;tid = OS ส่ง tid กลับมา (2) &amp;attr = ใช้ default
+       (3) runner = ฟังก์ชันที่ลูกจะทำ (4) argv[1] = ค่าส่งให้ runner */
+    pthread_join(tid, NULL);      /* แม่รอลูก (เทียบเท่า wait), NULL = ไม่สนค่าที่ลูกส่งกลับ */
+    printf("sum = %d\n", sum);    /* คนคำนวณคือลูก แต่คนพิมพ์คือแม่ */
+}
+
+void *runner(void *param) {
+    int upper = atoi(param);      /* รับ string แปลงเป็น int */
+    sum = 0;
+    for (int i = 1; i &lt;= upper; i++) sum += i;
+    pthread_exit(NULL);           /* จบเทรด (ค่าส่งกลับเป็น pointer ต่างจาก exit ของ process) */
+}</code></pre>
+        <ul>
+          <li><code>pthread_exit()</code> ต่างจาก <code>exit()</code> ของ process ตรงที่ค่าส่งกลับเป็น <strong>pointer</strong> (ส่ง struct ซับซ้อนได้)</li>
+          <li>Compile ต้องลิงก์ pthread library: <code>gcc pthread.c -o pthread -lpthread</code>, รัน <code>./pthread 5</code> ได้ 15</li>
+          <li>ตัวอย่างที่ 2: ลูกจอง memory เองแล้วส่ง pointer กลับผ่าน <code>pthread_exit</code> แม่รับด้วย <code>pthread_join(tid, &amp;sum)</code> แล้วพิมพ์ <code>*sum</code> อาจารย์ย้ำว่าทำได้จริง <strong>แต่ทางปฏิบัติไม่นิยม</strong></li>
+        </ul>
+
+        <h3>Java Thread (คลิป 5.3)</h3>
+        <p>สร้าง thread ใน Java ได้ 2 ทาง เลือกทางไหนก็ได้ ยกเว้นกรณี class สืบทอด class อื่นอยู่แล้ว Java ไม่รองรับ multiple inheritance จึง <strong>บังคับใช้ implements Runnable</strong></p>
+        <pre><code>/* วิธีที่ 1: extends Thread */
+class Worker1 extends Thread {
+    public void run() {                       /* override run(): งานของเทรดอยู่ที่นี่ */
+        System.out.println("I am a worker thread");
+    }
+}
+/* เรียกใช้: worker.start();  start() จะเรียก run() ผ่าน polymorphism */
+
+/* วิธีที่ 2: implements Runnable */
+class Worker2 implements Runnable {
+    public void run() { System.out.println("I am a worker thread"); }
+}
+/* เรียกใช้: Thread t = new Thread(worker); t.start();  ห่อด้วย Thread object ก่อน */</code></pre>
+        <ul>
+          <li>ผลลัพธ์มี 2 บรรทัด (แม่ + ลูก) แต่ <strong>ไม่การันตีว่าใครพิมพ์ก่อน</strong> รันหลายครั้งอาจได้ลำดับต่างกัน</li>
+          <li><strong>join()</strong> = แม่รอลูกจบ: "worker done" จะออกหลัง "worker working" เสมอเมื่อมี join</li>
+          <li>Java thread state: NEW → RUNNABLE (แปลว่า Ready ไม่ใช่กำลังรัน) → RUNNING → TERMINATED + Sleeping/Waiting/Blocking</li>
+        </ul>
+
+        <h3>Thread Cancellation (คลิป 5.4)</h3>
+        <ul>
+          <li><strong>Asynchronous</strong>: ถูกสั่ง cancel ปุ๊บจบทันที</li>
+          <li><strong>Deferred</strong>: thread ทำงานต่อจนถึง <strong>cancellation point</strong> (จุดที่ปลอดภัย) ค่อยจบ เช่นคำสั่ง I/O อย่าง <code>printf</code>, <code>sleep</code> หรือเรียก <code>pthread_testcancel()</code> เอง (Java ใช้แนวคิดเดียวกัน: <code>interrupt()</code> + ลูกต้องเช็ค <code>isInterrupted()</code> เอง ถ้าไม่เช็คก็ไม่หยุด เป็น cooperative mechanism)</li>
+        </ul>
+        <pre><code>void *worker(void *arg) {
+    pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);  /* หรือ ASYNCHRONOUS */
+    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);   /* default คือ ENABLE ตั้งหรือไม่ตั้งก็ได้ */
+    while (1) { i++; }        /* ถ้า loop ไม่มี cancellation point, cancel แบบ deferred ไม่มีวันทำงาน */
+    printf("thread finish work");
+}
+/* main: pthread_cancel(tid) สั่ง cancel แล้ว pthread_join(tid, NULL) รอให้จบ */</code></pre>
+        <ul>
+          <li>ทดลอง 4 สถานการณ์ของอาจารย์: deferred + loop ไม่มีจุด cancel → cancel ไม่ได้ต้อง Ctrl-C; ใส่ printf ใน loop → จบได้; asynchronous → หยุดทันที; ตั้ง cancel state เป็น DISABLE → ต่อให้ asynchronous ก็ cancel ไม่ได้</li>
+          <li>Default ของ Pthread คือ deferred เพราะ <strong>ปลอดภัยกว่าในแง่การใช้ทรัพยากร</strong> cancellation point ให้โอกาส thread เคลียร์ทรัพยากรก่อนจบ</li>
+        </ul>
+
+        <h3>Thread Pool (คลิป 5.4)</h3>
+        <p>สร้าง thread ไว้ล่วงหน้าหลายตัว มีงานก็หยิบจาก pool ทำเสร็จกลับเข้า pool ข้อดีคือใช้ thread ที่มีอยู่เร็วกว่าสร้างใหม่ และจำกัดจำนวน thread ได้ <strong>Pthread ไม่มี thread pool ให้ใช้ ต้องสร้างเอง</strong> ส่วน Java มี 3 แบบ:</p>
+        <ul>
+          <li><strong>Single thread executor</strong> (pool ขนาด 1)</li>
+          <li><strong>Fixed thread executor</strong> (ขนาดคงที่ ไม่เพิ่มไม่ลด)</li>
+          <li><strong>Cached thread pool</strong> (dynamic: ตัวที่ idle 1 นาทีถูกถอดออก ต้องการมากขึ้นก็สร้างเพิ่ม)</li>
+        </ul>
+        <div class="example"><div class="ex-title">ตัวอย่าง: ทดลอง 10,000 tasks (งานละ พิมพ์ชื่อ + sleep 1 วินาที)</div>
+        <table>
+          <tr><th>วิธี</th><th>เวลาที่วัดได้</th><th>หมายเหตุของอาจารย์</th></tr>
+          <tr><td>ไม่ใช้ pool (สร้าง 10,000 เทรด)</td><td>ประมาณ 3,444 ms</td><td></td></tr>
+          <tr><td>Unbounded pool</td><td>ประมาณ 2.6 วินาที</td><td>เร็วสุด เพราะเทรดที่ทำเสร็จกลับเข้า pool รับงานต่อได้เลย</td></tr>
+          <tr><td>Single-thread pool</td><td>ช้ามาก ต้องยกเลิกกลางทาง</td><td>ทำทีละงาน มีสิทธิ์รอถึง 10,000 วินาที</td></tr>
+          <tr><td>Fixed 10,000</td><td>ประมาณ 3.38 วินาที</td><td>ช้ากว่าไม่ใช้ pool ซะอีก ขึ้นกับ implementation ที่ค่อย ๆ สร้างเทรดเมื่อจำเป็น</td></tr>
+          <tr><td>Fixed 1,000</td><td>ประมาณ 10.2 วินาที</td><td></td></tr>
+          <tr><td>Fixed 5,000</td><td>ประมาณ 2.9 วินาที</td><td>ใกล้เคียง unbounded งานจริงต้องปรับขนาดให้เหมาะกับงานเรา</td></tr>
+        </table>
+        </div>
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li>นิยาม thread, สิ่งที่ thread มีเอง (PC, registers, stack) กับสิ่งที่แชร์ (code, data, open files), เหตุผลที่สลับ thread ถูกกว่า process</li>
+          <li>ตาราง 4 ประเภท OS ตาม process/thread (DOS, JVM, traditional UNIX, modern OS)</li>
+          <li>โมเดล many-to-one / one-to-one / many-to-many: ข้อดีข้อเสีย + ตัวอย่าง OS (Windows NT+/Linux/Solaris 9+, Solaris &lt; 9, Tru64)</li>
+          <li>Thread state: รอเสร็จกลับ Runnable เสมอ, ข้อมูลใน TCB</li>
+          <li>พารามิเตอร์ของ pthread_create, pthread_join = wait, pthread_exit ส่ง pointer, compile ต้อง -lpthread</li>
+          <li>สร้าง Java thread 2 วิธี + กรณีบังคับใช้ Runnable (multiple inheritance), start() เรียก run() ผ่าน polymorphism</li>
+          <li>Cancellation: asynchronous vs deferred, cancellation point, default ของ Pthread คือ deferred, Java interrupt() ต้องให้ลูกร่วมมือเช็คเอง</li>
+          <li>Thread pool 3 แบบของ Java + บทเรียนจากทดลอง 10,000 tasks</li>
+        </ul></div>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div><ul>
+          <li>"สร้าง 10,000 เทรด เทรดละ 1 วินาที ทำไมไม่ใช้เวลา 10,000 วินาที" เพราะเทรดทั้งหมด <strong>ไม่ได้เข้าคิวต่อกันทำ</strong> แต่ทำงานพร้อมกัน ยิ่ง multicore ยิ่งเร็ว จึงจบในราว 3 วินาที</li>
+          <li>Fixed pool ขนาดใหญ่ไม่ได้แปลว่าเร็วสุดเสมอ (fixed 10,000 ช้ากว่าไม่ใช้ pool) ต้องลองปรับดู</li>
+        </ul></div>
+      </section>
+
+      <section id="sec4" class="card">
+        <h2>CPU Scheduling</h2>
+
+        <h3>พื้นฐานและเกณฑ์วัด</h3>
+        <p><strong>CPU scheduler</strong> เลือก process จากพวกที่ ready แล้วให้ CPU แบ่งเป็น <strong>non-preemptive</strong> (เลือกแล้วขัดจังหวะไม่ได้ process ต้องยินดีปล่อย CPU เอง สมัยก่อนจึงต้องพึ่ง cooperative programming) กับ <strong>preemptive</strong> (OS ขัดจังหวะได้ตามต้องการ)</p>
+        <div class="keypoints"><div class="kp-title">เกณฑ์เพิ่มประสิทธิภาพ 5 ข้อ</div><ul>
+          <li><strong>Max CPU utilization</strong>: ใช้ CPU ให้เต็มประสิทธิภาพ ไม่ปล่อยว่าง</li>
+          <li><strong>Max throughput</strong>: จำนวน process ที่จบได้ต่อช่วงเวลามากที่สุด</li>
+          <li><strong>Min turnaround time</strong>: นับจากส่ง process เข้ามาจนทำงานจบ ต้องน้อยสุด</li>
+          <li><strong>Min waiting time</strong>: เวลาที่รออยู่ใน ready queue ต้องน้อยสุด</li>
+          <li><strong>Min response time</strong>: นับจากป้อนคำสั่งจนมีการตอบสนองกลับครั้งแรก (ไม่ต้องจบงาน) ต้องน้อยสุด</li>
+        </ul></div>
+        <p>อาจารย์บอกว่าวิชานี้เน้นด้านเวลา โดยเฉพาะ turnaround กับ waiting และมีสูตรตรวจคำตอบที่ใช้ได้กับทุกอัลกอริทึม:</p>
+        <div class="example"><div class="ex-title">สูตรสำคัญ (อาจารย์สอนในคลิป 6.1.1)</div><ol>
+          <li><code>turnaround time = เวลาจบ - เวลามาถึง (arrival)</code></li>
+          <li><code>waiting time = turnaround time - burst time</code> สำหรับอัลกอริทึมซับซ้อน หา turnaround ก่อนแล้วลบ burst จะง่ายกว่าอ่านจาก Gantt</li>
+        </ol></div>
+
+        <h3>FCFS (First-Come, First-Served) เป็น non-preemptive</h3>
+        <p>ข้อมูล: P1 มาเวลา 0 ใช้ 24, P2 มาเวลา 2 ใช้ 3, P3 มาเวลา 4 ใช้ 3</p>
+        <pre><code>| P1 (0-24) | P2 (24-27) | P3 (27-30) |
+0           24           27           30</code></pre>
+        <ul>
+          <li>Waiting: P1 = 0, P2 = 24-2 = 22, P3 = 27-4 = 23 → <strong>เฉลี่ย 15</strong></li>
+          <li>Turnaround: P1 = 24, P2 = 27-2 = 25, P3 = 30-4 = 26 (ตรวจด้วยสูตร turnaround - burst ได้ 0, 22, 23 ตรงกัน)</li>
+        </ul>
+        <p>ถ้าสลับลำดับให้ตัวเล็กมาก่อน (P2 มา 0, P3 มา 2, P1 มา 4):</p>
+        <pre><code>| P2 (0-3) | P3 (3-6) | P1 (6-30) |
+0          3          6           30</code></pre>
+        <ul>
+          <li>Waiting: P2 = 0, P3 = 1, P1 = 2 → <strong>เฉลี่ย 1</strong> (ดีขึ้นจาก 15 มหาศาล) turnaround ของ P1 แย่ขึ้นเป็น 26 แต่รวมทั้งระบบดีกว่า</li>
+          <li><strong>Convoy effect</strong> = short process ต่อแถวหลัง long process ทำให้ทั้งระบบรอนาน อุปมาของอาจารย์: ไปธนาคารต่อคิวหลังคนทำธุรกรรมหลักล้าน คนทำธุรกรรมหลักพันทั้งคิวต้องรอตาม</li>
+        </ul>
+
+        <h3>SJF (Shortest-Job-First) เป็น non-preemptive</h3>
+        <p>เลือก process ที่ใช้ burst time น้อยสุดทำก่อน <strong>SJF เป็น optimal ให้ average waiting time ต่ำสุด</strong>สำหรับชุด process ที่กำหนด แต่ทางปฏิบัติทำได้ยากเพราะไม่รู้ว่าแต่ละ process จะใช้ burst เท่าไร</p>
+        <p>ตัวอย่าง: P1(0,7), P2(2,4), P3(4,1), P4(5,4) เวลา 0 มีแต่ P1 และ SJF ไม่ขัดจังหวะ → P1 ทำจนจบก่อน</p>
+        <pre><code>| P1 (0-7) | P3 (7-8) | P2 (8-12) | P4 (12-16) |
+0          7          8           12           16</code></pre>
+        <ul>
+          <li>เวลา 7 คิวมี P2(4), P3(1), P4(4) เลือก P3 ตามด้วย <strong>P2 กับ P4 burst เท่ากัน เสมอกันเลือกตัวมาก่อน</strong> (tie-breaking)</li>
+          <li>Waiting: P1 = 0, P2 = 8-2 = 6, P3 = 7-4 = 3, P4 = 12-5 = 7 → <strong>เฉลี่ย 4</strong>; turnaround: 7, 10, 4, 11</li>
+        </ul>
+
+        <h3>SRTF (Shortest-Remaining-Time-First) เป็น preemptive ของ SJF</h3>
+        <p>ถ้า process ใหม่เข้ามาและใช้เวลาน้อยกว่าเวลาคงเหลือ (remaining) ของตัวที่กำลังรัน → ขัดจังหวะแล้วสลับ ข้อเสีย: ใช้ใน interactive system ไม่ได้ (ต้องรู้ burst ล่วงหน้า) และ <strong>overhead มากกว่า SJF</strong> เพราะต้องคอยติดตาม CPU time แล้วทำ context switch</p>
+        <p>ชุดข้อมูลเดิม ไล่ได้:</p>
+        <pre><code>| P1 (0-2) | P2 (2-4) | P3 (4-5) | P2 (5-7) | P4 (7-11) | P1 (11-16) |
+0          2          4          5           7           11           16</code></pre>
+        <ul>
+          <li>เวลา 2, P2 มา (burst 4) ขณะ P1 เหลือ 5 → ขัด P1; เวลา 4, P3 มา (burst 1) ขณะ P2 เหลือ 2 → ขัด P2; เวลา 5 เหลือ P1(5), P2(2), P4(4) → P2 ต่อ แล้ว P4 ปิดท้าย P1</li>
+          <li>Waiting: P1 = 16-7 = 9, P2 = 5-4 = 1, P3 = 0, P4 = 7-5 = 2 → <strong>เฉลี่ย 3</strong> (ดีกว่า SJF); turnaround: 16, 5, 1, 6</li>
+        </ul>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div><ul>
+          <li>ตอนใช้สูตร waiting = turnaround - burst ของ SRTF: waiting ของ P1 = 16 - <strong>7 (burst ทั้งหมดของ P1 ไม่ใช่เศษ 5)</strong> = 9 อาจารย์เตือนจุดนี้เป็นพิเศษ</li>
+        </ul></div>
+
+        <h3>Priority Scheduling</h3>
+        <ul>
+          <li>ให้ CPU กับ process priority สูงสุด ทำ preemptive หรือ non-preemptive ก็ได้</li>
+          <li>ข้อควรระวังตัวเลข: ขึ้นกับ OS ด้วย Unix-based <strong>เลขสูง = สิทธิต่ำ</strong> แต่ Java thread กลับกัน <strong>เลขสูง = สิทธิสูง</strong></li>
+          <li>มอง SJF ได้ว่าเป็น priority scheduling ที่ priority = predicted next CPU burst</li>
+          <li>ปัญหา <strong>Starvation</strong>: process สิทธิต่ำอาจไม่ได้รันเลยเพราะมีสิทธิสูงส่งเข้ามาตลอด ทางแก้ <strong>Aging</strong>: ยิ่งรอนานยิ่งเพิ่ม priority</li>
+        </ul>
+
+        <h3>Round Robin (RR) เป็น preemptive</h3>
+        <ul>
+          <li>แบ่งเวลา CPU เป็น <strong>time quantum</strong> (ปกติ 10-100 ms แล้วแต่ OS) ทำจบก่อนหมด quantum ก็จบไปเลย หมด quantum แล้วยังไม่จบ → ถูกขัดไปต่อท้าย ready queue</li>
+          <li><strong>การรับประกัน</strong>: n process ใน ready queue, quantum = q → แต่ละ process รอไม่เกิน <strong>(n-1) x q</strong> เช่น n = 10, q = 100 ms → ตัวท้ายสุดรอไม่เกิน 900 ms</li>
+          <li><strong>q ใหญ่เกิน → กลายเป็น FCFS</strong>; <strong>q เล็กเกิน → context switch ถี่เกิน</strong> เกิด overhead (q ต้องใหญ่พอเทียบกับ context-switch time) ตัวอย่าง process ใช้ 10 หน่วยเวลา: q = 12 → switch 0 ครั้ง, q = 6 → 1 ครั้ง, q = 1 → 9 ครั้ง</li>
+        </ul>
+        <p>ตัวอย่าง q = 4 กับ P1(0,24), P2(2,3), P3(4,3): P1 ทำ 0-4 หมดเวลาออก ตอนเวลา 4 ทั้ง P2, P3 มาถึงแล้ว โดย P2 มาก่อน (เวลา 2) จึงได้ทำก่อน</p>
+        <pre><code>| P1 0-4 | P2 4-7 | P3 7-10 | P1 10-14 | P1 14-18 | P1 18-22 | P1 22-26 | P1 26-30 |
+0        4        7         10         14         18         22         26         30</code></pre>
+        <ul>
+          <li>Turnaround: P1 = 30, P2 = 7-2 = 5, P3 = 10-4 = 6; Waiting (turnaround - burst): P1 = 6, P2 = 2, P3 = 3</li>
+          <li>โดยทั่วไป turnaround เฉลี่ยสูงกว่า SJF แต่ <strong>response ดีกว่า</strong> เหมาะกับระบบ interactive</li>
+        </ul>
+
+        <h3>Multilevel Queue (MLQ) และ Multilevel Feedback Queue (MLFQ)</h3>
+        <ul>
+          <li><strong>MLQ</strong>: แบ่ง ready queue เป็นหลายคิว แต่ละคิวใช้อัลกอริทึมของตัวเอง เช่น foreground (โต้ตอบ) ใช้ RR, background ใช้ FCFS ข้อจำกัด: <strong>process เข้าคิวไหนอยู่คิวนั้นตลอด ไม่ย้ายข้าม queue</strong></li>
+          <li>จัดคิวระหว่าง queue ได้ 2 วิธี: <strong>fixed-priority</strong> (foreground ก่อน background เสี่ยง starvation) หรือ <strong>time slice</strong> (เช่น 80% foreground RR, 20% background FCFS)</li>
+          <li><strong>MLFQ</strong>: <strong>process ย้ายข้าม queue ได้</strong> จึงทำ aging ได้ ถ้าจะ implement ต้องออกแบบ: แบ่งกี่คิว, แต่ละคิวใช้อัลกอริทึมอะไร, วิธี promote/demote, process ใหม่เริ่มที่คิวไหน</li>
+        </ul>
+        <div class="example"><div class="ex-title">ตัวอย่าง MLFQ 3 คิว (สไลด์ + คลิป 6.1.4)</div><ol>
+          <li>Q0 = RR quantum 8 ms → ไม่จบย้ายลง Q1 = RR quantum 16 ms → ยังไม่จบย้ายลง Q2 = FCFS</li>
+          <li>ทุก process เข้า Q0 ก่อน ที่ Q2 หมายถึง "ใครมาก่อนได้รันก่อน" และได้ทำเมื่อ Q0, Q1 ว่าง พอได้ทำจะทำจนจบ</li>
+          <li>ออกแบบนี้เหมาะกับงานสั้น: ใช้ 8 ms หรือน้อยกว่าจบที่ Q0, 8-24 ms จบที่ Q1, มากกว่า 24 ms ไปรอที่ Q2</li>
+          <li>ข้อควรระวัง: หลายคิว = ซับซ้อนขึ้น OS ต้องบริหารไม่ให้เกิด starvation</li>
+        </ol></div>
+
+        <h3>Java Thread Scheduling (คลิป 6.2)</h3>
+        <ul>
+          <li>สเปกของ Java <strong>ไม่กำหนดวิธี scheduling มาตรฐาน</strong> ขึ้นกับแต่ละ JVM (JVM เรียกใช้ thread library ของ host OS) จึงเชื่อมกับข้อเตือนใน <a href="#sec3">หัวข้อ Thread</a></li>
+          <li>กฎเหล็กที่อาจารย์เน้นหนักสุด: <strong>ห้ามเขียนโปรแกรม multithread โดยให้ความถูกต้องขึ้นอยู่กับ scheduling algorithm</strong> ถ้าต้องประสานงานจริงต้องใช้ synchronization (ดู <a href="#sec7">หัวข้อ Synchronization</a>)</li>
+          <li>ปกติเป็น <strong>preemptive + priority-based</strong>: priority <strong>1-10, default 5</strong> (setPriority()) เท่ากันเลือกแบบสุ่ม และการ set priority ไม่ได้รับประกันว่าสูงจะทำก่อนต่ำ มันแค่บอก JVM ว่าถ้าจำเป็นต้องเลือกให้เลือกตัว priority สูงกว่า</li>
+          <li>เทรดที่รันอยู่จะรันต่อจนกว่า 1 ใน 3 เหตุการณ์: มีเทรด priority สูงกว่าเข้ามา / เทรดเรียก <code>yield()</code> (ยังไม่จบงานแต่ยินดีออกจาก CPU ให้เทรด priority เท่ากัน) / ทำงานจบเอง หรือหมด time slice (ถ้าระบบ support time-slicing)</li>
+        </ul>
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li>เกณฑ์วัด 5 ข้อพร้อมนิยามที่ต่างกันของ turnaround/waiting/response + สูตร waiting = turnaround - burst</li>
+          <li>คำนวณ Gantt + waiting/turnaround ให้ครบ: <strong>FCFS เฉลี่ย 15 (สลับคิวได้ 1), SJF เฉลี่ย 4, SRTF เฉลี่ย 3, RR q=4 waiting 6/2/3</strong></li>
+          <li>convoy effect, tie-breaking ของ SJF (burst เท่ากันเลือกตัวมาก่อน), การตัดสินใจขัดจังหวะของ SRTF (เทียบ remaining time)</li>
+          <li>starvation/aging ของ priority, ต่างกันไหมเลขสูงคือสิทธิสูง (Unix กับ Java ตรงกันข้าม)</li>
+          <li>กฎ (n-1)q ของ RR, q ใหญ่ = FIFO, q เล็ก = context switch บ่อย</li>
+          <li>ต่างกันของ multilevel queue (ไม่ย้ายคิว) กับ multilevel feedback queue (ย้ายคิวได้ + aging) + ตัวอย่าง Q0 8ms / Q1 16ms / Q2 FCFS</li>
+          <li>Java: spec ไม่กำหนด scheduler, priority 1-10 default 5, 3 เหตุการณ์ที่เทรดหลุดจาก CPU, yield()</li>
+        </ul></div>
+      </section>
+
+      <section id="sec5" class="card">
+        <h2>IPC และ Signal</h2>
+
+        <h3>Inter-Process Communication: ภาพรวม</h3>
+        <p>Process ในระบบแบ่งเป็น <strong>independent</strong> (อิสระต่อกัน) หรือ <strong>cooperating</strong> (การทำงานของ process หนึ่งกระทบอีก process และ/หรือแลกเปลี่ยนข้อมูลกัน) เหตุผลที่ต้อง cooperate มี 3 ข้อ: <strong>Information sharing, Computation speedup, Modularity</strong> (แต่ละ process รับผิดชอบ module ของตัวแล้วเอาผลมารวมกัน)</p>
+        <p>OS แทบทุกตัวเตรียมกลไก IPC พื้นฐานไว้ <strong>3 โมเดล: Signal, Shared memory, Message passing</strong> (UNIX มีให้: Signal, Pipe, Shared memory)</p>
+        <table>
+          <tr><th>กลไก</th><th>ใช้ทำอะไร</th><th>ข้อดี/ข้อจำกัด (จากคลิป 7.1)</th></tr>
+          <tr><td>Signal</td><td>แจ้งเตือนว่าเกิด event</td><td>พกข้อมูลได้น้อยมาก (แค่ signal number) ใช้ส่งข้อมูลจริงไม่ได้</td></tr>
+          <tr><td>Message passing</td><td>ส่งข้อมูลจริงผ่าน message box</td><td>message box อยู่ใน kernel ต้องสลับ user/kernel mode จึงช้า แต่ <strong>OS จัดการ synchronization ให้</strong> ข้ามเครื่อง (ผ่าน socket) ก็ใช้แนวนี้</td></tr>
+          <tr><td>Shared memory</td><td>ส่งข้อมูลจริงผ่าน memory ร่วม</td><td>ไม่ยุ่งกับ kernel ไม่ต้องสลับ mode จึง <strong>เร็วกว่า</strong> แต่ <strong>โปรแกรมเมอร์ต้อง sync เอง</strong> ไม่งั้นเกิด race condition</td></tr>
+        </table>
+
+        <h3>Signal คืออะไร</h3>
+        <p><strong>Signal = software interrupt ที่แจ้ง process ว่าเกิด event</strong> สถานการณ์ที่เกิด: Errors/Exceptions (หารด้วยศูนย์, index เกิน), External events (กด Ctrl+C), Notifications (child ทำงานเสร็จบอก parent), Alarms (หมดเวลาที่ตั้งไว้)</p>
+        <p>เมื่อ process ได้รับ signal มีทางเลือก 3 แบบ:</p>
+        <ol>
+          <li><strong>Catch</strong>: เขียน handler เอง เทียบเท่า exception handling แบบ try/catch</li>
+          <li><strong>ทำตาม default action ของ OS</strong>: ไม่เขียนจัดการ OS สั่งยังไงก็ทำตาม</li>
+          <li><strong>Mask</strong>: บอก OS ให้หน่วง signal ประเภทนั้นไว้ (เช่นกำลังจัดการ signal อื่นอยู่) พอเสร็จค่อยปลด</li>
+        </ol>
+        <p>ชื่อ signal ประกาศใน <code>signal.h</code> ขึ้นต้นด้วย <code>SIG</code> (ค่าจริงคือตัวเลข):</p>
+        <table>
+          <tr><th>Signal</th><th>เกิดเมื่อ</th><th>จัดการได้ไหม</th></tr>
+          <tr><td>SIGFPE</td><td>คำนวณคณิตศาสตร์ผิดพลาด เช่น หารด้วย 0, overflow/underflow</td><td>ได้</td></tr>
+          <tr><td>SIGINT</td><td>ผู้ใช้กด Ctrl+C (คือ signal เบอร์ 2)</td><td>ได้</td></tr>
+          <tr><td>SIGTERM</td><td>ขอให้อีก process จบการทำงาน (software termination)</td><td>ได้ (เขียน handler หรือไม่สนใจก็ได้)</td></tr>
+          <tr><td>SIGQUIT</td><td>ผู้ใช้กด Ctrl+\ บน terminal</td><td>ได้</td></tr>
+          <tr><td>SIGUSR1, SIGUSR2</td><td>user-defined สำหรับแอปพลิเคชัน</td><td>ได้</td></tr>
+          <tr><td>SIGKILL</td><td>บังคับจบ process (เบอร์ 9)</td><td><strong>catch หรือ ignore ไม่ได้ ต้องทำตาม default คือต้องจบการทำงาน</strong></td></tr>
+        </table>
+
+        <h3>signal() ใช้ลงทะเบียน ไม่ใช่ส่ง (คลิป 7.2.1)</h3>
+        <p>จุดที่อาจารย์บอกว่านักเรียนสับสนมากที่สุด: <code>signal()</code> <strong>ไม่ใช่ฟังก์ชันส่ง signal</strong> แต่ใช้ <strong>ลงทะเบียน</strong>กับ OS ว่าเมื่อ signal นี้เกิด ให้ไปเรียกฟังก์ชันอะไร หรือขอไม่รับ (<code>SIG_IGN</code>)</p>
+        <ul>
+          <li><code>signal(int signum, void (*handler)(int))</code>: ตัวแรกคือหมายเลข signal (ใช้ค่าคงที่อย่าง SIGINT อย่าเขียนตัวเลขตรง ๆ) ตัวที่สองคือ pointer ไปยัง handler</li>
+          <li>Handler ต้อง <strong>รับ int 1 ตัว (signal number) และคืนค่า void</strong> เท่านั้น</li>
+        </ul>
+        <pre><code>#include &lt;stdio.h&gt;
+#include &lt;signal.h&gt;
+
+void inthandler(int);          /* handler ต้องเป็น void รับ int ตัวเดียว */
+
+int main(void) {
+    signal(SIGINT, inthandler);   /* ลงทะเบียน: SIGINT (Ctrl+C) ให้ไปเรียก inthandler */
+    while (1) {                   /* ถ้า comment บรรทัด signal() ออก: Ctrl+C ครั้งเดียวโปรแกรมจบทันที (default) */
+        printf("Running\n");
+        sleep(1);
+    }
+}
+
+void inthandler(int sig) {
+    signal(SIGINT, SIG_IGN);      /* ระหว่างจัดการ ขอ ignore Ctrl+C ที่ส่งมาซ้ำ */
+    printf("จะเลิกจริงหรอ? (y/n) ");
+    if (ตอบ y) exit(0);           /* ตอบ y จบโปรแกรม */
+    signal(SIGINT, inthandler);   /* ตอบอย่างอื่น: reinstall handler เดิมรับครั้งต่อไป */
+}</code></pre>
+        <p>จัดการหลาย signal ในโปรแกรมเดียวได้ 2 วิธี: ติดตั้ง handler ละ signal (แยกฟังก์ชัน) หรือ handler เดียว + <code>switch(sig)</code> เลือกใช้ตามความซับซ้อนของการจัดการแต่ละ signal</p>
+
+        <h3>การส่ง Signal: raise() กับ kill() (คลิป 7.2.2)</h3>
+        <pre><code>int raise(int sig);         /* ส่ง signal ถึง process ตัวเอง: สำเร็จ return 0, error คืนค่าไม่ใช่ 0 */
+int kill(pid_t pid, int sig);  /* ส่ง signal ถึง process อื่น: สำเร็จ return 0, ไม่สำเร็จ return -1 */</code></pre>
+        <ul>
+          <li><code>raise()</code> ใช้เพื่อ <strong>ทดสอบว่าถ้าได้รับ signal แบบนี้ โปรแกรมจะตอบสนองถูกต้องไหม</strong> ถ้ามี handler ลงทะเบียนไว้ก็ไปทำ handler ไม่มีก็ทำ default ตัวอย่างคลิป: loop คำนวณ factorial ถ้าค่าใหม่น้อยกว่าค่าเก่า (overflow วนกลับ) ก็ <code>raise(SIGUSR1)</code> ให้ handler รายงานค่าสูงสุด เครื่องอาจารย์เก็บได้ถึง <strong>20!</strong></li>
+          <li><code>kill(pid, sig)</code> ความหมายของ pid: <strong>pid &gt; 0</strong> = process ที่มี PID นั้น; <strong>pid = 0</strong> = ทุก process ใน process group เดียวกับผู้เรียก; <strong>pid = -1</strong> = ทุก process ที่ผู้เรียกมีสิทธิ์ ยกเว้น process 1 (init); <strong>pid &lt; 0 (อื่น ๆ)</strong> = ทุก process ที่ process group ID = |pid|</li>
+        </ul>
+        <pre><code>/* ตัวอย่างแม่-ลูกของอาจารย์: ลูกลงทะเบียนจับ SIGTERM คนเดียว แม่เป็นคนส่ง */
+/* ฝั่งลูก (fork คืนค่า 0) */
+signal(SIGTERM, sig_handler);    /* ลูกพิมพ์ข้อความลาก่อนเมื่อถูกแม่ส่ง SIGTERM มา */
+printf("ลูก pid=%d, แม่ pid=%d\n", getpid(), getppid());
+while (1) { sleep(1); }
+
+/* ฝั่งแม่ */
+sleep(3);                        /* ให้ลูกมีชีวิตสัก 3 วินาที */
+printf("แม่จะฆ่าลูกเบอร์ %d\n", pid);   /* pid ได้จากค่า return ของ fork() */
+kill(pid, SIGTERM);              /* ส่ง SIGTERM ไปฆ่าลูก */
+wait();
+printf("ฉันฆ่าลูกคนนี้แล้ว\n");</code></pre>
+
+        <h3>คำสั่ง kill บน shell</h3>
+        <ul>
+          <li>รูปแบบ <code>kill -SIGNAL PID</code> ส่งให้หลาย process พร้อมกันได้ ระบุ signal เป็นเลขหรือชื่อก็ได้ (ชื่อ <strong>ไม่ต้องมี SIG นำหน้า</strong> เช่น <code>kill -INT 29769</code>)</li>
+          <li>ถ้าไม่ระบุ signal → default คือ <strong>SIGTERM</strong> (ชื่อโปรแกรม kill มาจากจุดนี้)</li>
+          <li><strong>kill -9 pid = SIGKILL</strong> สำหรับ process ดื้อ: แม้เขียน handler ดัก SIGTERM ไว้ kill -TERM ก็ไม่มีผล ต้องใช้ -9 และพยายามดัก SIGKILL ก็เสียเปล่า</li>
+          <li>การใช้จริงที่อาจารย์ย้ำ: บน server ถ้า process เราค้าง ให้ <code>ps -a</code> หา PID แล้ว <code>kill -9</code> (แอดมินไม่ reboot ให้แน่ เพราะคนอื่นเดือดร้อนด้วย)</li>
+        </ul>
+
+        <h3>Message Passing: blocking vs non-blocking</h3>
+        <ul>
+          <li>สื่อสารด้วย <strong>send(message) / receive(message)</strong> โดยต้องสร้าง communication link ก่อน (write = send, read = receive ก็ได้)</li>
+          <li><strong>Blocking (synchronous)</strong>: blocking send = sender block จน message ถูกรับ; blocking receive = receiver block จนมี message</li>
+          <li><strong>Non-blocking (asynchronous)</strong>: send แล้วทำงานต่อ; receive ได้ message หรือ null กลับไปทำอย่างอื่น วิชานี้เน้น blocking อย่างเดียว (เป็น default)</li>
+          <li>เพราะ OS เป็นคนดูแล message passing จึงจัดจังหวะให้ เช่นถ้า message box เต็มและคนรับยังไม่อ่าน OS จะไม่ให้เขียนทับ</li>
+        </ul>
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li>3 โมเดล IPC + เหตุผลของ cooperating processes 3 ข้อ</li>
+          <li>trade-off หัวใจของคลิป: message passing ช้า (สลับ mode) แต่ OS sync ให้ / shared memory เร็ว แต่โปรแกรมเมอร์ sync เอง ไม่งั้น race condition</li>
+          <li>signal คือ software interrupt, 3 วิธีจัดการ signal (catch/default/mask), SIGKILL พิเศษอย่างไร</li>
+          <li><strong>signal() คือฟังก์ชันลงทะเบียน handler ไม่ใช่ส่ง</strong>, handler ต้อง void รับ int, SIG_IGN กัน signal ซ้ำ</li>
+          <li>raise() กับ kill() ต่างกันอย่างไร, ความหมาย pid 0 / -1 ใน kill(), kill -9, default ของคำสั่ง kill = SIGTERM</li>
+          <li>blocking vs non-blocking send/receive (default คือ blocking)</li>
+        </ul></div>
+      </section>
+
+      <section id="sec6" class="card">
+        <h2>Pipe และ Shared Memory</h2>
+
+        <h3>Pipe (anonymous pipe)</h3>
+        <p><strong>Pipe</strong> = implementation ของ message passing ที่นิยม: ท่อสื่อสาร <strong>ทางเดียว (one-way) แบบ stream of bytes</strong> เป็นพื้นที่ memory ที่ OS ปกป้องไว้ใช้เป็น buffer แบ่งเป็น 2 ประเภท วิชานี้เรียนเฉพาะ unnamed:</p>
+        <ul>
+          <li><strong>Unnamed pipe</strong>: พื้นที่ชั่วคราว ใช้ระหว่าง process ที่<strong>มีความสัมพันธ์กัน</strong> (แม่-ลูก) พอ process จบ พื้นที่ถูกเอาคืน</li>
+          <li><strong>Named pipe (FIFO)</strong>: ให้ process ที่ไม่เกี่ยวข้องกันคุยกันได้โดยใช้คอนเซปต์ไฟล์ พิเศษตรงที่อ่านแล้ว <strong>ข้อมูลถูกลบออกจากไฟล์</strong> กันได้รับซ้ำ</li>
+        </ul>
+
+        <h3>File descriptor และฟังก์ชัน pipe() (คลิป 8.1.1)</h3>
+        <p><strong>File descriptor</strong> = ตัวเลขใช้แทนไฟล์ที่กำลังทำงานด้วย โดย OS มองอุปกรณ์เป็นไฟล์หมดจึงมี fd มาตรฐานถูกใช้ไป 3 ตัว: <strong>0 = stdin (คีย์บอร์ด), 1 = stdout (จอ), 2 = stderr (จอ)</strong> → fd ใหม่เริ่มจากเบอร์ 3 ขึ้นไป</p>
+        <pre><code>int pfd[2];
+pipe(pfd);   /* สร้างท่อสื่อสารแบบทิศทางเดียว: pfd[0] = ปลายอ่าน (read end),
+                pfd[1] = ปลายเขียน (write end), สร้างไม่สำเร็จ return -1 */
+
+write(pfd[1], buff, size);   /* ปลายเขียน, buffer, จำนวนไบต์ (เขียนไม่ครบ buffer ก็ได้) */
+read(pfd[0], buff, SIZE);    /* ปลายอ่าน, ตัวแปรเก็บ, ขนาดสูงสุดต่อรอบ
+                                ข้อมูลใหญ่กว่า buffer ต้องอ่านหลายรอบ, read คืนจำนวนไบต์ที่อ่านได้จริง */</code></pre>
+        <ul>
+          <li>read/write เป็น <strong>blocking</strong>: ฝั่งอ่านจะ block รอจนมีข้อมูล อาจารย์สาธิตด้วยการให้แม่ <code>sleep(2)</code> ก่อนเขียน ลูกเข้ามา read ก่อนก็ต้องรอ</li>
+          <li><strong>แม่ต้องสร้าง pipe ก่อนแล้วค่อย fork()</strong> เพราะหลัง fork ลูกได้ file descriptor ชุดเดียวกับแม่ จึงเห็นปลายทั้งสองของท่อเดียวกัน</li>
+          <li>หลัง fork จะมี read end 2 ตัว + write end 2 ตัว เพื่อความชัดเจน <strong>ฝั่งส่งต้องปิด read end, ฝั่งรับปิด write end</strong></li>
+        </ul>
+        <pre><code>#define SIZE 1024              /* จริง ๆ ส่งได้ 1023 เผื่อที่ '\0' */
+char buff[SIZE];
+char buffread[5 + 1];          /* ฝั่งรับอ่านครั้งละ 5 ไบต์ +1 เผื่อ '\0' ปิดท้าย */
+int pfd[2], nread, pid;        /* nread = จำนวนไบต์ที่ read อ่านได้ในแต่ละรอบ */
+
+if (pipe(pfd) == -1) { /* สร้าง pipe แล้วตรวจ error */ }
+
+pid = fork();
+if (pid == 0) {                      /* ลูก = คนอ่าน */
+    close(pfd[1]);                   /* ปิดปลายเขียนที่ไม่ใช้ */
+    while ((nread = read(pfd[0], buffread, 5)) != 0) {
+        printf("%s", buffread);      /* อ่านทีละ 5 ไบต์พิมพ์ไปเรื่อย ๆ จนหมด */
+    }
+    close(pfd[0]);                   /* ปิดปลายอ่านตัวเอง = จบการใช้ pipe */
+} else {                             /* แม่ = คนเขียน */
+    close(pfd[0]);                   /* ปิดปลายอ่านที่ไม่ใช้ */
+    sleep(2);                        /* ตั้งใจให้ลูก block รอ จนกว่าแม่เขียนเสร็จ */
+    write(pfd[1], buff, strlen(buff) + 1);  /* +1 เพื่อส่ง '\0' ปิดท้ายไปด้วย (strlen ไม่นับ '\0') */
+    close(pfd[1]);
+    wait();                          /* รอให้ลูกอ่านจนจบ */
+}</code></pre>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div><ul>
+          <li>กับดัก <code>'\0'</code> ที่อาจารย์สาธิต: ถ้าเขียนแค่ <code>strlen(buff)</code> ไม่บวก 1 ทุกอย่างทำงานปกติ แต่ <strong>ตัวสุดท้ายจะมีตัวอักษรขยะโผล่มา</strong> เป็นเศษสตริงเก่าค้างใน buffer เพราะฟังก์ชัน string ใน C ส่วนใหญ่เช็ค <code>'\0'</code></li>
+          <li>ลืมปิดปลาย pipe ที่ไม่ใช้หลัง fork และลืมว่า pipe ต้องสร้าง <strong>ก่อน</strong> fork</li>
+          <li>pipe 1 อัน = ทางเดียวเท่านั้น ถ้าจะให้แม่เขียนหาลูกแล้วลูกตอบกลับ ต้องสร้าง <strong>pipe 2 อัน</strong> (ตัวอย่าง two_pipes.c ให้ไปรันเอง)</li>
+        </ul></div>
+
+        <h3>dup2 และกลไกของ ls | wc (คลิป 8.1.2)</h3>
+        <p><code>wc</code> นับ 3 อย่าง: จำนวนบรรทัดใหม่ (newline), จำนวนคำ, จำนวนอักขระ ทดลองกับโฟลเดอร์ 4 ไฟล์ <code>ls | wc</code> ได้ <strong>4 newline, 4 คำ, 29 อักขระ</strong> อยากได้แค่จำนวนไฟล์ใช้ <code>ls | wc -l</code> ข้อควรระวัง: ชื่อไฟล์มีช่องว่างจะนับคำเพี้ยน ให้ดูที่ newline (-l)</p>
+        <p>กลไก: <code>ls</code> เขียนที่ fd 1 (stdout) ปกติ, <code>wc</code> อ่านที่ fd 0 (stdin) ปกติ พอสร้าง pipe จะได้ fd ใหม่ เช่น 3 (เขียน) กับ 4 (อ่าน) จึงต้องจับคู่ให้ถูกด้วย <strong>dup2</strong> (dup + "to"):</p>
+        <pre><code>dup2(pfd[1], 1);   /* พารามิเตอร์แรก = fd ต้นฉบับ, ตัวที่สอง = fd ปลายทาง
+                      "3 อยากเป็น 1" → จากนี้เขียนลง fd 1 = เขียนลง pipe */
+dup2(pfd[0], 0);   /* "4 อยากเป็น 0" → จากนี้อ่านจาก fd 0 = อ่านจาก pipe */</code></pre>
+        <p>โปรแกรมเลียนแบบ <code>ls | wc</code> (คลิปให้ลูกเป็น ls แม่เป็น wc):</p>
+        <pre><code>pipe(pfd);
+pid = fork();
+if (pid == 0) {              /* ลูก = ls (ฝั่งเขียน) */
+    close(pfd[0]);           /* ปิดปลายอ่านที่ไม่ใช้ */
+    dup2(pfd[1], 1);         /* ดันปลายเขียนไปแทน stdout (1) */
+    close(pfd[1]);           /* ปิด fd ต้นฉบับของ pipe */
+    execl("/bin/ls", "ls", NULL);   /* ผลลัพธ์ไหลเข้า pipe แทนจอ */
+    perror("execl");
+} else {                     /* แม่ = wc (ฝั่งอ่าน) */
+    close(pfd[1]);           /* ปิดปลายเขียนที่ไม่ใช้ */
+    dup2(pfd[0], 0);         /* ดันปลายอ่านไปแทน stdin (0) */
+    close(pfd[0]);
+    execl("/usr/bin/wc", "wc", NULL);
+}</code></pre>
+        <p>ผลลัพธ์เหมือนพิมพ์ <code>ls | wc</code> ตรง ๆ และ <code>dup2</code> ใช้ redirect file descriptor อย่างอื่นได้ด้วย เช่นย้าย stdout ไปไฟล์</p>
+
+        <h3>Shared Memory: แนวคิด</h3>
+        <p><strong>Shared memory</strong> = พื้นที่ memory ที่ attach อยู่ใน address space ของหลาย process พร้อมกัน ใช้เหมือน memory ของตัวเอง (process ไม่รู้ตัวว่าใช้พื้นที่แชร์) จุดสำคัญ 2 ข้อที่อาจารย์ย้ำทุกคลิป:</p>
+        <ul>
+          <li><strong>ไม่มี protection</strong> ไม่มีกลไกพิเศษกัน ใครรู้วิธีเข้าถึงก็ใช้ได้</li>
+          <li><strong>OS ไม่ดูแล synchronization ให้</strong> เป็นหน้าที่โปรแกรมเมอร์ ไม่จัดจังหวะกันเองจะเกิด <strong>race condition</strong></li>
+          <li>ผู้ขอสร้าง (ใช้ key) เรียก <strong>server</strong>, ที่เหลือเรียก <strong>client</strong> และ <strong>server ต้องรันก่อน client เสมอ</strong></li>
+        </ul>
+        <pre><code>#include &lt;sys/types.h&gt;   /* นิยาม type key_t */
+#include &lt;sys/ipc.h&gt;
+#include &lt;sys/shm.h&gt;</code></pre>
+
+        <h3>เรื่องคีย์ (key) 3 วิธี (คลิป 8.2.1)</h3>
+        <ul>
+          <li>คีย์ชนิด <code>key_t</code> (จริง ๆ เป็น integer แต่ใช้ type ที่ระบบประกาศไว้เพื่อ portability เหมือนเหตุผลที่ใช้ pid_t) server กับ client ต้องใช้ <strong>คีย์เดียวกัน</strong>จึงชี้ shared memory ก้อนเดียวกัน</li>
+          <li><strong>1) ใส่เลขตรง ๆ</strong> (เช่น 1234): ง่ายแต่ <strong>ไม่ควรทำ</strong> คนอื่นนึกเลขเดียวกันได้ กลายเป็นใช้ shared memory ร่วมกันโดยไม่เกี่ยวข้องกัน "ยุ่งแน่ ๆ"</li>
+          <li><strong>2) ftok(path, id)</strong>: generate key จาก path + id ใช้ argument เดิมได้ key เดิมเสมอ นิยม path = <code>"."</code> (โฟลเดอร์ปัจจุบัน) เพราะแต่ละ user รันใน home ของตัวเองที่ไม่ซ้ำ id ใช้แยกหลายโปรแกรมใน path เดียวกัน แต่ <strong>ไม่การันตี 100%</strong> ถ้าใครจงใจรู้ path/id ก็ยังเข้าถึงได้ และ server กับ client ต้องรันจากโฟลเดอร์เดียวกัน</li>
+          <li><strong>3) IPC_PRIVATE</strong>: ระบบ generate unique key ให้แน่นอน แต่ใช้ได้เฉพาะ <strong>process ในครอบครัวเดียวกัน</strong> (แม่-ลูก, พี่น้อง) เพราะส่งต่อถึงกันผ่าน fork()</li>
+        </ul>
+        <pre><code>key_t shmkey;
+shmkey = ftok(".", 'x');   /* 'x' ดูเหมือน char แต่ใน C คือ integer = ASCII code ของ 'x' */</code></pre>
+
+        <h3>System calls ทั้ง 4 ตัว (คลิป 8.2.2)</h3>
+        <table>
+          <tr><th>ฟังก์ชัน</th><th>หน้าที่</th><th>รายละเอียดที่อาจารย์เน้น</th></tr>
+          <tr><td><code>shmget(key, size, flag)</code></td><td>ขอสร้าง/ขอเข้าใช้</td><td>server ใช้ flag <strong>IPC_CREAT | 0666</strong> (สร้าง + สิทธิอ่านเขียนทุกคน), client ใช้ของที่ server สร้างแล้ว size กับ flag <strong>ใส่ 0 ได้</strong>, สำเร็จคืน shared memory ID ไม่สำเร็จคืนค่าลบ มี IPC_EXCL (กันสร้างซ้ำ) แต่วิชานี้ไม่ใช้</td></tr>
+          <tr><td><code>shmat(shmid, shmaddr, flag)</code></td><td>attach เข้า address space ตัวเอง</td><td>ปกติ shmaddr = <strong>NULL</strong> (ให้ OS เลือกจุดเชื่อม), flag = 0 (อ่านเขียน) หรือ SHM_RDONLY, คืน pointer แบบ <strong>void *</strong> ต้อง <strong>cast</strong> เป็นชนิดข้อมูลที่เก็บ, ล้มเหลวคืน -1</td></tr>
+          <tr><td><code>shmdt(shm_ptr)</code></td><td>detach ถอนตัว</td><td><strong>ไม่ได้ลบ shared memory</strong> ถอนแล้วอยากกลับมาใช้เรียก shmat ใหม่ได้, สำเร็จคืน 0</td></tr>
+          <tr><td><code>shmctl(shm_id, IPC_RMID, NULL)</code></td><td>ควบคุม และในวิชานี้ใช้เพื่อ <strong>ลบ</strong></td><td>ลบแล้วใช้ใหม่ต้อง shmget + shmat ใหม่ <strong>การลบเป็นหน้าที่ของ server เท่านั้น client ห้ามลบ</strong></td></tr>
+        </table>
+        <p><code>0666</code> เป็นเลขฐาน 8 เลียนแบบสิทธิไฟล์ Unix: 9 บิตแบ่ง 3 กลุ่ม (owner / group / others) กลุ่มละ 3 บิต rwx เช่น <code>rwx r-x r-x</code> = <code>111 101 101</code> = <strong>755</strong>, 666 = <code>rw- rw- rw-</code> อ่าน+เขียนทุกกลุ่ม ใช้ <code>chmod</code> เปลี่ยนสิทธิได้ เช่น <code>chmod 0664 temp</code> (ใส่ 0 นำหน้าเพื่อบอกว่าเป็นฐาน 8)</p>
+
+        <h3>โค้ดตัวอย่าง 1: แม่-ลูก (คลิป 8.2.3)</h3>
+        <p>ผู้ใช้ป้อนเลข 4 ตัว แม่รับไปใส่ shared memory แล้ว fork ให้ลูกอ่านมาพิมพ์</p>
+        <pre><code>int shmid;
+int *ptr;      /* เก็บข้อมูลชนิดไหน ประกาศ pointer เป็นชนิดนั้น */
+
+shmid = shmget(IPC_PRIVATE,            /* แม่ลูกคุยกัน ใช้คีย์ unique ได้เลย */
+               4 * sizeof(int),        /* จองพื้นที่เก็บ integer 4 ตัว */
+               IPC_CREAT | 0666);      /* สร้างใหม่ + สิทธิอ่านเขียนกับใครก็ได้ */
+if (shmid &lt; 0) exit(1);                /* เช็ค error ทุกขั้น */
+
+ptr = (int *) shmat(shmid, NULL, 0);   /* attach, อย่าลืม casting ให้ตรงชนิด */
+if (ptr == (int *) -1) exit(1);
+/* แม่ใส่เลข 4 ตัวลง ptr[0..3] แล้ว fork: ลูกได้รับทุกอย่างจากแม่ (inherit)
+   จึงไม่ต้อง shmget ซ้ำ อ่านค่า พิมพ์ แล้ว exit, แม่ wait รอลูก */
+shmdt(ptr);                     /* แม่ถอนตัว */
+shmctl(shmid, IPC_RMID, NULL);  /* แม่ (ฝั่ง server) ลบ shared memory */</code></pre>
+
+        <h3>โค้ดตัวอย่าง 2: server-client เก็บ struct พร้อมจัดจังหวะเอง (คลิป 8.2.3)</h3>
+        <pre><code>struct shared_memory {
+    int status;      /* NOT_READY = -1, FILLED = 0, TAKEN = 1  ใช้ประสานจังหวะ */
+    int data[4];     /* เลข 4 ตัว */
+};
+struct shared_memory *shm_ptr;
+
+key = ftok(".", 'x');   /* ทั้งคู่ต้องใช้ path กับ id เดียวกัน = รันจากโฟลเดอร์เดียวกัน */
+
+/* -------- Server (รันก่อนเสมอ) -------- */
+shmid = shmget(key, sizeof(struct shared_memory), IPC_CREAT | 0666);
+shm_ptr = (struct shared_memory *) shmat(shmid, NULL, 0);
+shm_ptr->status = NOT_READY;     /* ตั้งก่อน เพื่อให้ใส่เลขเสร็จก่อน client อ่าน */
+/* ใส่เลข 4 ตัวลง data */
+shm_ptr->status = FILLED;        /* บอก client ว่าอ่านได้แล้ว */
+while (shm_ptr->status != TAKEN);/* รอ client อ่านเสร็จ */
+shmdt(shm_ptr);
+shmctl(shmid, IPC_RMID, NULL);   /* server คนเดียวที่ลบ */
+
+/* -------- Client -------- */
+shmid = shmget(key, 0, 0666);    /* size ใส่ 0 ได้ เพราะ server สร้างไว้แล้ว */
+shm_ptr = (struct shared_memory *) shmat(shmid, NULL, 0);
+while (shm_ptr->status != FILLED);  /* รอจน server ใส่ครบ */
+/* อ่านข้อมูล */
+shm_ptr->status = TAKEN;         /* ตอบกลับว่าอ่านแล้ว */
+shmdt(shm_ptr);</code></pre>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div><ul>
+          <li>การจัดจังหวะด้วย status flag ของโปรแกรมเมอร์ <strong>ยังไม่สมบูรณ์</strong> อาจารย์สาธิตให้ server sleep 10 วินาทีก่อนเซ็ต status → client เข้ามาเช็คก่อน เจอค่า 0 ซึ่งบังเอิญตรงกับ FILLED = 0 (memory ให้ค่าเริ่มต้น 0) จึงหลุด loop ไปอ่านข้อมูลว่าง ๆ</li>
+          <li>เปลี่ยน FILLED เป็น -99 ก็แก้แค่ชั่วคราว compiler อื่นอาจให้ค่าขยะ สักวันอาจบังเอิญเท่ากันอีก <strong>ทางแก้ที่ดีคือใช้กลไก synchronization ของ OS</strong> (ดู <a href="#sec7">หัวข้อถัดไป</a>)</li>
+        </ul></div>
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li>pipe เป็น one-way stream of bytes: เขียนผ่าน <code>pfd[1]</code> อ่านผ่าน <code>pfd[0]</code>, ต่าง unnamed กับ named pipe (FIFO)</li>
+          <li>fd 0/1/2 คืออะไร, pipe ต้องสร้างก่อน fork, <strong>ต้องปิดปลายที่ไม่ใช้ทั้งสองฝั่ง</strong>, read ต้องอ่านหลายรอบเมื่อข้อมูลใหญ่</li>
+          <li>กับดัก <code>'\0'</code>: เขียน <code>strlen(buff)+1</code> เพื่อส่งตัวปิดสตริงไปด้วย</li>
+          <li>dup2(src, dst) ใช้ทำอะไร, กลไก ls | wc ทั้งเส้น (close → dup2 → close → exec), สื่อสารสองทางต้องใช้ 2 pipes</li>
+          <li>ลำดับชีวิต shared memory: <code>shmget → shmat → ใช้งาน → shmdt → shmctl</code>, shmdt ต่างจาก shmctl อย่างไร, ทำไม client ลบไม่ได้</li>
+          <li>3 วิธีสร้าง key + ข้อจำกัดของแต่ละแบบ, ความหมาย flag IPC_CREAT | 0666, 0666 เป็นเลขฐาน 8 อย่างไร</li>
+          <li>ทำไม shared memory ต้องมี synchronization (ไม่มี protection + OS ไม่ sync ให้)</li>
+        </ul></div>
+      </section>
+
+      <section id="sec7" class="card">
+        <h2>Process Synchronization</h2>
+
+        <h3>Bounded Buffer: จุดตั้งต้นของปัญหา (คลิป 9.1)</h3>
+        <p>Producer เขียนข้อมูลลง buffer, Consumer อ่านจาก buffer ถ้าไม่จัดจังหวะเกิด 2 กรณี: <strong>ข้อมูลหาย</strong> (producer เขียนครบ 5 ช่องแล้ววนกลับเขียน F ทับ A ก่อน consumer อ่าน) และ <strong>อ่านข้อมูลซ้ำ</strong> (consumer อ่านครบแล้ววนกลับไปอ่านข้อมูลเดิมอีก)</p>
+        <pre><code>#define BUFFER_SIZE 5
+int count = 0;          /* shared: จำนวนข้อมูลใน buffer ที่ยังไม่ถูกอ่าน */
+int in = 0, out = 0;    /* in เป็นของ producer เท่านั้น, out เป็นของ consumer เท่านั้น */
+
+/* ---- Producer ---- */
+while (count == BUFFER_SIZE);   /* buffer เต็ม ติด loop รอ */
+buffer[in] = item;
+in = (in + 1) % BUFFER_SIZE;    /* วนกลับช่องแรกเมื่อถึงช่องสุดท้าย */
+count++;
+
+/* ---- Consumer ---- */
+while (count == 0);             /* ไม่มีข้อมูล ติด loop รอ */
+item = buffer[out];
+out = (out + 1) % BUFFER_SIZE;
+count--;</code></pre>
+        <p>ใช้ count เป็นตัวจัดจังหวะได้ไหม? อาจารย์ตอบว่า <strong>ยังไม่สมบูรณ์ 100%</strong> เพราะถูกต้องก็ต่อเมื่อ producer ทำ <code>count++</code> จนจบโดยไม่ถูกขัด แต่ OS ขัดจังหวะเมื่อไหร่ก็ได้ สาเหตุอยู่ที่ว่า count++ ไม่ใช่คำสั่งเดียว (ดูหัวข้อ race condition)</p>
+
+        <h3>Race Condition (คลิป 9.2)</h3>
+        <p><strong>Race condition</strong> = หลาย process เข้าไปแก้ shared data พร้อมกันแล้ว <strong>ผลลัพธ์ขึ้นกับลำดับการทำงาน</strong> (ผลเป็นของ process ที่เสร็จทีหลังและเป็นค่าที่ผิด) เพราะ <code>count++</code> และ <code>count--</code> จริง ๆ ถูกแตกเป็น 3 คำสั่งระดับเครื่อง:</p>
+        <pre><code>count++                          count--
+1) register1 = count             1) register2 = count    (โหลดจาก memory)
+2) register1 = register1 + 1     2) register2 = register2 - 1
+3) count = register1             3) count = register2    (เขียนคืน memory)</code></pre>
+        <div class="example"><div class="ex-title">ตัวอย่าง interleaving จากสไลด์ (S0-S5): count เริ่ม 5, producer +1 และ consumer -1 คำตอบที่ถูกคือ 5</div><ol>
+          <li>S0: producer <code>register1 = count</code> → register1 = 5</li>
+          <li>S1: producer <code>register1 = register1 + 1</code> → register1 = 6</li>
+          <li>S2: consumer <code>register2 = count</code> → register2 = 5 (count ยังเป็น 5 เพราะ producer ยังไม่เขียนคืน)</li>
+          <li>S3: consumer <code>register2 = register2 - 1</code> → register2 = 4</li>
+          <li>S4: producer <code>count = register1</code> → count = 6</li>
+          <li>S5: consumer <code>count = register2</code> → count = <strong>4</strong> (ผิด! ที่ถูกคือ 5)</li>
+        </ol></div>
+        <p>สลับลำดับก็อาจได้ 6 ซึ่งก็ผิด ต่อให้รันได้เป็นเดือนเป็นปีโดยไม่มีปัญหา พอสักวันเกิดขึ้นก็ไล่โปรแกรมตาเหลือกว่าจะเจอ ทางแก้คือ <strong>synchronization = การล็อก</strong>: ใครใช้ shared data ให้ล็อกไว้ ถูกขัดกลางทางก็ยังล็อกอยู่ คนอื่นเข้ามาทำอะไรไม่ได้ (แต่ถ้าล็อกไม่ดีจะเกิด deadlock ดู <a href="#sec8">หัวข้อ Deadlock</a>)</p>
+
+        <h3>Critical-Section Problem</h3>
+        <p><strong>Critical section (critical region)</strong> = ส่วนของโปรแกรมที่ต้องรันให้จบก่อน จึงจะให้ process อื่นเข้าใช้ resource นั้นได้ เช่น <code>count++</code> ของ producer กับ <code>count--</code> ของ consumer อัลกอริทึมแก้ปัญหาต้องผ่าน 3 เงื่อนไข (อาจารย์เปรียบเทียบเป็นห้องน้ำ 1 ห้อง):</p>
+        <ol>
+          <li><strong>Mutual Exclusion</strong>: ณ เวลาใดเวลาหนึ่งมีเพียง process เดียวอยู่ใน critical section (ติดกลอนห้องน้ำ ใครเข้าก็ล็อก)</li>
+          <li><strong>Progress</strong>: ถ้าไม่มีใครอยู่ใน critical section และมีคนขอเข้า ต้องเลือกจาก process ที่อยากใช้เท่านั้น อย่ายุ่งกับคนที่ไม่อยากใช้ ตัวอย่างไม่ผ่าน: กำหนดคิวตายตัวแดง→เขียว→เหลือง พอแดงไม่อยากเข้า เขียวก็เข้าไม่ได้ตลอดทั้งที่ห้องว่าง</li>
+          <li><strong>Bounded Waiting</strong>: มีขอบเขตจำนวนครั้งที่ process อื่นเข้า critical section ได้หลังจาก process หนึ่ง request ไปแล้ว ตัวอย่างไม่ผ่าน: แดงใช้เสร็จออกมาก็แซงคิวเข้าใหม่ทันที เขียวกับเหลืองไม่รู้จะได้เมื่อไหร่</li>
+        </ol>
+        <p>ข้อเท็จจริงจากคลิป: ถ้าเลือกได้ข้อเดียวที่ต้องผ่านคือ <strong>ข้อ 1</strong> และถ้าไม่ผ่านข้อ 2 ก็จะไม่ผ่านข้อ 3 ด้วย (สมมติฐานของโจทย์: ทุก process รันด้วย speed ไม่เป็นศูนย์ ไม่สันนิษฐาน relative speed)</p>
+
+        <h3>Peterson's Solution (2 process) และ Bakery Algorithm (n process)</h3>
+        <p><strong>Peterson</strong> ใช้ได้กับ 2 process แต่ครบทั้ง 3 ข้อ สมมติว่า <strong>LOAD และ STORE เป็น atomic</strong> ตัวแปร shared: <code>int turn</code> (ตาของใครเข้า) และ <code>boolean flag[2]</code> (พร้อมเข้าหรือยัง)</p>
+        <pre><code>/* โค้ดของ Pi */
+do {
+    flag[i] = TRUE;          /* ประกาศว่าพร้อมเข้า */
+    turn = j;                /* ยกตาให้อีกฝ่ายก่อน */
+    while (flag[j] &amp;&amp; turn == j);   /* รอจนอีกฝ่ายไม่พร้อม หรือตาเป็นของเรา */
+    /* critical section */
+    flag[i] = FALSE;
+    /* remainder section */
+} while (1);</code></pre>
+        <p><strong>Bakery Algorithm</strong> แก้ได้กับ n process ด้วยแนวคิด <strong>กดบัตรคิว</strong>เหมือนไปธนาคาร: เจ้าของเลขน้อยสุดเข้าก่อน เลขเท่ากันใช้ process id ตัดสิน (Pi ก่อน Pj เมื่อ i &lt; j) ใช้ notation lexicographical order <strong>(ticket #, process id #)</strong> shared data: <code>boolean choosing[n]</code>, <code>int number[n]</code> (เริ่ม false/0)</p>
+        <pre><code>choosing[i] = true;                 /* กำลังกดบัตร */
+number[i] = max(number[0], ..., number[n-1]) + 1;   /* ได้เลขมากสุด + 1 */
+choosing[i] = false;
+for (j = 0; j &lt; n; j++) {           /* รอจนไม่มีใครกดบัตรอยู่
+    while (choosing[j]);                และไม่มี (number[j], j) &lt; (number[i], i) */
+    while ((number[j] != 0) &amp;&amp; ((number[j], j) &lt; (number[i], i)));
+}
+/* critical section */
+number[i] = 0;                      /* เสร็จแล้วเคลียร์บัตร */</code></pre>
+        <p>อาจารย์วิเคราะห์ว่า Bakery ผ่าน 3 ข้อ: mutual exclusion (เลขน้อยเข้าก่อน เลขซ้ำดู PID), progress (ต้องมากดบัตรถึงจะถูกพิจารณา), bounded waiting (ใช้เสร็จต้องออกมากดบัตรใหม่ บัตรใหม่ไม่มีทางน้อยกว่าคนรออยู่) แต่ทั้ง Peterson และ Bakery ยังเหลือปัญหา <strong>busy waiting</strong> อยู่</p>
+
+        <h3>Semaphore (คลิป 10.1)</h3>
+        <p><strong>Semaphore S = ตัวแปร integer</strong> เข้าถึงได้ผ่าน 2 atomic operations เท่านั้น: <strong>wait() และ signal()</strong> (เดิมชื่อ <strong>P() และ V()</strong>) OS รับประกันว่าได้ทำแล้วต้องได้ทำจนจบ ไม่ถูกขัดจังหวะ ระวังสับสน: ไม่ใช่ <code>wait()</code> ที่แม่รอลูก และไม่ใช่ signal ของหัวข้อ IPC</p>
+        <pre><code>wait(S) {            /* เดิมชื่อ P */
+    while (S &lt;= 0);  /* ค่า S &lt;= 0 → ติด loop รอ (busy waiting) */
+    S--;             /* ผ่าน → ลดค่า S แล้วทำงานต่อ */
+}
+signal(S) {          /* เดิมชื่อ V */
+    S++;
+}</code></pre>
+        <p><strong>Busy waiting</strong> คือ process ที่ไม่ผ่านเงื่อนไขจะติด while loop พอ OS เลือกมันเข้ามาทำงานก็ทำอะไรไม่ได้ เสีย time quantum ทั้งที่ไม่พร้อม อุปมาของอาจารย์: บ้านชั้นบนอยากใช้ห้องน้ำชั้นล่าง จึงวางโหลใส่หินไว้หน้าบันได (หิน = ค่า S): มีหิน (S &gt; 0) หยิบหิน (wait: S--) แล้วลงไปใช้, ใช้เสร็จเอาหินคืนโหล (signal: S++) คนรอเห็นหินก็ได้เข้า ห้องน้ำ 2 ห้องก็ใส่หิน 2 ลูก</p>
+        <ul>
+          <li><strong>Counting semaphore</strong>: ค่าไม่จำกัดช่วง (ทรัพยากรหลายหน่วย)</li>
+          <li><strong>Binary semaphore</strong>: ค่าได้แค่ 0 กับ 1 เรียกอีกอย่าง <strong>mutex lock</strong></li>
+          <li>ใช้คุม critical section ด้วย binary semaphore: ตั้ง <code>S = 1</code> → <code>wait(S)</code> → critical section → <code>signal(S)</code></li>
+        </ul>
+        <p>Implementation แบบ <strong>ไม่มี busy waiting</strong>: แต่ละ semaphore มี <strong>waiting queue</strong> (เก็บ value + pointer) และคำสั่ง <strong>block</strong> (หย่อน process ลง waiting queue) กับ <strong>wakeup</strong> (ดึง process หนึ่งกลับ ready queue)</p>
+        <pre><code>wait(S) {
+    S--;
+    if (S &lt; 0) { add this process to waiting queue; block(); }
+}
+signal(S) {
+    S++;
+    if (S &lt;= 0) { remove a process P from waiting queue; wakeup(P); }
+}</code></pre>
+        <ul>
+          <li>เงื่อนไขจำไว้: <code>value &lt; 0</code> ใน wait กับ <code>value &lt;= 0</code> ใน signal (ยังติดลบแปลว่ามีคนรออยู่ จึงปลุก 1 ตัว)</li>
+          <li>วิเคราะห์ 3 เงื่อนไข: mutual exclusion ผ่านแน่, progress ผ่าน, <strong>bounded waiting ขึ้นกับ implementation ของ wakeup</strong> ถ้าปลุก "ใครก็ได้" ไม่ผ่าน ถ้า implement แบบ FIFO ผ่าน</li>
+        </ul>
+
+        <h3>Classical Problems of Synchronization (คลิป 10.2)</h3>
+        <p><strong>1) Bounded-Buffer Problem:</strong> N buffer (ละ 1 item) ใช้ semaphore 3 ตัวแทนตัวแปร count: <strong>mutex = 1, full = 0, empty = N</strong></p>
+        <pre><code>semaphore mutex = 1;  /* binary: ล็อก buffer */
+semaphore full  = 0;  /* counting: จำนวนช่องที่มีข้อมูล */
+semaphore empty = n;  /* counting: จำนวนช่องว่าง = ขนาด buffer */
+
+/* ---- Producer ---- */
+wait(empty);      /* เช็คมีช่องว่างไหม → หยิบหินจากโหล empty */
+wait(mutex);      /* ล็อก buffer (ห้าม consumer อ่านขณะเขียน) */
+/* ใส่ item */
+signal(mutex);    /* ปลดล็อก */
+signal(full);     /* ย้ายหินไปใส่โหล full = แจ้งว่ามีข้อมูลใหม่ */
+
+/* ---- Consumer ---- */
+wait(full);       /* เช็คมีข้อมูลไหม → หยิบหินจากโหล full */
+wait(mutex);      /* ล็อก buffer (ห้าม producer เขียนขณะอ่าน) */
+/* ดึง item */
+signal(mutex);
+signal(empty);    /* คืนหินโหล empty = แจ้งว่ามีช่องว่าง */</code></pre>
+        <p>จุดน่าสังเกต: producer <strong>ไม่เคย wait(full) แต่ signal(full)</strong> เพราะมันย้ายหินจากโหล empty ไปใส่โหล full เพื่อส่งสัญญาณว่ามีข้อมูลใหม่ (consumer ทำกลับกัน) อาจารย์ตอบว่า "รู้ได้ยังไงต้องทำแบบนี้" คือขึ้นอยู่กับแอปพลิเคชัน โปรแกรมเมอร์ต้องคิดเอง</p>
+        <p><strong>2) Readers-Writers Problem:</strong> Readers อ่านอย่างเดียว, Writers อ่าน+เขียน อนุญาต <strong>readers หลายตัวพร้อมกัน แต่ writer ได้ตัวเดียว</strong> และ writer ทำงานอยู่ห้ามใครยุ่ง shared data: <strong>mutex = 1, wrt = 1, readcount = 0</strong></p>
+        <pre><code>/* ---- Writer ---- */
+wait(wrt);        /* มีหิน = ยังไม่มีใครใช้ data → ล็อก */
+/*  writing  */
+signal(wrt);
+
+/* ---- Reader ---- */
+wait(mutex);              /* ล็อกช่วงอัปเดต readcount */
+readcount++;
+if (readcount == 1) wait(wrt);   /* reader ตัวแรกล็อก data กัน writer */
+signal(mutex);
+/*  reading  */
+wait(mutex);
+readcount--;
+if (readcount == 0) signal(wrt); /* reader ตัวสุดท้ายปลดล็อกให้ writer */
+signal(mutex);</code></pre>
+        <p>ประเด็นสำคัญ: <strong>reader ตัวแรกเป็นคนล็อก data และ reader ตัวสุดท้ายเป็นคนปลดล็อก</strong> ตราบใดที่ยังมี reader อยู่ writer เขียนไม่ได้เลย</p>
+        <p><strong>3) Dining-Philosophers Problem:</strong> นักปราชญ์ 5 คน ชีวิตมีแค่คิดกับกิน มี<strong>ตะเกียบ 5 ข้าง</strong> (ไม่ใช่ 5 คู่) กินต้องได้ทั้งซ้ายและขวา เชื่อมกับ OS: <strong>นักปราชญ์ = process, ตะเกียบ = ทรัพยากร</strong> ใช้ <code>chopstick[5]</code> แต่ละอัน init = 1</p>
+        <pre><code>semaphore chopstick[5];            /* binary sem ทุกตัวเริ่มต้น = 1 */
+
+/* นักปราชญ์คนที่ i */
+do {
+    /* คิดปรัชญา พอหิว: */
+    wait(chopstick[i]);              /* หยิบตะเกียบซ้าย: ว่าง → ถือ, มีคนถือ → รอ */
+    wait(chopstick[(i + 1) % 5]);    /* หยิบตะเกียบขวา: ระหว่างรอไม่วางซ้ายลง */
+    /*  กินข้าว  */
+    signal(chopstick[i]);            /* วางซ้าย แจ้งเพื่อนบ้านว่าว่างแล้ว */
+    signal(chopstick[(i + 1) % 5]);  /* วางขวา */
+} while (1);</code></pre>
+        <p>ปัญหาของทางแก้นี้คือ <strong>deadlock</strong>: สมมติทุกคนหิวพร้อมกันแล้วหยิบตะเกียบซ้ายพร้อมกัน ตะเกียบ 5 ข้างอยู่ในมือหมด ทุกคนรอตะเกียบขวา แต่จะมีใครวางตะเกียบได้ต้องกินก่อน ทั้งที่ไม่มีใครได้กิน → "ตายทั้งโต๊ะ"</p>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div><ul>
+          <li>ปัญหาไม่ได้เกิดจากตัว semaphore แต่เกิดจากโปรแกรมเมอร์ เพราะ semaphore เป็นกลไกระดับต่ำ ไม่มีฟีเจอร์ของ OS หรือภาษามาเช็คให้ รู้ตัวตอนผลลัพธ์ผิดเท่านั้น</li>
+          <li>ข้อผิดพลาดคลาสสิก: ใช้ <code>signal(mutex) ... wait(mutex)</code> (สลับลำดับ: เหมือนเติมหิน "อะไรก็ไม่รู้" ลงโหลที่ควรมีหินลูกเดียว), <code>wait(mutex) ... wait(mutex)</code> (deadlock), ลืม wait หรือ signal หรือทั้งคู่</li>
+        </ul></div>
+
+        <h3>การเขียนโปรแกรม Semaphore จริง (คลิป 10.3)</h3>
+        <p>ใช้ POSIX semaphore ป้องกัน race condition ของตัวแปร counter ระหว่าง 2 เทรด</p>
+        <pre><code>#include &lt;semaphore.h&gt;
+#include &lt;pthread.h&gt;
+
+int count = 5;      /* global: ใช้ร่วมกันระหว่างเทรด */
+sem_t mutex;        /* binary semaphore คุมการอัปเดต count */
+
+void *increment(void *arg) {
+    sem_wait(&amp;mutex);        /* sem_wait = wait (P) */
+    int temp = count;        /* แตกเป็น 3 สเต็ป + sleep สุ่ม จำลองการถูกขัดจังหวะ */
+    temp++;
+    count = temp;
+    sem_post(&amp;mutex);        /* sem_post = signal (V) */
+}
+/* decrement เขียนโครงเดียวกัน แต่เป็น temp-- */
+
+int main() {
+    pthread_t t1, t2;
+    sem_init(&amp;mutex, 0, 1);  /* 1 = ค่าเริ่มต้นของ semaphore (ไม่ใช่ 0),
+                                0 = แชร์เฉพาะเทรดใน process นี้ (ค่าอื่น = แชร์ข้าม process) */
+    pthread_create(&amp;t1, NULL, increment, NULL);
+    pthread_create(&amp;t2, NULL, decrement, NULL);
+    pthread_join(t1, NULL);
+    pthread_join(t2, NULL);
+    printf("%d\n", count);   /* ถูกต้องต้องได้ 5 */
+    sem_destroy(&amp;mutex);
+}</code></pre>
+        <ul>
+          <li>Compile ต้องลิงก์ library: <code>gcc program.c -lpthread</code> รันแล้วได้ <strong>5 ถูกต้อง</strong></li>
+          <li>ทดลองปิด semaphore (comment out sem_wait/sem_post): ได้ <strong>6</strong> ซึ่งผิด จริง ๆ อาจเป็น 6, 4 หรือแม้แต่ 5 (ฟลุ๊คถูก) แล้วแต่ถูกขัดตรงไหน</li>
+          <li>macOS ไม่ support unnamed semaphore ต้องใช้ <strong>named semaphore</strong>: <code>sem_open("ชื่อsem", O_CREAT, 0666, 1)</code> แทน sem_init, <code>sem_close</code> + <code>sem_unlink</code> แทน sem_destroy ส่วน increment/decrement ไม่ต้องแก้</li>
+        </ul>
+
+        <h3>Monitor (คลิป 11.1)</h3>
+        <p><strong>Monitor = high-level abstraction</strong> สำหรับ synchronization อยู่ระดับสูงกว่า semaphore โครงสร้างคล้าย object ใน OOP: รวม shared variables + procedures + initialization code ไว้ในก้อนเดียว และ <strong>มี process ทำงานใน monitor ได้ครั้งละ 1</strong> จึงได้ mutual exclusion โดยอัตโนมัติ</p>
+        <ul>
+          <li>Process ที่ยังเข้าไม่ได้รออยู่ใน <strong>entry queue</strong> (แยกจาก waiting queue ของ condition variable)</li>
+          <li>เทียบกับ producer-consumer: ใช้ monitor แล้วเรื่อง mutual exclusion เป็นหน้าที่ของ monitor ไปเอง สิ่งที่ยังต้องมีคือเงื่อนไขอย่าง "buffer เต็มให้รอ" จึงใช้ <strong>condition variable</strong> แทน semaphore</li>
+          <li><code>condition x, y;</code> มี operation ชื่อ wait/signal เหมือน semaphore: <strong><code>x.wait()</code></strong> = process เข้า monitor มาแล้วแต่ต้องรอเงื่อนไข x → ถูก suspend ลง waiting queue ของ x; <strong><code>x.signal()</code></strong> = resume process ที่เคย x.wait() (ถ้ามี)</li>
+          <li>จุดสำคัญ: process ที่ถูก signal ปลุก <strong>ไม่ได้ทำงานต่อทันที</strong> แต่กลับไปต่อคิวใน entry queue และการ signal เมื่อไม่มีใครรอ <strong>ไม่มีผลอะไรเสียหาย</strong> (อุปมา: นัดแม่ปลุกแต่ตื่นเองก่อน แม่มาปลุกซ้ำก็ไม่เสียหาย)</li>
+        </ul>
+        <p>ทางแก้ Dining Philosophers ด้วย monitor dp (ไม่มีการถือตะเกียบข้างเดียวค้างไว้ จึงไม่เกิด deadlock):</p>
+        <pre><code>monitor dp {
+    enum {THINKING, HUNGRY, EATING} state[5];   /* สถานะของนักปราชญ์แต่ละคน */
+    condition self[5];                          /* condition variable คนละ 1 ตัว */
+
+    void pickup(int i) {              /* เรียกเมื่อหิว */
+        state[i] = HUNGRY;
+        test(i);
+        if (state[i] != EATING)       /* เทสแล้วยังกินไม่ได้ */
+            self[i].wait();           /* หลับรอใน waiting queue ของ self[i] */
+    }
+    void putdown(int i) {             /* เรียกเมื่อกินเสร็จ */
+        state[i] = THINKING;
+        test((i+4) % 5);              /* สะกิดเพื่อนบ้านซ้าย: ถ้าหิวและกินได้ให้ตื่น */
+        test((i+1) % 5);              /* สะกิดเพื่อนบ้านขวา */
+    }
+    void test(int i) {                /* ฟังก์ชันหลัก: กินได้เมื่อครบ 3 เงื่อนไข */
+        if (state[(i+4)%5] != EATING &amp;&amp; state[i] == HUNGRY &amp;&amp; state[(i+1)%5] != EATING) {
+            state[i] = EATING;
+            self[i].signal();         /* ปลุกตัวเอง (กรณีมาจาก wait ใน pickup) */
+        }
+    }
+    void initialize() {
+        for (int i = 0; i &lt; 5; i++) state[i] = THINKING;
+    }
+}
+/* ใช้งาน: dp.pickup(i) → EAT → dp.putdown(i) */</code></pre>
+        <ul>
+          <li>เรียก test จาก pickup: ตั้ง HUNGRY แล้วเทส ไม่ผ่านก็ wait ตัวเอง (self[i].signal() ท้าย test ในเคสนี้เป็นการเรียกเกินความจำเป็น ไม่เสียหาย)</li>
+          <li>เรียก test จาก putdown: กินเสร็จตั้ง THINKING แล้วสะกิดซ้าย-ขวา เพื่อนบ้านที่หิวและกินได้จะได้กินต่อ</li>
+          <li>ข้อสรุปของอาจารย์: วิธีนี้ <strong>ไม่เกิด deadlock</strong> (เท่ากับหันไปดูซ้าย-ขวาก่อนแล้วหยิบตะเกียบทั้ง 2 ข้างพร้อมกัน) แต่ <strong>ยังเกิด starvation ได้</strong>: หันซ้ายมีคนกิน รอจนซ้ายเสร็จ หันขวากินอยู่ สลับกันไปเรื่อย ๆ อดตายในที่สุด</li>
+        </ul>
+
+        <h3>Java Synchronization (คลิป 11.2)</h3>
+        <p>Java มีหลักการเหมือน monitor ทุกอย่าง: entry set = entry queue, wait set = condition queue, notify = signal และ <strong>object ทุกตัวมี lock ติดตัวอยู่แล้ว</strong></p>
+        <ul>
+          <li><strong>synchronized method</strong>: ณ เวลาหนึ่งมีเทรดเดียวทำงานกับ synchronized method ของ object นั้นได้ เทรดแรกที่เรียกเป็น <strong>owner (เจ้าของ lock)</strong> เทรดอื่นไม่ว่า method เดียวกันหรือตัวอื่นต้องไปรอใน <strong>entry set</strong> ล็อก/ปลดล็อกเป็นอัตโนมัติทั้งคู่ (เรียก = ล็อก, method จบ = ปลดล็อก) ใน class เดียวมี method สองแบบผสมกันได้ lock มีผลเฉพาะกลุ่ม synchronized</li>
+          <li><strong>wait()</strong> ทำ 3 อย่าง: 1) release object lock ทันที (ไม่ต้องรอจบ method) 2) state = blocked 3) เข้าสู่ <strong>wait set</strong></li>
+          <li><strong>notify()</strong>: เลือก thread ใด ๆ จาก wait set ("อะไรก็ได้" เพราะ Java spec ไม่กำหนด ขึ้นกับ JVM) → ย้ายไป entry set → ตั้งเป็น Runnable ไปแข่ง lock ใหม่ ไม่ได้รันทันที</li>
+          <li><strong>notifyAll()</strong>: ย้ายทุก thread จาก wait set เข้า entry set เป็นกลยุทธ์ conservative เหมาะเมื่อไม่ไว้ใจการเลือกของ JVM และมีหลาย thread ใน wait set (โปรแกรมเมอร์เลือกเองไม่ได้)</li>
+        </ul>
+        <pre><code>class BoundedBuffer {
+    synchronized void insert(Object item) {   /* producer เรียก */
+        if (count == size) wait();            /* เต็ม: ปล่อย lock แล้วเข้า wait set */
+        /* ใส่ item, count++ */
+        notify();                             /* ปลุก consumer ที่รออยู่ (ถ้าไม่มีก็ไม่เป็นไร) */
+    }
+    synchronized Object remove() {            /* consumer เรียก */
+        if (count == 0) wait();               /* ว่าง: รอ producer */
+        /* ดึง item, count-- */
+        notify();
+    }
+}</code></pre>
+        <div class="example"><div class="ex-title">ตัวอย่าง Counter พิสูจน์ความจำเป็นของ synchronized</div><ol>
+          <li>count เริ่ม 5, 2 เทรด (increment + decrement แบบแตก 3 สเต็ป + sleep สุ่ม) ทำงาน 1 ครั้ง ถ้าถูกต้องต้องได้ 5</li>
+          <li>มี synchronized → ได้ <strong>5 ถูกต้องทุกครั้ง</strong></li>
+          <li>ถอด synchronized ออก → ได้ <strong>4, 5 หรือ 6</strong> ขึ้นกับว่าเทรดไหนเสร็จทีหลัง อาจารย์เตือนว่าแบบนี้ถ้ามีปัญหาจะไล่ยากมาก เพราะบางทีถูกบางทีผิด</li>
+        </ol></div>
+        <ul>
+          <li><strong>Java Semaphore class</strong> (มีตั้งแต่ Java 5 ก่อนหน้าต้องสร้างเองด้วย synchronized): <code>acquire()</code> = wait (รอจน value &gt; 0 แล้ว value--), <code>release()</code> = signal (value++ + notify) ใช้ acquire/release ครอบช่วงอัปเดต count โดยสร้าง semaphore เริ่มค่า 1 ก็ได้ผลถูกต้อง</li>
+          <li><strong>Synchronized block</strong>: ล็อกเฉพาะจุดสำคัญเพื่อเพิ่ม degree of concurrency เช่นส่วนสุ่มเลข/sleep ปล่อยให้เทรดทำพร้อมกันได้ แต่ครอบเฉพาะบล็อกอัปเดต count ด้วย <code>synchronized (this) { count++; }</code></li>
+        </ul>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div><ul>
+          <li>อย่าใช้ <code>yield()</code> แทน <code>wait()</code>: yield แค่ยอมออกจาก CPU ไปต่อคิว ready queue แต่ <strong>ไม่ปลดล็อก object</strong> wait ปลดล็อกด้วย อุปมาอาจารย์: "ล็อกห้องไว้ แทนที่จะเปิดประตูออก กลับล็อกห้องค้างไว้แล้วปีนหน้าต่างออกไป"</li>
+          <li>notify เลือกเทรดแบบ "อะไรก็ได้" ตามแต่ละ JVM อย่าสมมติว่าปลุกตัวที่เราอยากให้ตื่น</li>
+        </ul></div>
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li>ไล่ interleaving count++/count-- หาค่าสุดท้าย (ตัวอย่าง S0-S5 ได้ 4) + นิยาม race condition</li>
+          <li>นิยาม critical section + 3 เงื่อนไข (mutual exclusion, progress, bounded waiting) พร้อมตัวอย่างที่ไม่ผ่านข้อ 2 และข้อ 3</li>
+          <li>Peterson: ตัวแปร turn + flag[2] + สมมติ LOAD/STORE atomic, Bakery: กดบัตรคิว (ticket, pid) ใช้ได้กับ n process</li>
+          <li>นิยาม wait/signal (P/V) atomic, counting vs binary semaphore (binary = mutex lock), การใช้ S = 1 คุม critical section</li>
+          <li>Implementation แบบไม่ busy waiting: block/wakeup, เงื่อนไข value &lt; 0 กับ value &lt;= 0, bounded waiting ขึ้นกับ wakeup (FIFO = ผ่าน)</li>
+          <li>ค่าเริ่มต้น semaphore ของ 3 classical problems: Bounded-buffer <strong>mutex=1, full=0, empty=N</strong>; Readers-Writers <strong>mutex=1, wrt=1, readcount=0</strong>; Dining <strong>chopstick[5] = 1</strong> + โครงสร้างโค้ดและจุดที่ทำให้เกิด deadlock</li>
+          <li>Monitor: 1 process ต่อครั้ง, entry queue vs waiting queue ของ condition, signal แล้วกลับ entry queue, ทางแก้ DP ด้วย state[5] + self[5] + pickup/putdown/test (ไม่ deadlock แต่ starvation ได้)</li>
+          <li>Java: object ทุกตัวมี lock, wait() ทำ 3 อย่าง, notify() vs notifyAll(), entry set/wait set, wait กับ yield ต่างกันที่การปลดล็อก, Counter ถอด synchronized แล้วได้ 4/5/6, Java Semaphore (Java 5+) acquire/release</li>
+          <li>POSIX semaphore: sem_init(&amp;mutex, 0, 1) ความหมายพารามิเตอร์, sem_wait/sem_post = P/V, compile ด้วย -lpthread, macOS ต้องใช้ named semaphore</li>
+        </ul></div>
+      </section>
+
+      <section id="sec8" class="card">
+        <h2>Deadlock</h2>
+
+        <h3>แนวคิดพื้นฐาน (คลิป 11.3)</h3>
+        <p>อุปมาของสไลด์และคลิป: จราจรทางเดียวบนสะพานแคบ แต่ละช่วงสะพาน = resource รถสองคันเจอกันกลางสะพานไม่มีใครยอมถอย ก็ไม่มีใครไปถึงจุดหมาย แปลงเป็น OS: รถ = process, ถนน = resource แก้ได้ถ้ามีรถถอย (<strong>preempt resources + rollback</strong>) อาจต้องถอยหลายคัน และถ้ากำหนดให้ฝั่งหนึ่งยอมถอยเสมอก็เกิด <strong>starvation</strong> ได้</p>
+        <ul>
+          <li><strong>Deadlock</strong> = process ตั้งแต่ 2 ตัวขึ้นไป <strong>รอกันไม่สิ้นสุด</strong> สำหรับ event ที่เกิดจาก process ที่กำลังรอเท่านั้น เมื่อเกิดแล้วมีโอกาสขยายตัว (อุปมา: เริ่มติดแค่ 4 แยกเดียว ถ้าไม่มีใครแก้ ขยายจนติดทั้งเมือง)</li>
+          <li><strong>Starvation</strong> = <strong>indefinite blocking</strong>: process ไม่ถูกดึงออกจาก semaphore queue เลย ผลลัพธ์เหมือน deadlock (process ไม่จบ) แต่ starvation กระทบเฉพาะ process ไม่กี่ตัว ส่วน deadlock ขยายทั้งระบบได้ จึงสนใจแก้ deadlock มากกว่า</li>
+          <li>ข้อเท็จจริงสำคัญ: <strong>ส่วนใหญ่ OS ไม่ป้องกันและไม่จัดการ deadlock</strong> ระดับ user process เลย</li>
+        </ul>
+        <p>ตัวอย่าง deadlock จาก semaphore (S, Q เป็น binary semaphore ค่าเริ่มต้น 1 ดูพื้นฐาน semaphore ที่ <a href="#sec7">หัวข้อ Synchronization</a>):</p>
+        <pre><code>P0: wait(S);  wait(Q);  ...  signal(S);  signal(Q);
+P1: wait(Q);  wait(S);  ...  signal(Q);  signal(S);</code></pre>
+        <div class="example"><div class="ex-title">ไล่เหตุการณ์ที่อาจารย์ให้ trace</div><ol>
+          <li>OS ให้ P0 ทำก่อน: P0 wait(S) ถือ S</li>
+          <li>OS สลับไป P1: P1 wait(Q) ถือ Q</li>
+          <li>P0 ทำ wait(Q): Q ว่างแล้ว (P1 ถืออยู่) → P0 ไปรอใน wait state</li>
+          <li>P1 ทำ wait(S): S ว่างแล้ว (P0 ถืออยู่) → P1 ไปรอใน wait state</li>
+          <li>P0 รอให้ P1 signal(Q), P1 รอให้ P0 signal(S) ทั้งคู่ออกมาทำงานอีกไม่ได้เลย → deadlock</li>
+        </ol></div>
+
+        <h3>Deadlock Characterization: 4 เงื่อนไขจำเป็น (ต้องครบพร้อมกัน)</h3>
+        <p>เกิด deadlock ได้ต้องมีทั้ง 4 เงื่อนไขพร้อมกัน <strong>ขาดข้อใดข้อหนึ่งก็ไม่เกิด</strong> อาจารย์ผูกทุกข้อกลับไปที่โค้ด S/Q ด้านบน:</p>
+        <ol>
+          <li><strong>Mutual exclusion</strong>: ทรัพยากรให้ใช้ได้ครั้งละ 1 process (S, Q เป็น binary semaphore)</li>
+          <li><strong>Hold and wait</strong>: process ถือ resource อย่างน้อย 1 อันแล้วรอขอ resource ที่ถือโดย process อื่น (P0 ถือ S รอ Q, P1 ถือ Q รอ S)</li>
+          <li><strong>No preemption</strong>: resource ปล่อยได้เฉพาะโดยสมัครใจจากเจ้าของเมื่อทำงานเสร็จ (P0 คืน S ได้ต่อเมื่อเรียก signal(S) เอง ไม่มีใครดึงออกจากมือได้)</li>
+          <li><strong>Circular wait</strong>: มีชุด process รอวนกันเป็นวง P0 → P1 → P2 → ... → P0 (P0 รอ Q ของ P1, P1 รอ S ของ P0)</li>
+        </ol>
+        <p><strong>ตัดเงื่อนไขใดเงื่อนไขหนึ่งออก = แก้ deadlock ได้</strong> แต่อาจารย์ย้ำว่า "พูดง่ายแต่ทำยาก"</p>
+
+        <h3>Resource-Allocation Graph (RAG)</h3>
+        <ul>
+          <li>Vertex: วงกลม = <strong>P</strong> (process), สี่เหลี่ยม = <strong>R</strong> (resource type) จุดข้างในสี่เหลี่ยม = จำนวน instances ของ type นั้น (เช่น ปริ้นเตอร์ 4 ตัวใส่จุด 4 จุด)</li>
+          <li>Edge (มีทิศ): <strong>request edge Pi → Rj</strong> = Pi ขอ Rj, <strong>assignment edge Rj → Pi</strong> = Rj ถูกให้ Pi</li>
+        </ul>
+        <div class="keypoints"><div class="kp-title">กฎการอ่านกราฟ (ตัดสินจาก cycle)</div><ul>
+          <li>กราฟ <strong>ไม่มี cycle → ไม่มี deadlock แน่นอน 100%</strong></li>
+          <li>มี cycle + แต่ละ resource type มี <strong>instance เดียว → deadlock แน่นอน</strong> (ตัวอย่างคลิป: cycle P1 → R1 → P2 → R3 → P3 → R2 → P1 คือ deadlock ระหว่าง P1, P2, P3)</li>
+          <li>มี cycle + มี <strong>หลาย instance → สรุปได้แค่ "มีความเป็นไปได้" (possibility)</strong> (ตัวอย่างคลิป: cycle ระหว่าง P1 กับ P3 แต่ R1 มี 2 ชิ้น ถ้า P2 คืน R1 ปุ๊บ P1 ก็ใช้ได้ จึงไม่เกิด deadlock)</li>
+        </ul></div>
+
+        <h3>วิธีจัดการ Deadlock 3 ทาง</h3>
+        <ol>
+          <li>ทำให้ระบบ <strong>ไม่เข้าสู่ deadlock เลย</strong> แบ่งเป็น prevention (ป้องกัน) กับ avoidance (หลีกเลี่ยง)</li>
+          <li>ยอมให้เกิดแล้ว <strong>recover</strong> (detection + recovery)</li>
+          <li><strong>ไม่สนใจ</strong> แกล้งทำเป็นไม่มี deadlock ถ้าเกิดจริงก็เป็นหน้าที่คน/แอดมินจัดการเอง เช่น reboot, <strong>ใช้โดย OS ส่วนใหญ่ รวมถึง UNIX</strong></li>
+        </ol>
+
+        <h3>Deadlock Prevention: ตัดเงื่อนไขทีละข้อ (คลิป 11.4)</h3>
+        <ol>
+          <li><strong>ตัด Mutual Exclusion</strong>: ทำไม่ได้กับทุกทรัพยากร ทรัพยากร sharable (อ่านพร้อมกันได้) ไม่ต้องมี แต่ nonsharable ธรรมชาติของมันต้องใช้ทีละตัว บังคับธรรมชาติมาไม่ได้</li>
+          <li><strong>ตัด Hold and Wait</strong>: รับประกันว่า process ที่ขอ resource ต้องไม่ถือ resource อื่น ให้ขอครบทุกอย่างก่อนเริ่ม หรือขอได้เมื่อไม่ถืออะไรเลย ตัวอย่างคลิป: P1 ต้องได้ disk + printer พร้อมกันจึงเริ่มทำงานได้ ปัญหา 2 อย่าง: ถ้าไม่เคยได้พร้อมกันเลย P1 ไม่ได้ทำงานเลย (<strong>starvation</strong>) และถ้าได้แล้วใช้ไม่ทับกันก็เปลือง เช่น P1 อ่าน disk 10,000 record ประมวลผล 15 นาที แต่ถือ printer ค้างไว้ตลอด → <strong>printer ว่างงานอย่างน้อย 15 นาที</strong> (utilization ต่ำ)</li>
+          <li><strong>ตัด No Preemption</strong> (ทำให้มี preemption): ถ้าขอแล้วไม่ได้ ต้องปล่อย resource ที่ถือทั้งหมด ใส่ไว้ในรายการรอ จะรันใหม่เมื่อได้ของเก่า + ของใหม่ครบ ปัญหา: จากเดิมรอตัวเดียวกลายเป็นรอทั้งตัวเก่าและตัวใหม่ <strong>มีโอกาส starvation</strong></li>
+          <li><strong>ตัด Circular Wait</strong>: จัด <strong>total ordering</strong> ให้ resource type แล้วบังคับให้ขอตามลำดับ increasing order ตัวอย่างตัวเลขคลิป: กำหนด disk = 4, printer = 11 กฎคือ "ยังขอเลข 4 ไม่ได้ ห้ามถือเลข 11" ทำให้ P1 ที่ยังขอ disk (ถูก P2 ถือ) อยู่ ไม่มีวันได้ printer เส้น request ที่จะก่อวงไม่เกิดขึ้น ปัญหา: เลขมาจากสถิติการใช้งาน กระทบ process ที่ต้องใช้ printer ก่อน disk กฎนี้อาจไม่เหมาะกับ process บางกลุ่ม</li>
+        </ol>
+        <p>สรุปคลิป: ไม่ว่าป้องกันข้อไหนก็มีปัญหาตามมาเสมอ (ประสิทธิภาพ/การใช้ทรัพยากรไม่คุ้ม) ทำได้ในทางทฤษฎีแต่ทางปฏิบัติไม่คุ้มเสีย OS จึงเลือกไม่ใช้ prevention</p>
+
+        <h3>Deadlock Avoidance (คลิป 11.5)</h3>
+        <ul>
+          <li>ต้องมี <strong>a priori information</strong>: process ต้องแจ้ง OS ล่วงหน้าว่าจะใช้ทรัพยากรอะไร และ max ใช้กี่ตัว (โมเดลง่ายสุด) พอขอแต่ละครั้ง OS ตรวจทุกครั้งว่าถ้าให้ไประบบจะมีโอกาสเกิด deadlock ไหม <strong>แค่มีโอกาสก็ไม่ให้</strong></li>
+          <li><strong>Safe state</strong> = ระบบรู้ว่าไม่เกิด deadlock แน่นอน → ให้ได้; <strong>Unsafe state</strong> = มีความเป็นไปได้จะเกิด → avoidance คือไม่เข้า unsafe state เลย</li>
+          <li>กรณี instance เดียวต่อ type ใช้ <strong>resource-allocation graph + claim edge (เส้นประ)</strong>: claim edge Pi - -&gt; Rj หมายถึง Pi อาจขอ Rj ในอนาคต (สิ่งที่แจ้งไว้ล่วงหน้า) เมื่อขอจริงเปลี่ยนเป็น request edge เมื่อได้รับเป็น assignment edge เมื่อปล่อยกลับเป็น claim edge</li>
+          <li>วิธีตัดสิน: ลองเปลี่ยน claim → assignment ชั่วคราว ถ้ากราฟ <strong>ไม่เกิด cycle อนุมัติ, เกิด cycle ปฏิเสธ</strong> แล้วดึงด้านกลับเป็นเส้นประ ตัวอย่างคลิป: P2 ขอ R2 ทำให้เกิด cycle P1 → R2 → P2 → R1 → P1 ระบบจะ unsafe จึงไม่ให้ ทำแบบนี้ทุกครั้งที่มีการร้องขอ</li>
+          <li>เหตุผลที่ OS ไม่ทำ: ต้องเช็คหา cycle ทุกครั้งที่ขอ และการหา cycle ใช้ <strong>O(n^2)</strong> เมื่อ n คือจำนวนจุดยอด ระบบไม่มีประสิทธิภาพ + กระบวนการจริงไม่รู้ resource ที่จะใช้ล่วงหน้า (อาจารย์ว่าแนวคิดพอเข้ากับระบบ batch สมัยก่อน)</li>
+          <li>กรณีหลาย instance ต่อ type ใช้ <strong>Banker's Algorithm</strong> (ปัญหาเดียวกันคือการเช็ค safe state แต่ละครั้งใช้เวลานานมาก ยิ่ง process เยอะทรัพยากรเยอะยิ่งนาน)</li>
+        </ul>
+        <details class="more"><summary>อ่านเพิ่ม: Banker's Algorithm (สไลด์ No.07 มีตัวอย่างเต็ม)</summary><div>
+          <p>หมายเหตุ: <strong>อาจารย์แจ้งในคลิปว่าไม่อยู่ในสโคป แต่มีในสไลด์ ควรอ่านเผื่อไว้</strong></p>
+          <p>ใช้กับ n process, m resource type ข้อมูลที่ต้องมี: <strong>Available</strong> (เวกเตอร์ m), <strong>Max</strong> (n x m), <strong>Allocation</strong> (n x m) และ <strong>Need = Max - Allocation</strong></p>
+          <p><strong>Safety Algorithm</strong>: ตั้ง Work = Available, Finish[i] = false ทั้งหมด → หา i ที่ Finish[i] = false และ Need_i &lt;= Work → Work += Allocation_i, Finish[i] = true → ถ้า Finish เป็นจริงทุกตัว = safe state</p>
+          <p><strong>Resource-Request Algorithm</strong> (เมื่อ Pi ขอ Request): 1) Request &lt;= Need? ถ้าไม่ใช่ = error เกิน claim 2) Request &lt;= Available? ถ้าไม่ใช่ = ต้องรอ 3) จำลอง allocate: Available -= Request, Allocation_i += Request, Need_i -= Request → ถ้า state ที่ได้ safe ให้จริง ถ้า unsafe Pi ต้องรอและคืนสถานะเดิม</p>
+          <p><strong>ตัวอย่างสไลด์</strong>: 5 process (P0-P4), resource A(10), B(5), C(7), Available = (3,3,2); Need: P0(7,4,3), P1(1,2,2), P2(6,0,0), P3(0,1,1), P4(4,3,1) → safe sequence <strong>&lt;P1, P3, P4, P2, P0&gt;</strong></p>
+          <p>P1 ขอ (1,0,2) (ไม่เกิน Need และไม่เกิน Available (3,3,2)) → จำลองแล้ว safe sequence <strong>&lt;P1, P3, P4, P0, P2&gt;</strong> → อนุมัติ สไลด์ทิ้งคำถาม: P4 ขอ (3,3,0) ได้ไหม? P0 ขอ (0,2,0) ได้ไหม?</p>
+          <p><strong>ข้อเสียของ Banker's</strong>: job ต้องแจ้ง max, จำนวน resource รวมต้องคงที่, จำนวน job ต้อง fix, overhead สูง, ใช้ resource คุ้มไม่ดี (สมมติ worst case) และ scheduling แย่ลง</p>
+        </div></details>
+
+        <h3>Deadlock Detection (คลิป 11.6)</h3>
+        <p>ยอมให้ระบบเข้า deadlock state + มี detection algorithm รันเป็นระยะ + recovery scheme</p>
+        <ul>
+          <li><strong>Instance เดียวต่อ type</strong>: ใช้ <strong>wait-for graph</strong> แปลงจาก RAG มาเป็นกราฟ process ต่อ process (Pi → Pj ถ้า Pi รอ resource ที่ Pj ถืออยู่) มี cycle = มี deadlock การหา cycle ใช้ <strong>O(n^2)</strong> ตัวอย่างคลิป: แปลงแล้วพบ cycle ที่เกี่ยวข้อง P1, P2, P3, P4 → deadlock ทั้ง 4 ตัว</li>
+          <li><strong>หลาย instance</strong>: ใช้ Available, Allocation, Request (n x m) ทำ Detection Algorithm ทำนองเดียวกับ safety algorithm ถ้า Finish[i] = false บางตัว → ระบบ deadlock โดย Pi เหล่านั้นติด deadlock ความซับซ้อน <strong>O(m x n^2)</strong></li>
+          <li>ปัญหาของ detection ที่ OS เลยไม่ทำ: ตรวจ <strong>บ่อยแค่ไหน</strong>? น้อยไปปัญหาเล็กขยายใหญ่แก้ยาก บ่อยไป OS เสียเวลาแทนที่จะให้บริการ user + ตัว detection เองก็ O(n^2)</li>
+        </ul>
+        <p>ตัวอย่างสไลด์ (หลาย instance): 5 process, A(7), B(2), C(6) ตอนแรกได้ sequence &lt;P0, P2, P3, P1, P4&gt; Finish จริงหมด = ไม่ deadlock พอ <strong>P2 ขอ C เพิ่ม 1</strong> → reclaim ของ P0 ได้แต่ไม่พอให้คนอื่น → <strong>deadlock มี P1, P2, P3, P4</strong></p>
+
+        <h3>Recovery from Deadlock (คลิป 11.6)</h3>
+        <p><strong>วิธี 1: Process termination</strong></p>
+        <ul>
+          <li>Abort deadlocked process ทั้งหมด: ง่ายสุดแต่อาจแย่ที่สุด ไม่มีใครเสร็จเลย และ user รันใหม่ก็อาจติด deadlock ซ้ำ</li>
+          <li>Abort ทีละตัวจนวงหัก: ดีกว่า แต่ถ้าไม่มีเกณฑ์เลือกที่ดีสุดท้ายก็อาจต้องจบทั้งหมด</li>
+          <li>เกณฑ์เลือก (ยกตัวอย่าง): <strong>priority</strong> (ต่ำกว่าถูกจบก่อน), ทำงานมานานไหม/เหลือเท่าไร (จบตัวเพิ่งเข้ามา เพราะยังใช้ทรัพยากรไม่มาก), ใช้ resource อะไรไปแล้ว/ต้องใช้อะไรอีก, ต้อง terminate กี่ process, interactive หรือ batch</li>
+        </ul>
+        <p><strong>วิธี 2: Resource preemption</strong> (ขอ resource คืนชั่วคราวแล้วให้ process ทำต่อภายหลัง)</p>
+        <ul>
+          <li><strong>Selecting a victim</strong>: เลือกว่าจะเอา resource จากใคร โดยลด cost</li>
+          <li><strong>Rollback</strong>: คืน resource กลางคันอาจทำให้ข้อมูลไม่ถูกต้อง ตัวอย่างอาจารย์: process กำลังโอนเงิน ถอนจากต้นทางแล้วยังไม่ฝากปลายทาง ถ้าคืน resource เดี๋ยวนั้นเงินหาย → ต้อง rollback ไปจุด safe state (ก่อนถอน) แล้ว restart</li>
+          <li><strong>Starvation</strong>: process เดิมอาจถูกเลือกเป็น victim ตลอด ทำงานไปได้ไม่นานก็โดนขอคืน วนไปเรื่อย ๆ → แก้โดยใส่จำนวน rollback เข้าไปใน cost factor</li>
+        </ul>
+        <div class="keypoints"><div class="kp-title">บทสรุปของทั้งชุด (จากคลิป)</div><ul>
+          <li>ทุกแนวทาง (prevention, avoidance, detection+recovery) ทำได้ แต่ประสิทธิภาพและการใช้ทรัพยากรไม่คุ้ม</li>
+          <li>OS ส่วนใหญ่ (รวม UNIX) เลือกวิธี ignore: ไม่จัดการ deadlock ระดับ user process</li>
+          <li>ข้อสรุปของอาจารย์: <strong>นักเขียนโปรแกรมต้องป้องกัน deadlock เอง เพราะ OS ไม่มีกลไกช่วย</strong></li>
+        </ul></div>
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li>นิยาม deadlock vs starvation (indefinite blocking) + ไล่ตัวอย่าง semaphore S/Q ว่าทำไมติดกันตาย</li>
+          <li><strong>4 เงื่อนไขจำเป็น (ออกบ่อยมาก)</strong>: mutual exclusion, hold and wait, no preemption, circular wait + ข้อเท็จจริงว่าตัดข้อเดียว deadlock หาย</li>
+          <li>RAG: cycle กับ instance เดียว (deadlock แน่) กับหลาย instance (มีโอกาสเท่านั้น), ไม่มี cycle = ไม่ deadlock</li>
+          <li>OS ส่วนใหญ่ (UNIX) เลือกวิธีใด → ignore</li>
+          <li>Prevention: ตัดเงื่อนไขไหนด้วยวิธีใด + ปัญหาของแต่ละวิธี (printer ว่าง 15 นาที, starvation, กฎ disk=4/printer=11)</li>
+          <li>Avoidance: safe vs unsafe state, claim edge, ทำไม OS ไม่ทำ (O(n^2) ทุกครั้ง + ต้องแจ้งล่วงหน้า)</li>
+          <li>Banker's: Need = Max - Allocation, ไล่ safety algorithm หา safe sequence (ตัวอย่าง &lt;P1, P3, P4, P2, P0&gt;) อยู่ใน details ข้างบน ควรอ่านเผื่อแม้ไม่อยู่ในสโคป</li>
+          <li>Detection: wait-for graph O(n^2) (หลาย instance O(m x n^2)), ตัวอย่างสไลด์ P2 ขอ C เพิ่ม 1 → deadlock P1-P4</li>
+          <li>Recovery: เกณฑ์เลือก victim, rollback (ตัวอย่างโอนเงิน), starvation จากการโดนเลือกเป็น victim ตลอด</li>
+        </ul></div>
+      </section>
+
+      <p><a href="os-quiz.html">ทำแบบทดสอบรวมที่หน้า OS ควิซ</a></p>
+      <p><a href="os-2.html">หัวข้อถัดไป: Memory และ File System</a></p>
+    </article>
+  </main>
+</div>
+<script src="assets/site.js"></script>
+</body>
+</html>

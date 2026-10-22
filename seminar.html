@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seminar in Modern Platform Technologies | ติวสอบ ปี 2 เทอม 1</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-subject="seminar">
+<header class="topbar">
+  <a class="brand" href="index.html">ติวสอบ <span>ปี 2 เทอม 1</span></a>
+  <nav class="subject-nav">
+    <a href="dsa.html">DSA</a>
+    <a href="os.html">OS</a>
+    <a href="os-2.html">OS (ต่อ)</a>
+    <a href="os-quiz.html">OS ควิซ</a>
+    <a href="oslab.html">OS Lab</a>
+    <a href="bpm.html">BA/BPM</a>
+    <a href="linear.html">พีชคณิตเชิงเส้น</a>
+    <a href="seminar.html" class="active">Seminar</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="toc">
+    <div class="toc-title">สารบัญหน้านี้</div>
+    <a href="#sec1">ภาพรวมวิชาและเกณฑ์ประเมิน</a>
+    <a href="#sec2">หลักการทำพรีเซนเทชัน</a>
+    <a href="#sec3">การออกแบบสไลด์</a>
+    <a href="#sec4">เช็คลิสต์ก่อนขึ้นพรีเซนต์</a>
+    <a href="#quiz">แบบทดสอบ</a>
+  </aside>
+  <main>
+    <article>
+      <h1>Seminar in Modern Platform Technologies</h1>
+      <p class="page-sub">รหัสวิชา 05506238 สรุปจากเอกสาร Overview ของวิชาและสไลด์ "How to do a presentation effectively 2026" พร้อมแบบทดสอบ 15 ข้อ</p>
+
+      <section id="sec1" class="card">
+        <h2>ภาพรวมวิชาและเกณฑ์การประเมิน</h2>
+        <p>วิชานี้เป็นรายวิชาใหม่ในหลักสูตรวิทยาการคอมพิวเตอร์ KMITL ฉบับใหม่ 64 (new 64 computer science KMITL curriculum) เป็นวิชาสัมมนา สไลด์บรรยายมีจำนวนน้อย ข้อสอบจึงมาจากเอกสาร Overview และสไลด์การนำเสนอเท่านั้น</p>
+
+        <h3>เป้าหมายวิชา</h3>
+        <p>สิ่งที่วิชาคาดหวังจากผู้เรียนมี 5 ข้อ ต้องจำให้ได้ครบ</p>
+        <div class="keypoints"><div class="kp-title">ประเด็นสำคัญ</div><ul>
+          <li>สำรวจโลกของเทคโนโลยีโดยใช้หลักการวิทยาการคอมพิวเตอร์ (explore the world of technologies using computer science principles)</li>
+          <li>เน้นว่าเทคโนโลยีคืออะไร และทำไมจึงจำเป็น</li>
+          <li>เริ่มสำรวจว่าเทคโนโลยีเหล่านั้นถูกพัฒนาขึ้นอย่างไร</li>
+          <li>พัฒนาทักษะการนำเสนอ (presentation skills)</li>
+          <li>เข้าใจการเชื่อมโยงความรู้จากหลายแหล่ง และความสำคัญของการอ้างอิง (references)</li>
+        </ul></div>
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li>โจทย์ชอบแทรกตัวเลือกกวน เช่น "เรียนรู้การเขียนโปรแกรมเกม 3 มิติจนสร้างเกมได้หนึ่งเกม" ข้อนี้ไม่ใช่เป้าหมายวิชา เพราะเป็นเพียงสาขาความเชี่ยวชาญของผู้สอน</li>
+        </ul></div>
+
+        <h3>รูปแบบวิชา</h3>
+        <p><strong>Lectures (บรรยาย)</strong> มี 2 หัวข้อ: How to do a presentation effectively และ How to create a good slide</p>
+        <p><strong>Seminar (สัมมนา)</strong> ทำทั้งหมด 4 ครั้ง แบ่ง 4 กลุ่มตาม 4 แทร็ก แต่ละแทร็กมีอาจารย์ผู้รับผิดชอบหลายท่าน</p>
+        <table>
+          <tr><th>แทร็ก</th><th>หัวข้อ</th></tr>
+          <tr><td>Track 1</td><td>Computer Science (Computer Science foundations and applications)</td></tr>
+          <tr><td>Track 2</td><td>Software Engineering (Software Engineering and System Development)</td></tr>
+          <tr><td>Track 3</td><td>Data Science and AI (Data Science and Data Engineering)</td></tr>
+          <tr><td>Track 4</td><td>Computer Security &amp; Network &amp; IoT (Computer Network, System Security, Internet of Things)</td></tr>
+        </table>
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li>ผู้เรียนถูกแบ่งกลุ่มละ 2-3 คน และทุกคนต้องนำเสนอในทุกสัมมนา (everyone must present in each seminar)</li>
+          <li>แต่ละกลุ่มนำเสนอ 4 ครั้งใน 4 กลุ่ม และคะแนนประเมินเป็นรายบุคคล (graded individually)</li>
+        </ul></div>
+
+        <h3>เกณฑ์การประเมิน</h3>
+        <p>การประเมินเป็นแบบรายบุคคล สัมมนาแต่ละครั้งมีค่า 20 คะแนน แบ่งเป็น 5 หมวด รายละเอียดเกณฑ์และ rubric อยู่ที่ลิงก์ <code>bit.ly/3QFUkJm</code> (เครดิต Aj. Brook)</p>
+        <table>
+          <tr><th>เกรด</th><th>คะแนน</th></tr>
+          <tr><td>A</td><td>≥ 70</td></tr>
+          <tr><td>B+</td><td>65-69.9</td></tr>
+          <tr><td>B</td><td>60-64.9</td></tr>
+          <tr><td>C+</td><td>55-59.9</td></tr>
+          <tr><td>C</td><td>50-54.9</td></tr>
+          <tr><td>D+</td><td>45-49.9</td></tr>
+          <tr><td>D</td><td>40-44.9</td></tr>
+          <tr><td>F</td><td>≤ 39.9</td></tr>
+        </table>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div><ul>
+          <li>ตัวเลือกกลวงในข้อสอบ: "สัมมนาละ 25 คะแนน 4 หมวด", "ประเมินเป็นหมู่คณะ", "ได้คะแนนจาก midterm เป็นหลัก" ทั้งหมดผิด ที่ถูกคือ 20 คะแนน 5 หมวด ประเมินรายบุคคล</li>
+        </ul></div>
+
+        <h3>ตารางกิจกรรม</h3>
+        <table>
+          <tr><th>สัปดาห์</th><th>วันที่ (ปี 2026)</th><th>กิจกรรม</th></tr>
+          <tr><td>1</td><td>29 มิ.ย.</td><td>ไม่มีเรียน</td></tr>
+          <tr><td>2</td><td>6 ก.ค.</td><td>Introductions (Aj. Witchaya)</td></tr>
+          <tr><td>3</td><td>13 ก.ค.</td><td>Exploration and Presentations เวลา 13:30 (Aj. Witchaya)</td></tr>
+          <tr><td>4</td><td>20 ก.ค.</td><td>ไม่มีเรียน, Work 1 Due</td></tr>
+          <tr><td>5</td><td>27 ก.ค.</td><td>ไม่มีเรียน</td></tr>
+          <tr><td>6</td><td>3 ส.ค.</td><td>Seminar 1 (14:00)</td></tr>
+          <tr><td>7</td><td>10 ส.ค.</td><td>MIDTERM EXAM</td></tr>
+          <tr><td>8</td><td>24 ส.ค.</td><td>ไม่มีเรียน</td></tr>
+          <tr><td>9</td><td>31 ส.ค.</td><td>Seminar 2</td></tr>
+          <tr><td>10</td><td>7 ก.ย.</td><td>ไม่มีเรียน</td></tr>
+          <tr><td>11</td><td>14 ก.ย.</td><td>Seminar 3 (14:00)</td></tr>
+          <tr><td>12</td><td>21 ก.ย.</td><td>ไม่มีเรียน</td></tr>
+          <tr><td>13</td><td>28 ก.ย.</td><td>Seminar 4</td></tr>
+          <tr><td>14-16</td><td>-</td><td>ไม่มีเรียน</td></tr>
+        </table>
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li>จำวันสำคัญ: Work 1 Due สัปดาห์ 4 (20 ก.ค.), Seminar 1 สัปดาห์ 6 (3 ส.ค. เวลา 14:00), MIDTERM สัปดาห์ 7 (10 ส.ค.)</li>
+        </ul></div>
+      </section>
+
+      <section id="sec2" class="card">
+        <h2>หลักการทำพรีเซนเทชันอย่างมีประสิทธิภาพ</h2>
+
+        <h3>พรีเซนเทชันคืออะไร</h3>
+        <p>ตามพจนานุกรม Oxford Collocations พรีเซนเทชันมีสองความหมาย: (1) ชุดของสไลด์คอมพิวเตอร์ (ภาพ) ที่ฉายประกอบการพูดเมื่อมีคนนำเสนอในที่ประชุม และ (2) วิธีที่สิ่งใดถูกเสนอ, แสดง, หรืออธิบายให้ผู้อื่นฟัง จึงไม่ได้หมายถึงแค่ไฟล์ PowerPoint หรือเอกสารแจก</p>
+        <div class="keypoints"><div class="kp-title">ประเด็นสำคัญ</div><ul>
+          <li>แนวคิดจาก Gemignani (2014): ผู้นำเสนอต้องไปยืนตรงจุดที่ผู้ฟังอยู่ (meet their audiences where they are) ในแบบที่ผู้ฟังมีส่วนร่วมได้อย่างสบายใจ</li>
+          <li>Presentation = Persuasion: การนำเสนอคือการโน้มน้าว</li>
+          <li>Best balance point อยู่ระหว่าง "สิ่งที่เราต้องการจะบอก" (What we are trying to tell) กับ "สิ่งที่ผู้ฟังอยากได้ยิน" (What audiences want to hear)</li>
+          <li>Message is the key: สารคือหัวใจของการนำเสนอ</li>
+        </ul></div>
+
+        <h3>กฎเหล็ก 4 ข้อ (Golden Rules)</h3>
+        <table>
+          <tr><th>กฎ</th><th>ความหมาย</th></tr>
+          <tr><td>RULE NO.1: DON'T START CREATING SLIDES</td><td>อย่าเริ่มงานด้วยการเปิดโปรแกรมทำสไลด์ ต้องวางแผนข้อความ, ผู้ฟัง, และวิธีส่งสารก่อน</td></tr>
+          <tr><td>RULE NO.2: PRESENTER IS THE MAIN CHARACTER</td><td>ผู้พูดคือตัวเอกของงาน ไม่ใช่สไลด์</td></tr>
+          <tr><td>RULE NO.3: AUDIENCES HOLD THE POWER</td><td>ผู้ฟังคือผู้ที่มีอำนาจ ทุกอย่างต้องออกแบบจากฝั่งผู้ฟัง</td></tr>
+          <tr><td>RULE NO.4: SLIDES ARE TOOLS</td><td>สไลด์เป็นเพียงเครื่องมือถ่ายทอด message ของคุณ (Slides are tools to convey your messages)</td></tr>
+        </table>
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li>RULE NO.1 มักถูกสลับกับตัวเลือกกับดัก เช่น "ใช้ขนาดฟอนต์ไม่ต่ำกว่า 30 พอยต์เสมอ" ซึ่งมาจากหลัก 10-20-30 ที่ไม่ปรากฏในเอกสาร และ "เริ่มงานด้วยเทมเพลตสวยที่สุด" ซึ่งขัดกับ RULE NO.1 และคำเตือน AVOID USING BUILT-IN THEMES</li>
+        </ul></div>
+
+        <h3>ขั้นตอนเริ่มต้นทำพรีเซนเทชัน (STEPS)</h3>
+        <div class="example"><div class="ex-title">ลำดับ 5 ขั้นตอนตามสไลด์</div><ol>
+          <li>Message/Context ของคุณคืออะไร (What is your message / context?)</li>
+          <li>ผู้ฟังของคุณคือใคร (Who is your audience?)</li>
+          <li>คิดจากฝั่งผู้ฟัง (Think from your audience's side)</li>
+          <li>จะส่ง message ที่ไหน (Where will you deliver your message?)</li>
+          <li>จะส่ง message อย่างไร (How will you deliver your message?)</li>
+        </ol></div>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div><ul>
+          <li>โจทย์ถามลำดับขั้นตอน ให้จำว่า message ต้องมาก่อน audience และ "Think from your audience's side" อยู่ลำดับที่ 3 ระหว่าง Who กับ Where</li>
+        </ul></div>
+
+        <h3 id="canvas">Presentation Canvas และ Core idea table</h3>
+        <p>เป็นเครื่องมือวางแผนนำเสนอ (แนะนำจาก presentationcanvas) ประกอบด้วย 5 ช่อง กรอกให้ครบก่อนลงมือทำสไลด์</p>
+        <table>
+          <tr><th>ช่อง</th><th>คำอธิบาย</th></tr>
+          <tr><td>Objectives</td><td>เป้าหมายของการนำเสนอ</td></tr>
+          <tr><td>Context</td><td>บริบทหรือเงื่อนไขที่กำหนด เช่น งบประมาณ, กำลังคน, กลุ่มเป้าหมาย, ระยะเวลา</td></tr>
+          <tr><td>Idea (in one sentence)</td><td>ไอเดียหลักสรุปให้ได้ในหนึ่งประโยค เช่นเดียวกับ core message ของ Apple ("มุ่งทำผลิตภัณฑ์ที่ดีที่สุดบนโลก"), Google ("จัดระเบียบข้อมูลของโลกให้เข้าถึงและใช้ประโยชน์ได้ทั่วถึง"), Nintendo ("สร้างรอยยิ้มให้ทุกคนที่เราสัมผัส")</td></tr>
+          <tr><td>Selling points (1-3 ข้อ)</td><td>จุดขายที่จะใช้โน้มน้าว ควรชี้วัดเป็นตัวเลขได้</td></tr>
+          <tr><td>How to make it real</td><td>แผนทำให้เป็นจริง: ทรัพยากร, แรงงาน, เวลา</td></tr>
+        </table>
+        <details class="more"><summary>อ่านเพิ่ม: ตัวอย่าง Core idea table จากสไลด์</summary><div>
+          <p><strong>Great Wall of China (กำแพงเมืองจีน)</strong></p>
+          <ul>
+            <li>Objectives: ป้องกันประเทศ</li>
+            <li>Context: งบไม่จำกัด, ทหารพร้อม 10,000 นาย, พร้อมใน 5 ปี</li>
+            <li>Idea: สร้างกำแพงล้อมรอบประเทศ</li>
+            <li>Selling points: ป้องกันศัตรู, กำหนดเขตแดนที่เป็นรูปธรรม, แสดงความแข็งแกร่ง</li>
+            <li>How to make it real: อิฐราว 3,873,000,000 ก้อน, แรงงานหลายล้านคน, งานนับร้อยปี</li>
+          </ul>
+          <p><strong>Nespresso</strong></p>
+          <ul>
+            <li>Objectives: ทำให้คนเพลิดเพลินกับกาแฟคุณภาพสูงที่บ้าน</li>
+            <li>Context: งบ prototype 250,000 ยูโร, กลุ่มเป้าหมายคือ millennial</li>
+            <li>Idea: เครื่องชงกาแฟแบบแคปซูลพร้อมบริการจัดส่ง</li>
+            <li>Selling points: ชงกาแฟที่แรงดัน 8 bars, กาแฟคุณภาพสูงอย่างง่ายดาย, พร้อมดื่มในไม่ถึง 30 วินาที</li>
+          </ul>
+        </div></details>
+        <p>การนำเสนอที่ดีปิดท้ายด้วยการชวนให้ผู้ฟัง "รู้" หรือ "ลงมือทำ" เรียกว่า CALL TO KNOW / ACTION</p>
+
+        <h3>กรอบคำถาม WHO-WHY-WHAT-HOW</h3>
+        <p>พื้นฐานของกรอบนี้: ภาษามีพลัง แต่ไม่มีอารมณ์ และถูกตีความได้ต่างกันตามบริบทของผู้ฟัง คำถามหลักก่อนนำเสนอคือ คุณเป็นใคร? ใครกำลังฟังคุณ? ทำไมเขาต้องฟังคุณ? เขาจะได้ฟังอะไร? เขาจะฟังอย่างไร?</p>
+        <table>
+          <tr><th>คำถาม</th><th>สิ่งที่ต้องตอบให้ได้</th></tr>
+          <tr><td>WHO</td><td>คุณเป็นใคร (ความเชี่ยวชาญ, ตำแหน่ง), ผู้ฟังเป็นใคร, และความสัมพันธ์ระหว่างคุณกับผู้ฟังเป็นแบบใด</td></tr>
+          <tr><td>WHY</td><td>ทำไมคุณถึงนำเสนอกับเขา และทำไมเขาต้องฟังคุณ</td></tr>
+          <tr><td>WHAT</td><td>เนื้อหาหลัก ใช้ Core idea table (Objectives / Context / Idea หนึ่งประโยค / Selling points / How to make it real) ดูที่ <a href="#canvas">หัวข้อ Presentation Canvas</a></td></tr>
+          <tr><td>HOW</td><td>วิธีส่งสาร ใช้ STORYTELLING (การเล่าเรื่อง) เป็นเทคนิคหลักที่ยกมา</td></tr>
+        </table>
+      </section>
+
+      <section id="sec3" class="card">
+        <h2>การออกแบบสไลด์</h2>
+
+        <h3>เหตุผลที่ต้องใช้สไลด์</h3>
+        <p>สไลด์ระบุว่า "GOOD SLIDES HELP AUDIENCES UNDERSTAND YOUR MESSAGE WITH LESS EFFORT" คือสไลด์ที่ดีช่วยให้ผู้ฟังเข้าใจ message ของคุณด้วยความพยายามน้อยลง สไลด์จึงไม่ใช่สคริปต์ให้ผู้พูดอ่าน และไม่ใช่เครื่องโชว์ฝีมือ</p>
+        <details class="more"><summary>อ่านเพิ่ม: ตัวอย่างข้อมูลดิบกับ insight จากสไลด์</summary><div>
+          <p>สไลด์เปรียบเทียบการนำเสนอข้อมูลดิบ (คะแนน O-NET, งบประมาณการศึกษาเป็นตัวเลขเต็ม) กับการใช้แผนภูมิบวกประโยคสรุป insight เช่น "คุณภาพการศึกษา (O-NET) ของกรุงเทพฯ สูงกว่าค่าเฉลี่ยอย่างมีนัยสำคัญ" และ "กรุงเทพฯ ได้รับงบการศึกษามากกว่า 82.50% ของงบทั้งประเทศ แต่มีโรงเรียนเพียง 3.60% ของทั้งหมด" ซึ่งสื่อสารสาระได้ชัดเจนกว่ามาก</p>
+        </div></details>
+
+        <h3>ใช้จิตวิทยาเข้าช่วย (USE PSYCHOLOGIES)</h3>
+        <div class="keypoints"><div class="kp-title">ประเด็นสำคัญ</div><ul>
+          <li>หลักเกสตัลต์ (Gestalt) มี 4 หลัก: Similarity (ความคล้าย), Proximity (ความใกล้ชิด), Closure (การปิดภาพ), Continuity (ความต่อเนื่อง)</li>
+          <li>Gutenberg Diagram: แนวทางการอ่านแบบ Z Pattern และ F Pattern กำหนดว่าสายตาวิ่งไปที่ใด</li>
+          <li>สิ่งสำคัญวางไว้ตรงกลาง (IMPORTANT IS AT THE MIDDLE)</li>
+          <li>layout ตัวอย่างในสไลด์: ส่วน DO/PLUS กับ DON'T/MINUS แยกกันชัดเจน (NORMAL เป็นฐาน), แผนภูมิ (chart) วางด้านซ้าย, คำอธิบายวางด้านขวา</li>
+          <li>ใช้ลำดับชั้นของตัวอักษร (typography hierarchy) กำกับสายตา</li>
+        </ul></div>
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li>จำ Gestalt ให้ครบ 4 หลัก ตัวเลือกกวนที่เจอบ่อยคือ Reciprocity ซึ่งไม่ปรากฏในเอกสาร</li>
+        </ul></div>
+
+        <h3>กฎ 60-30-10 ของการใช้สี</h3>
+        <table>
+          <tr><th>บทบาท</th><th>สัดส่วน</th><th>ใช้ทำอะไร</th><th>ลักษณะสี</th></tr>
+          <tr><td>Primary colour</td><td>60%</td><td>พื้นหลัง (background)</td><td>ความอิ่มตัวต่ำ (low saturation)</td></tr>
+          <tr><td>Secondary colour</td><td>30%</td><td>ข้อความหลัก (main text)</td><td>ความอิ่มตัวปานกลาง</td></tr>
+          <tr><td>Accent colour</td><td>10%</td><td>จุดไฮไลต์ (highlight)</td><td>ความอิ่มตัวสูง, ความสว่างปานกลาง</td></tr>
+        </table>
+        <p>นอกจากนี้ให้กำหนด Colour Scheme จากวงจรสี (color wheel) และใช้สีข้อความที่ตัดกันเพื่อดึงดูดความสนใจ</p>
+
+        <h3>ข้อควรทำและไม่ควรทำ (DO / DON'T)</h3>
+        <table>
+          <tr><th>ด้าน</th><th>ควรทำ (DO)</th><th>ไม่ควรทำ (DON'T)</th></tr>
+          <tr><td>ธีม</td><td>ออกแบบ layout เองตามหลักจิตวิทยา</td><td>AVOID USING BUILT-IN THEMES: อย่าใช้ธีมสำเร็จรูปของโปรแกรม</td></tr>
+          <tr><td>ปริมาณข้อความ</td><td>เปลี่ยน bullet ยาวเป็นคำสำคัญหรือตัวเลขใหญ่พร้อมไอคอน เช่น "13 weeks", "No Exams", "40% / 50% / 10%" อ่านง่ายกว่ามาก</td><td>DON'T USE MORE THAN 6 LINES OF TEXT: อย่าใส่ข้อความเกิน 6 บรรทัดต่อสไลด์ และ DON'T USE TOO MANY BULLET POINTS</td></tr>
+          <tr><td>ฟอนต์และความชัด</td><td>USE CLEAN FONTS (ฟอนต์สะอาดอ่านง่าย), USE FONT SIZE APPROPRIATELY (ขนาดเหมาะสม), MAINTAIN STRONG CONTRAST (ตรวจได้ที่ webaim.org/resources/contrastchecker)</td><td>อย่าใช้ตัวอักษรที่ contrast ต่ำจนอ่านยาก เช่น สีเทาอ่อนบนพื้นขาว</td></tr>
+          <tr><td>สี</td><td>USE COLOR WISELY ตามกฎ 60-30-10, USE CONTRASTING TEXT COLORS TO DRAW ATTENTION</td><td>อย่าใช้สีจนรกวุ่นวายจนไม่เห็นจุดสำคัญ</td></tr>
+          <tr><td>ภาพ</td><td>SINGLE BIG IMAGE IS A KEY: ใช้ภาพใหญ่หนึ่งภาพเป็นหัวใจของสไลด์, USE VISUALS TO INCREASE EMOTIONAL APPEAL (ใช้ภาพหรือ visual analogy เพิ่มอรรถรสทางอารมณ์)</td><td>อย่าแปะกราฟหรือภาพหลายตัวอัดแน่นในสไลด์เดียวจนผู้ฟังไม่รู้ว่าต้องมองตรงไหน</td></tr>
+          <tr><td>ลูกเล่น</td><td>ไม่ต้องกลัวการใช้ animations และ transitions แต่ใช้อย่างมีจุดประสงค์ ช่วยเสริม ไม่ใช่ถ่วง</td><td>อย่าใช้เอฟเฟกต์ฟุ่มเฟือยจนแย่งบทผู้พูด</td></tr>
+        </table>
+        <details class="more"><summary>อ่านเพิ่ม: ตัวอย่างสไลด์งานวิจัยจริง</summary><div>
+          <p>สไลด์ยกตัวอย่างงานวิจัย "Death Escape" (ประชุม VR ที่สิงคโปร์ ปี 2018) เป็นแบบแผนสไลด์ Title / Overview / Contents ที่เป็นระเบียบ</p>
+        </div></details>
+      </section>
+
+      <section id="sec4" class="card">
+        <h2>เช็คลิสต์ก่อนขึ้นพรีเซนต์</h2>
+
+        <h3>เนื้อหาและการวางแผน (ตาม Golden Rules + Presentation Canvas)</h3>
+        <ul>
+          <li>ไม่ได้เริ่มจากการเปิดทำสไลด์ รู้ message ก่อน (RULE NO.1)</li>
+          <li>สรุปไอเดียหลักเป็นประโยคเดียวได้ (Idea in one sentence)</li>
+          <li>กรอก Core idea table ครบ: Objectives / Context / Idea / Selling points 3 ข้อ / How to make it real</li>
+          <li>ตอบได้ครบกรอบ WHO (ตัวเรา, ผู้ฟัง, ความสัมพันธ์), WHY (ทำไมเขาต้องฟัง), WHAT (core idea), HOW (storytelling)</li>
+          <li>เนื้อหาสมดุลระหว่าง "สิ่งที่เราอยากบอก" กับ "สิ่งที่ผู้ฟังอยากได้ยิน"</li>
+          <li>ปิดท้ายด้วย call to know / call to action</li>
+          <li>เตรียมแหล่งอ้างอิง เพราะวิชานี้เน้นความสำคัญของ references</li>
+        </ul>
+
+        <h3>สไลด์ (Slides are tools, RULE NO.4)</h3>
+        <ul>
+          <li>สไลด์ช่วยให้ผู้ฟังเข้าใจ message ด้วยความพยายามน้อยลง</li>
+          <li>ไม่ใช้ built-in theme</li>
+          <li>ข้อความไม่เกิน 6 บรรทัดต่อสไลด์ และไม่ใช้ bullet รกเกินไป</li>
+          <li>ใช้ฟอนต์สะอาด, ขนาดเหมาะสม, contrast ชัด (เช็คที่ contrast checker)</li>
+          <li>สีใช้ตามกฎ 60-30-10 (primary พื้นหลัง / secondary ข้อความ / accent ไฮไลต์)</li>
+          <li>มีภาพใหญ่เพียงภาพเดียวเป็นพระเอกของสไลด์ หรือ visual ที่เพิ่ม emotional appeal</li>
+          <li>จัดวางตามหลัก Gestalt (similarity/proximity/closure/continuity) และ Gutenberg (Z/F pattern)</li>
+          <li>สิ่งสำคัญอยู่ตรงกลาง, แผนภูมิอยู่ซ้าย คำอธิบายอยู่ขวา</li>
+          <li>ใช้ animation/transition ช่วยเสริม ไม่ใช่ถ่วง</li>
+        </ul>
+
+        <h3>ตัวผู้พูด (Presenter is the main character, RULE NO.2)</h3>
+        <ul>
+          <li>เข้าใจว่าผู้ฟังคือผู้ที่มีอำนาจ (RULE NO.3) เตรียมพูดจากมุมของผู้ฟัง</li>
+          <li>ทุกคนในกลุ่ม (2-3 คน) พร้อมนำเสนอ เพราะประเมินรายบุคคล สัมมนาละ 20 คะแนน 5 หมวด</li>
+        </ul>
+      </section>
+
+      <section id="quiz" class="card quiz" data-quiz>
+        <h2>แบบทดสอบ</h2>
+        <div class="quiz-status"></div>
+
+        <div class="q" data-answer="D">
+          <p class="q-text">1) ตามเอกสาร Overview ข้อใดไม่ใช่สิ่งที่วิชานี้คาดหวังจากผู้เรียน</p>
+          <button class="choice" data-k="A">ก. สำรวจโลกของเทคโนโลยีโดยใช้หลักการวิทยาการคอมพิวเตอร์</button>
+          <button class="choice" data-k="B">ข. เน้นว่าเทคโนโลยีคืออะไร และทำไมเทคโนโลยีเหล่านั้นจึงจำเป็น</button>
+          <button class="choice" data-k="C">ค. พัฒนาทักษะการนำเสนอ (presentation skills)</button>
+          <button class="choice" data-k="D">ง. เรียนรู้การเขียนโปรแกรมเกม 3 มิติขั้นสูงจนสร้างเกมได้หนึ่งเกม</button>
+          <div class="q-explain">เฉลย ง: สิ่งที่วิชาคาดหวังตาม Overview คือ สำรวจโลกของเทคโนโลยีด้วยหลักการ CS, เน้นว่าเทคโนโลยีคืออะไรและทำไมจึงจำเป็น, เริ่มสำรวจว่าพัฒนาขึ้นอย่างไร, พัฒนา presentation skills และเข้าใจการเชื่อมโยงความรู้จากหลายแหล่งกับความสำคัญของ references การสร้างเกม 3 มิติไม่ได้อยู่ในเป้าหมายวิชา (เป็นเพียงสาขาความเชี่ยวชาญของผู้สอน)</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">2) ตามนิยามที่ยกจาก Oxford Collocations Dictionary ข้อใดกล่าวถูกต้องเกี่ยวกับ "presentation"</p>
+          <button class="choice" data-k="A">ก. หมายถึงเฉพาะไฟล์ PowerPoint ที่เปิดบนเครื่องโปรเจกเตอร์</button>
+          <button class="choice" data-k="B">ข. ชุดของสไลด์ (ภาพ) ที่ฉายประกอบการพูด และวิธีที่สิ่งใดถูกเสนอ/แสดง/อธิบายให้ผู้อื่น</button>
+          <button class="choice" data-k="C">ค. เอกสารพิมพ์ที่แจกให้ผู้ฟังอ่านประกอบการประชุม</button>
+          <button class="choice" data-k="D">ง. การอ่านรายงานที่เขียนไว้ล่วงหน้าต่อหน้าผู้ฟัง</button>
+          <div class="q-explain">เฉลย ข: ตาม Oxford Collocations Dictionary ที่ยกในสไลด์ presentation มีสองความหมาย: (1) ชุดสไลด์/ภาพที่ฉายประกอบการพูดในที่ประชุม และ (2) วิธีที่สิ่งใดถูกเสนอ/แสดง/อธิบายให้ผู้อื่น จึงไม่ได้หมายถึงแค่ไฟล์หรือเอกสาร</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">3) สไลด์ระบุว่า "Presentation = ______" และ "Best balance point" ของการนำเสนออยู่ตรงไหน</p>
+          <button class="choice" data-k="A">ก. Information, อยู่ระหว่างเนื้อหามากกับเนื้อหาน้อย</button>
+          <button class="choice" data-k="B">ข. Persuasion, อยู่ระหว่าง "สิ่งที่เราต้องการจะบอก" กับ "สิ่งที่ผู้ฟังอยากได้ยิน"</button>
+          <button class="choice" data-k="C">ค. Education, อยู่ระหว่างทฤษฎีกับการปฏิบัติ</button>
+          <button class="choice" data-k="D">ง. Entertainment, อยู่ระหว่างภาพกับตัวอักษร</button>
+          <div class="q-explain">เฉลย ข: สไลด์ระบุ "Presentation = Persuasion" และแผนภาพสมดุลระหว่าง "What we are trying to tell" (ฝั่งผู้พูด) กับ "What audiences want to hear" (ฝั่งผู้ฟัง) โดย Best balance point คือจุดกึ่งกลางของทั้งสองฝั่ง ปิดท้ายด้วย "Message is the key"</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">4) RULE NO.1 ในการทำพรีเซนเทชันคือข้อใด</p>
+          <button class="choice" data-k="A">ก. ใช้ขนาดฟอนต์ไม่ต่ำกว่า 30 พอยต์เสมอ</button>
+          <button class="choice" data-k="B">ข. เริ่มงานด้วยการเลือกเทมเพลตที่สวยที่สุดก่อน</button>
+          <button class="choice" data-k="C">ค. DON'T START CREATING SLIDES, อย่าเริ่มด้วยการสร้างสไลด์</button>
+          <button class="choice" data-k="D">ง. ซ้อมพูดอย่างน้อย 10 รอบก่อนขึ้นเวที</button>
+          <div class="q-explain">เฉลย ค: RULE NO.1 คือ DON'T START CREATING SLIDES ต้องวางแผน message/ผู้ฟัง/วิธีส่งสารก่อนลงมือทำสไลด์ ตัวเลือก ก. เป็นกับดักจากหลัก 10-20-30 ซึ่งไม่ปรากฏในเอกสาร และ ข. ขัดกับ RULE NO.1 และคำเตือน AVOID USING BUILT-IN THEMES</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">5) ลำดับขั้นตอน "STEPS of starting your presentation" ตามสไลด์ที่ถูกต้องคือ</p>
+          <button class="choice" data-k="A">ก. Who is your audience, What is your message/context, Where, Think from your audience's side, How</button>
+          <button class="choice" data-k="B">ข. What is your message/context, Who is your audience, Think from your audience's side, Where will you deliver, How will you deliver</button>
+          <button class="choice" data-k="C">ค. What, Where, Who, How, Think from your audience's side</button>
+          <button class="choice" data-k="D">ง. Who, Why, What, How, Where</button>
+          <div class="q-explain">เฉลย ข: ลำดับตามสไลด์คือ 1) What is your message/context? 2) Who is your audience? 3) Think from your audience's side 4) Where will you deliver your message? 5) How will you deliver your message?</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-text">6) ข้อใดไม่ใช่องค์ประกอบของ Core idea table (Presentation Canvas)</p>
+          <button class="choice" data-k="A">ก. Objectives</button>
+          <button class="choice" data-k="B">ข. Selling points 3 ข้อ</button>
+          <button class="choice" data-k="C">ค. Idea (in one sentence)</button>
+          <button class="choice" data-k="D">ง. งบประมาณที่ใช้ไปแล้วในอดีต 3 ปี</button>
+          <div class="q-explain">เฉลย ง: Core idea table มี 5 ช่อง: Objectives, Context, Idea (in one sentence), Selling points (1-3), How to make it real "งบที่ใช้ไปในอดีต 3 ปี" ไม่ใช่องค์ประกอบ (งบประมาณปรากฏเฉพาะในฐานะตัวอย่างของช่อง Context เช่น 250,000 ยูโรของ Nespresso)</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">7) ตามหัวข้อ "WHY are we using slides?" เหตุผลสำคัญของการใช้สไลด์คือ</p>
+          <button class="choice" data-k="A">ก. ทำให้งานดูทันสมัยและมีมืออาชีพ</button>
+          <button class="choice" data-k="B">ข. สไลด์ที่ดีช่วยให้ผู้ฟังเข้าใจ message ของคุณด้วยความพยายามน้อยลง</button>
+          <button class="choice" data-k="C">ค. เป็นสคริปต์ให้ผู้พูดอ่านกันลืม</button>
+          <button class="choice" data-k="D">ง. แสดงให้เห็นว่าผู้พูดใช้โปรแกรมได้คล่อง</button>
+          <div class="q-explain">เฉลย ข: สไลด์ระบุชัด "GOOD SLIDES HELP AUDIENCES UNDERSTAND YOUR MESSAGE WITH LESS EFFORT" ตัวเอกคือผู้พูด (RULE NO.2) สไลด์เป็นแค่เครื่องมือ จึงไม่ใช่สคริปต์อ่านหรือเครื่องโชว์ฝีมือ</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-text">8) ข้อใดไม่ใช่หลักเกสตัลต์ (Gestalt) ที่กล่าวถึงในเนื้อหาการออกแบบสไลด์</p>
+          <button class="choice" data-k="A">ก. Similarity</button>
+          <button class="choice" data-k="B">ข. Proximity</button>
+          <button class="choice" data-k="C">ค. Continuity</button>
+          <button class="choice" data-k="D">ง. Reciprocity</button>
+          <div class="q-explain">เฉลย ง: เนื้อหากล่าวถึง Gestalt 4 หลัก: Similarity, Proximity, Closure, Continuity Reciprocity ไม่ปรากฏในเอกสาร</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">9) ตามกฎ 60-30-10 ของการใช้สี "Accent colour" มีบทบาทและลักษณะอย่างไร</p>
+          <button class="choice" data-k="A">ก. ใช้เป็นพื้นหลัง 60% ของสไลด์ ความอิ่มตัวต่ำ</button>
+          <button class="choice" data-k="B">ข. ใช้เป็นข้อความหลัก 30% ความอิ่มตัวปานกลาง</button>
+          <button class="choice" data-k="C">ค. ใช้เป็นจุดไฮไลต์ 10% ความอิ่มตัวสูง / ความสว่างปานกลาง</button>
+          <button class="choice" data-k="D">ง. ห้ามใช้ในสไลด์เพราะทำให้รกเกินไป</button>
+          <div class="q-explain">เฉลย ค: กฎ 60-30-10: Primary colour (60%) ใช้เป็นพื้นหลัง ความอิ่มตัวต่ำ / Secondary colour (30%) ใช้เป็นข้อความหลัก ความอิ่มตัวปานกลาง / Accent colour (10%) ใช้เป็นไฮไลต์ ความอิ่มตัวสูงหรือความสว่างปานกลาง</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">10) เกี่ยวกับเกณฑ์การประเมินของวิชา ข้อใดถูกต้อง</p>
+          <button class="choice" data-k="A">ก. ประเมินเป็นหมู่คณะตามผลงานกลุ่มเท่านั้น</button>
+          <button class="choice" data-k="B">ข. สัมมนาแต่ละครั้งมีค่า 20 คะแนน แบ่งเป็น 5 หมวด และประเมินเป็นรายบุคคล</button>
+          <button class="choice" data-k="C">ค. สัมมนาแต่ละครั้งมีค่า 25 คะแนน แบ่งเป็น 4 หมวด</button>
+          <button class="choice" data-k="D">ง. คะแนนรวมได้จากการสอบ midterm เป็นหลัก</button>
+          <div class="q-explain">เฉลย ข: ตาม Overview: ประเมินรายบุคคล, สัมมนาแต่ละครั้ง 20 คะแนน ใน 5 หมวด (rubric อยู่ที่ bit.ly/3QFUkJm) และเกณฑ์เกรด A ≥ 70, B+ 65-69.9, F ≤ 39.9 ทุกคนต้องขึ้นพรีเซนต์ทุกสัมมนาในฐานะกลุ่ม 2-3 คน</div>
+        </div>
+
+        <div class="q">
+          <p class="q-text">11) นักศึกษากลุ่มหนึ่งส่งสไลด์มาคู่ใดคู่หนึ่งดังนี้: ใช้ built-in theme ของโปรแกรม, ใส่ข้อความ bullet ยาว 12 บรรทัด, ตัวอักษรสีเทาอ่อนบนพื้นขาว, และแปะกราฟ 4 ตัวเรียงแน่นในสไลด์เดียว จงระบุข้อผิดพลาดอย่างน้อย 4 ข้อ พร้อมระบุว่าละเมิดหลักข้อใดจากเนื้อหา</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p>ข้อผิดพลาดที่ควรระบุ (ตอบได้อย่างน้อย 4 จาก 6):</p>
+            <ol>
+              <li>ใช้ built-in theme: ละเมิดหลัก "AVOID USING BUILT-IN THEMES"</li>
+              <li>ข้อความ 12 บรรทัด: ละเมิด "DON'T USE MORE THAN 6 LINES OF TEXT"</li>
+              <li>bullet เยอะเกินไป: ละเมิด "DON'T USE TOO MANY BULLET POINTS" (ควรเปลี่ยนเป็นคำสำคัญ/ตัวเลขใหญ่ เช่นตัวอย่าง 40% / 50% / 10% ในสไลด์)</li>
+              <li>ตัวอักษรเทาอ่อนบนพื้นขาว: ละเมิด "MAINTAIN STRONG CONTRAST" (ตรวจได้ที่ contrast checker ของ webaim)</li>
+              <li>กราฟ 4 ตัวเรียงแน่นในสไลด์เดียว: ขัด "SINGLE BIG IMAGE IS A KEY" และหลัก Proximity ของ Gestalt, สไลด์ไม่ช่วยให้ผู้ฟังเข้าใจด้วยความพยายามน้อยลง</li>
+              <li>โดยรวมสไลด์แย่งบทผู้พูด: ขัด RULE NO.2 (ผู้พูดคือตัวเอก) และ RULE NO.4 (สไลด์เป็นแค่เครื่องมือ)</li>
+            </ol>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">12) สมมติว่าคุณต้องนำเสนอไอเดีย "แอปจองใช้สนามกีฬาของมหาวิทยาลัยสำหรับนักศึกษา KMITL" ให้คณะกรรมการ จงเขียน Core idea table ครบทั้ง 5 ช่อง: Objectives / Context (สมมติเงื่อนไขได้) / Idea (in one sentence) / Selling points 3 ข้อ / How to make it real</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p>ต้องมีครบ 5 ช่องตาม Core idea table (โครงถูกสำคัญกว่าตัวเนื้อหา) เช่น:</p>
+            <ul>
+              <li><strong>Objectives:</strong> ทำให้นักศึกษา KMITL จองและใช้สนามกีฬาได้ยุติธรรมและสะดวก</li>
+              <li><strong>Context (สมมติ):</strong> งบพัฒนา X บาท / ทีม 3 คน / เปิดใช้ภายใน 1 ภาคเรียน / ผู้ใช้เป้าหมายคือนักศึกษาทั้งมหาวิทยาลัย</li>
+              <li><strong>Idea (one sentence):</strong> แอปจองสนามกีฬาแบบเรียลไทม์ที่จองได้ในไม่กี่วินาทีผ่านมือถือ</li>
+              <li><strong>Selling points:</strong> 1) เห็นสถานะสนามว่างแบบเรียลไทม์ 2) จองล่วงหน้าได้เท่าเทียมตามลำดับคิว 3) แจ้งเตือนก่อนเวลาใช้สนามอัตโนมัติ</li>
+              <li><strong>How to make it real:</strong> ระบุทรัพยากร/เวลา/แรงงานที่ใช้พัฒนา (แนวเดียวกับตัวอย่าง Great Wall ที่ระบุจำนวนอิฐ/แรงงาน/เวลา และ Nespresso ที่มี selling points วัดเป็นตัวเลขได้ เช่น 8 bars, ใต้ 30 วินาที)</li>
+            </ul>
+            <p>เกณฑ์หักคะแนน: idea ยาวหลายประโยค หรือ selling points ไม่ชี้วัด</p>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">13) เพื่อนบอกว่า "ทำสไลด์ให้เป็นตามหลัก 10-20-30 สิ" หลัก 10-20-30 มีปรากฏในเนื้อหาที่เรียนหรือไม่ จงตอบว่ามีหรือไม่มี และให้ระบุกฎตัวเลขที่ปรากฏจริงในเอกสารพร้อมอธิบายสั้น ๆ</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p>ต้องตอบว่าเอกสารไม่ได้กล่าวถึงหลัก 10-20-30 (ห้ามตอบแต่งจากความรู้ภายนอก) กฎตัวเลขที่ปรากฏจริงมี 2 อย่าง:</p>
+            <ol>
+              <li>กฎ 60-30-10 ของสี: Primary 60% พื้นหลัง (ความอิ่มตัวต่ำ) / Secondary 30% ข้อความหลัก (ความอิ่มตัวปานกลาง) / Accent 10% ไฮไลต์ (ความอิ่มตัวสูง ความสว่างปานกลาง)</li>
+              <li>กฎ 6 บรรทัด: อย่าใส่ข้อความเกิน 6 บรรทัดต่อสไลด์ และอย่าใช้ bullet มากเกินไป</li>
+            </ol>
+            <p>ข้อนี้วัดว่านักศึกษาแยกได้ว่าอะไรอยู่ในเอกสาร อะไรไม่อยู่ และรู้กฎที่มีจริง</p>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">14) จงอธิบายว่ากฎทั้งสามข้อนี้ทำงานร่วมกันอย่างไรในการส่ง message ถึงผู้ฟัง: RULE NO.2 "PRESENTER IS THE MAIN CHARACTER", RULE NO.3 "AUDIENCES HOLD THE POWER" และ RULE NO.4 "SLIDES ARE TOOLS" (ให้เชื่อมโยงกับ "Message is the key" และการคิดจากฝั่งผู้ฟังด้วย)</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <ul>
+              <li>หัวใจของการนำเสนอคือ message ("Message is the key") และ "SLIDES ARE TOOLS TO CONVEY YOUR MESSAGES": สไลด์เป็นเครื่องมือช่วยส่ง message เท่านั้น ไม่ใช่ตัวเนื้อหาเอง</li>
+              <li>เมื่อสไลด์เป็นแค่เครื่องมือ ผู้พูดจึงเป็น MAIN CHARACTER: ผู้พูดเป็นคนเล่าเรื่อง (storytelling) ตีความ และเชื่อมจุดให้ผู้ฟัง ไม่ใช่ยืนอ่านสไลด์</li>
+              <li>เนื่องจาก AUDIENCES HOLD THE POWER (ผู้ฟังเป็นผู้ตัดสินผลลัพธ์) ทั้ง message และสไลด์ต้องออกแบบจากฝั่งผู้ฟัง (Think from your audience's side): ตอบคำถาม WHO/WHY ก่อน และหาจุดสมดุลระหว่างสิ่งที่เราอยากบอกกับสิ่งที่ผู้ฟังอยากได้ยิน</li>
+              <li>สรุป: กฎทั้งสามข้อบังคับให้ "message เป็นหัวใจ, ผู้พูดนำ, สไลด์ตาม, ทุกอย่างออกแบบเพื่อผู้ฟัง" ซึ่งสอดคล้องกับขั้นตอนเริ่มต้น 5 ขั้นในเอกสาร</li>
+            </ul>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">15) สไลด์หนึ่งแสดงตารางตัวเลขดิบ เช่น คะแนน O-NET เป็นทศนิยม 4 หลัก และงบประมาณการศึกษาเป็นจำนวนเงินเต็มหลายแถว โดยไม่มีคำอธิบาย ถ้าต้องการให้ผู้ฟังเข้าใจ message ด้วยความพยายามน้อยลง จงเสนอวิธีปรับปรุงอย่างน้อย 3 วิธีจากหลักการในเนื้อหา</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p>ตอบได้อย่างน้อย 3 จาก 5 วิธี:</p>
+            <ol>
+              <li>เปลี่ยนตารางตัวเลขดิบเป็นแผนภูมิ/ภาพข้อมูล เพราะสไลด์ที่ดีช่วยให้ผู้ฟังเข้าใจ message ด้วยความพยายามน้อยลง (ตามตัวอย่าง O-NET ในสไลด์)</li>
+              <li>เขียนประโยคสรุป insight กำกับ เช่น "คุณภาพการศึกษาของกรุงเทพฯ สูงกว่าค่าเฉลี่ยอย่างมีนัยสำคัญ" หรือ "งบ 82.50% กับโรงเรียนแค่ 3.60%" แทนการทิ้งตัวเลขไว้เปล่า ๆ</li>
+              <li>จัด layout แบบ chart อยู่ซ้าย คำอธิบายอยู่ขวา ตามตัวอย่างในเนื้อหา</li>
+              <li>ใช้สี accent ตัดกันเพื่อไฮไลต์ตัวเลข/แท่งที่สำคัญ (USE CONTRASTING TEXT COLORS TO DRAW ATTENTION)</li>
+              <li>วางข้อความสำคัญไว้ตรงกลางสไลด์ (IMPORTANT IS AT THE MIDDLE) และจัดกลุ่มข้อมูลด้วยหลัก Proximity ของ Gestalt</li>
+            </ol>
+          </div></details>
+        </div>
+
+        <button class="quiz-reset">ลองทำใหม่ทั้งชุด</button>
+      </section>
+    </article>
+  </main>
+</div>
+<script src="assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OS ควิซ | ติวสอบ ปี 2 เทอม 1</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-subject="os">
+<header class="topbar">
+  <a class="brand" href="index.html">ติวสอบ <span>ปี 2 เทอม 1</span></a>
+  <nav class="subject-nav">
+    <a href="dsa.html">DSA</a>
+    <a href="os.html">OS</a>
+    <a href="os-2.html">OS (ต่อ)</a>
+    <a href="os-quiz.html" class="active">OS ควิซ</a>
+    <a href="oslab.html">OS Lab</a>
+    <a href="bpm.html">BA/BPM</a>
+    <a href="linear.html">พีชคณิตเชิงเส้น</a>
+    <a href="seminar.html">Seminar</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="toc">
+    <div class="toc-title">สารบัญหน้านี้</div>
+    <a href="#quiz">แบบทดสอบ 30 ข้อ</a>
+    <a href="#q-process">Process และ Thread</a>
+    <a href="#q-sched">CPU Scheduling</a>
+    <a href="#q-ipc">IPC: Signal, Pipe, SHM</a>
+    <a href="#q-sync">Synchronization/Semaphore</a>
+    <a href="#q-deadlock">Deadlock</a>
+    <a href="#q-memory">Memory Management</a>
+    <a href="#q-vm">Virtual Memory</a>
+    <a href="#q-fs">File System</a>
+    <a href="#q2-sched">อัตนัย: Process/Scheduling</a>
+    <a href="#q2-ipc">อัตนัย: IPC และ Pipe</a>
+    <a href="#q2-deadlock">อัตนัย: Deadlock</a>
+    <a href="#q2-memory">อัตนัย: Memory/VM</a>
+  </aside>
+  <main>
+    <article>
+      <h1>Operating Systems: แบบทดสอบรวม</h1>
+      <p class="page-sub">รวม 30 ข้อคัดดีที่สุดจากสไลด์ (OSNo00-OSNo10) และคลิปบรรยาย (5.1-14.3 + WSL2): ปรนัย 22 ข้อ + อัตนัย 8 ข้อ พร้อมเฉลยทุกข้อ</p>
+
+      <section id="quiz" class="card quiz" data-quiz>
+        <h2>แบบทดสอบ</h2>
+        <div class="quiz-status"></div>
+
+        <div class="keypoints"><div class="kp-title">วิธีใช้หน้านี้</div><ul>
+          <li>ข้อปรนัย: คลิกตัวเลือกเพื่อตรวจทันที ระบบนับคะแนนให้ด้านบน</li>
+          <li>ข้ออัตนัย: ลองทำเองก่อนแล้วกด "ดูเฉลย" เพื่อเทียบรายละเอียด</li>
+          <li>ครอบคลุม 10 หัวข้อ: Process, Thread, Scheduling, IPC/Signal, Pipe/SHM, Sync/Semaphore, Deadlock, Memory, Virtual Memory, File System</li>
+          <li>ทบทวนเนื้อหาย้อนกลับได้ท้ายหน้า (os.html และ os-2.html)</li>
+        </ul></div>
+
+        <div class="warn-box"><div class="kp-title">กับดักที่พบบ่อย</div><ul>
+          <li>fork() คืนค่า 0 ให้ process ลูก แต่คืน PID ของลูกให้ process แม่</li>
+          <li>signal() ในภาษา C ใช้ลงทะเบียน handler ไม่ใช่ฟังก์ชันส่ง signal</li>
+          <li>SIGKILL (เบอร์ 9) ปลายทาง catch หรือ ignore ไม่ได้ แต่ SIGTERM จัดการได้</li>
+          <li>FIFO มี Belady's anomaly: เพิ่ม frame แล้ว page fault อาจเพิ่มขึ้น (9 เป็น 10 ครั้ง) แต่ LRU และ Optimal ไม่มีปรากฏการณ์นี้</li>
+        </ul></div>
+
+        <h3 id="q-process">Process และ Thread</h3>
+
+        <div class="q" data-answer="A">
+          <p class="q-text">1) เมื่อโปรแกรมเรียก <code>pid = fork();</code> ในกรณีสร้างสำเร็จ ค่า pid ที่ process ลูกเห็นคืออะไร</p>
+          <button class="choice" data-k="A">ก. 0</button>
+          <button class="choice" data-k="B">ข. Process ID ของตัวเอง (เท่ากับที่ parent เห็น)</button>
+          <button class="choice" data-k="C">ค. Process ID ของ parent</button>
+          <button class="choice" data-k="D">ง. -1</button>
+          <div class="q-explain">เฉลย ก: fork() คืนค่า ใน child = 0, ใน parent = process ID ของ child (มากกว่า 0), ค่าติดลบ = สร้างไม่สำเร็จ โปรแกรมใช้ค่าที่ต่างกันนี้แยกว่าตัวเองเป็น parent หรือ child</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">2) ข้อใดถูกต้องเกี่ยวกับสิ่งที่ thread แต่ละตัวมีเป็น "ของตัวเอง" และสิ่งที่ "แชร์กัน" ภายใน process เดียวกัน</p>
+          <button class="choice" data-k="A">ก. มีทุกอย่างเป็นของตัวเองเหมือน process ย่อยที่สร้างด้วย fork()</button>
+          <button class="choice" data-k="B">ข. แชร์ program counter และ stack ร่วมกัน แต่มี code กับ data เป็นของตัวเอง</button>
+          <button class="choice" data-k="C">ค. มี program counter, register และ stack เป็นของตัวเอง แต่แชร์ code, data และ open files ร่วมกัน</button>
+          <button class="choice" data-k="D">ง. มี code และ data เป็นของตัวเอง แต่แชร์ register กับ stack ร่วมกัน</button>
+          <div class="q-explain">เฉลย ค: thread แต่ละตัวต้องมี program counter, register และ stack เป็นของตัวเอง (เก็บสถานะการทำงานและ local variable) แต่แชร์ code, data และ open files กับ process แม่ จึงถูกเรียกว่า lightweight process และ context switch ของ thread เร็วกว่า process</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">3) ใน Java ถ้า class Foo สืบทอด (extends) จาก class Bar อยู่แล้ว และต้องการให้ Foo ทำงานเป็น thread ด้วย ควรทำอย่างไร</p>
+          <button class="choice" data-k="A">ก. เขียน class Foo extends Bar, Thread สืบทอดพร้อมกันทั้งสอง class</button>
+          <button class="choice" data-k="B">ข. ให้ Foo implements interface Runnable แล้วส่ง object ของ Foo ให้ Thread constructor ก่อนเรียก start()</button>
+          <button class="choice" data-k="C">ค. เขียน extends Thread แทน แล้วเรียก run() เองโดยไม่ต้องเรียก start()</button>
+          <button class="choice" data-k="D">ง. Java ทำแบบนี้ไม่ได้ ต้องเขียนใหม่เป็นภาษา C</button>
+          <div class="q-explain">เฉลย ข: Java ไม่รองรับ multiple inheritance จึง extends ทั้ง Bar และ Thread พร้อมกันไม่ได้ กรณีนี้ "บังคับ" ให้ใช้ implements Runnable แล้วห่อด้วย Thread object (new Thread(worker)) ก่อนเรียก start()</div>
+        </div>
+
+        <h3 id="q-sched">CPU Scheduling</h3>
+
+        <div class="q" data-answer="D">
+          <p class="q-text">4) "Convoy effect" ที่เกิดกับ FCFS scheduling หมายถึงอะไร</p>
+          <button class="choice" data-k="A">ก. Process ที่ priority สูงแย่ง CPU จาก priority ต่ำ</button>
+          <button class="choice" data-k="B">ข. เกิด context switch ถี่เกินไปเพราะ time quantum เล็ก</button>
+          <button class="choice" data-k="C">ค. Process รอ I/O ทั้งหมดพร้อมกันจน CPU ว่าง</button>
+          <button class="choice" data-k="D">ง. Short process ต้องต่อแถวอยู่หลัง long process ทำให้รอนาน</button>
+          <div class="q-explain">เฉลย ง: convoy effect คือ "short process behind long process" จากตัวอย่างสไลด์ถ้า P1 (24 หน่วย) มาก่อน P2, P3 (3 หน่วย) waiting เฉลี่ยเป็น 15 แต่ถ้าสลับให้ process สั้นมาก่อนเหลือเพียง 1 (วิธีคำนวณเต็มอยู่ข้อ 25)</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">5) ปัญหา starvation ใน Priority Scheduling แก้ได้ด้วยเทคนิคใด</p>
+          <button class="choice" data-k="A">ก. Time slicing</button>
+          <button class="choice" data-k="B">ข. Aging: ค่อย ๆ เพิ่ม priority ของ process ตามเวลาที่รอ</button>
+          <button class="choice" data-k="C">ค. Multi-level queue แบบ fixed priority</button>
+          <button class="choice" data-k="D">ง. Shortest remaining time first</button>
+          <div class="q-explain">เฉลย ข: starvation คือ process priority ต่ำอาจไม่ได้รันเลย Aging แก้โดยค่อย ๆ เพิ่ม priority ของ process เมื่อเวลาผ่านไป</div>
+        </div>
+
+        <h3 id="q-ipc">IPC: Signal, Pipe และ Shared Memory</h3>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">6) ฟังก์ชัน <code>signal()</code> ในภาษา C (<code>#include &lt;signal.h&gt;</code>) มีหน้าที่ใด</p>
+          <button class="choice" data-k="A">ก. ใช้ส่ง signal ไปยัง process อื่น</button>
+          <button class="choice" data-k="B">ข. ใช้ลงทะเบียนกับ OS ว่าเมื่อได้รับ signal ชนิดใด ให้เรียกฟังก์ชัน handler ตัวใด (หรือขอไม่รับด้วย SIG_IGN)</button>
+          <button class="choice" data-k="C">ค. ใช้ส่ง signal กลับมาที่ process ตัวเอง</button>
+          <button class="choice" data-k="D">ง. ใช้ block รอจนกว่าจะได้รับ signal</button>
+          <div class="q-explain">เฉลย ข: signal() ไม่ใช่ฟังก์ชันส่ง signal แต่ใช้ลงทะเบียน handler กับ OS (จุดที่นักศึกษาสับสนมากที่สุด) ถ้าจะส่ง signal ให้ตัวเองใช้ raise() และส่งให้ process อื่นใช้ kill()</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">7) ข้อใดถูกต้องเกี่ยวกับ SIGTERM และ SIGKILL</p>
+          <button class="choice" data-k="A">ก. ทั้ง SIGTERM และ SIGKILL เขียน handler จัดการได้เหมือนกัน</button>
+          <button class="choice" data-k="B">ข. SIGTERM จัดการไม่ได้ แต่ SIGKILL จัดการได้</button>
+          <button class="choice" data-k="C">ค. SIGTERM เขียน handler จัดการ (หรือไม่สนใจ) ได้ แต่ SIGKILL จัดการไม่ได้ ได้รับแล้วต้องจบการทำงานตาม default ของ OS เท่านั้น</button>
+          <button class="choice" data-k="D">ง. SIGKILL คือ signal เบอร์ 2 ซึ่งเกิดจากการกด Ctrl+C</button>
+          <div class="q-explain">เฉลย ค: SIGTERM ยังเขียน handler จัดการหรือไม่สนใจได้ แต่ SIGKILL (เบอร์ 9) จัดการไม่ได้ "ถ้าได้รับ SIGKILL ต้องตาย" ตาม default ของ OS (signal เบอร์ 2 คือ SIGINT จาก Ctrl+C และคำสั่ง kill บน shell default คือ SIGTERM)</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">8) โปรแกรม client ที่มาใช้ shared memory ซึ่ง server สร้างเอาไว้แล้ว ข้อใดถูกต้อง</p>
+          <button class="choice" data-k="A">ก. client ต้องเรียก shmctl(shmid, IPC_RMID, NULL) เพื่อลบ shared memory เมื่อใช้เสร็จ</button>
+          <button class="choice" data-k="B">ข. client ต้องใช้ key ต่างจาก server เพื่อไม่ให้ชนกับโปรแกรมอื่น</button>
+          <button class="choice" data-k="C">ค. client ใช้ key เดียวกับ server โดย shmget ใส่ size กับ flag เป็น 0 ได้ และไม่ลบ shared memory (การลบเป็นหน้าที่ของ server)</button>
+          <button class="choice" data-k="D">ง. client ต้องเรียก shmget ด้วย flag IPC_CREAT | 0666 เสมอ ไม่งั้นเข้าถึงไม่ได้</button>
+          <div class="q-explain">เฉลย ค: หัวใจของ shared memory คือ server กับ client ต้องใช้ key เดียวกันจึงชี้ไปก้อนเดียวกัน ฝั่ง client ใส่ size/flag = 0 ได้เพราะใช้ของที่สร้างไว้แล้ว และห้ามลบ (shmctl เป็นสิทธิ์ของ server เท่านั้น)</div>
+        </div>
+
+        <h3 id="q-sync">Synchronization และ Semaphore</h3>
+
+        <div class="q" data-answer="D">
+          <p class="q-text">9) สถานการณ์ใดเรียกว่า race condition</p>
+          <button class="choice" data-k="A">ก. Process หนึ่งรันจนหมด time quantum</button>
+          <button class="choice" data-k="B">ข. Process รอ I/O นานจนถูก suspend</button>
+          <button class="choice" data-k="C">ค. Process สองตัวรอ semaphore วนกันไม่สิ้นสุด</button>
+          <button class="choice" data-k="D">ง. หลาย process เข้าถึงและแก้ไขข้อมูลร่วมกันพร้อมกัน โดยผลลัพธ์ขึ้นอยู่กับลำดับการทำงาน</button>
+          <div class="q-explain">เฉลย ง: race condition คือกรณีหลาย process เข้าไปแก้ข้อมูลตัวเดียวกันพร้อมกัน ผลลัพธ์สุดท้ายขึ้นกับลำดับ (interleaving) เช่น ตัวอย่าง count++/count-- ของสไลด์ที่ count กลายเป็น 4 ทั้งที่ควรเป็น 5 (ตัวเลือก ค คือ deadlock ไม่ใช่ race condition)</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">10) ในโจทย์ Bounded-Buffer (N buffer) ค่าเริ่มต้นของ semaphore ทั้งสามตัวคือข้อใด</p>
+          <button class="choice" data-k="A">ก. mutex = 0, full = 1, empty = N</button>
+          <button class="choice" data-k="B">ข. mutex = 1, full = N, empty = 0</button>
+          <button class="choice" data-k="C">ค. mutex = 1, full = 0, empty = N</button>
+          <button class="choice" data-k="D">ง. mutex = N, full = 1, empty = 0</button>
+          <div class="q-explain">เฉลย ค: mutex กำหนด 1 (mutual exclusion), full กำหนด 0 (ยังไม่มี item), empty กำหนด N (buffer ว่างทั้งหมด)</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-text">11) กำหนดวิธีเข้าใช้ critical section ด้วย "คิวตายตัว แดง ไป เขียว ไป เหลือง" วันหนึ่งแดงไม่อยากเข้าใช้ ทั้งที่ section ว่าง เขียวกลับเข้าไม่ได้ตลอดไป วิธีนี้ละเมิดเงื่อนไขข้อใดของการแก้ปัญหา critical section</p>
+          <button class="choice" data-k="A">ก. mutual exclusion</button>
+          <button class="choice" data-k="B">ข. bounded waiting</button>
+          <button class="choice" data-k="C">ค. aging</button>
+          <button class="choice" data-k="D">ง. progress</button>
+          <div class="q-explain">เฉลย ง: เงื่อนไข Progress ต้องการให้เลือก process ถัดไปจาก "process ที่อยากใช้เท่านั้น อย่าไปยุ่งกับ process ที่ไม่อยากใช้" คิวตายตัวทำให้เขียวเข้าไม่ได้ทั้งที่ section ว่างและแดงไม่ได้ต้องการใช้</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">12) Peterson's Solution ทำงานได้ภายใต้ข้อสมมติใด และใช้ตัวแปร shared อะไร</p>
+          <button class="choice" data-k="A">ก. สมมติ context switch เกิดท้าย instruction; ใช้ตัวแปร lock และ key</button>
+          <button class="choice" data-k="B">ข. สมมติ LOAD และ STORE เป็น atomic; ใช้ตัวแปร turn และ flag[2]</button>
+          <button class="choice" data-k="C">ค. สมมติ process ทุกตัวมี speed เท่ากัน; ใช้ตัวแปร number[n] และ choosing[n]</button>
+          <button class="choice" data-k="D">ง. สมมติมี TLB ขนาดใหญ่พอ; ใช้ตัวแปร turn และ mutex</button>
+          <div class="q-explain">เฉลย ข: Peterson's Solution สำหรับ 2 process สมมติ LOAD/STORE เป็น atomic (interrupt ไม่ได้) และใช้ตัวแปร shared สองตัวคือ int turn (ตาใครเข้า) และ boolean flag[2] (พร้อมเข้าหรือยัง) ส่วน number[n]/choosing[n] เป็นตัวแปรของ Bakery Algorithm</div>
+        </div>
+
+        <h3 id="q-deadlock">Deadlock</h3>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">13) แก้ปัญหา Dining Philosophers ด้วย <code>semaphore chopstick[5]</code> (binary ทุกตัวเริ่มต้น 1) ถ้านักปราชญ์ทั้ง 5 หิวพร้อมกัน และทุกคน <code>wait(chopstick[i])</code> หยิบตะเกียบซ้ายสำเร็จพร้อมกัน จะเกิดอะไรขึ้นต่อไป</p>
+          <button class="choice" data-k="A">ก. ทุกคนได้กินวนตามลำดับรอบโต๊ะอย่างเป็นระเบียบ</button>
+          <button class="choice" data-k="B">ข. ทุกคนถือตะเกียบซ้ายรอตะเกียบขวาตลอดไป (deadlock) เพราะจะวางตะเกียบซ้ายคืนได้ต้องกินเสร็จก่อน แต่ไม่มีใครได้กิน</button>
+          <button class="choice" data-k="C">ค. OS จะยึดตะเกียบจากนักปราชญ์คนหนึ่งคืนให้ระบบกลับมาทำงานต่อ</button>
+          <button class="choice" data-k="D">ง. คนที่รอนานที่สุดจะได้ตะเกียบก่อนเพราะกลไก aging</button>
+          <div class="q-explain">เฉลย ข: ตะเกียบ 5 ข้างถูกถือครบในมือทุกคน ทุกคน wait(chopstick[(i+1)%5]) ตะเกียบขวาแล้วเจอค่า 0 จึงติดรอทั้งหมด และจะวางตะเกียบซ้ายคืนได้ต้องกินเสร็จก่อน ซึ่งไม่มีวันเกิดขึ้น เป็น deadlock "ตายทั้งโต๊ะ" (เกิดจากโปรแกรมเมอร์จัดลำดับผิด ไม่ใช่ตัว semaphore)</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">14) Resource allocation graph ของระบบหนึ่งพบว่ามี cycle แต่ทรัพยากรบางประเภทที่เกี่ยวข้องกับ cycle มีหลาย instance จะสรุปได้อย่างไร</p>
+          <button class="choice" data-k="A">ก. เกิด deadlock แน่นอนเพราะมี cycle</button>
+          <button class="choice" data-k="B">ข. ไม่เกิด deadlock แน่นอนเพราะมีทรัพยากรหลายชิ้น</button>
+          <button class="choice" data-k="C">ค. สรุปได้เพียงว่า "มีความเป็นไปได้" ที่จะเกิด deadlock จะรับประกันไม่เกิด 100% ได้ก็ต่อเมื่อกราฟไม่มี cycle เลย</button>
+          <button class="choice" data-k="D">ง. จะเกิด starvation ทุกครั้งไปเสมอ</button>
+          <div class="q-explain">เฉลย ค: กฎของ resource allocation graph: ไม่มี cycle ไม่เกิด deadlock แน่นอน / มี cycle + ทรัพยากร 1 ประเภทมี 1 ชิ้น เกิดแน่นอน / มี cycle + มีหลายชิ้น สรุปได้แค่ "มีโอกาส" เท่านั้น (เช่น process นอก cycle อาจคืนทรัพยากรให้)</div>
+        </div>
+
+        <h3 id="q-memory">Memory Management</h3>
+
+        <div class="q" data-answer="A">
+          <p class="q-text">15) ระบบ Fixed-Partition Multiprogramming เกิด fragmentation ชนิดใด และ Variable-Partition เกิดชนิดใด</p>
+          <button class="choice" data-k="A">ก. Fixed เกิด Internal, Variable เกิด External</button>
+          <button class="choice" data-k="B">ข. Fixed เกิด External, Variable เกิด Internal</button>
+          <button class="choice" data-k="C">ค. ทั้งสองแบบเกิดแต่ internal fragmentation</button>
+          <button class="choice" data-k="D">ง. ทั้งสองแบบเกิดแต่ external fragmentation</button>
+          <div class="q-explain">เฉลย ก: Fixed partition: partition ใหญ่กว่า job เหลือช่องว่างใน partition ของตัวเอง เป็น internal fragmentation ส่วน Variable partition: job ถูกถอดออกแล้วเหลือ holes เล็ก ๆ ที่ไม่พอให้ process ใหม่ เป็น external fragmentation (แก้ด้วย coalescing/compaction)</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-text">16) Address ที่ CPU ส่งออกมาเพื่ออ้างตำแหน่งในโปรแกรม (มองว่าโปรแกรมเริ่มที่ไบต์ 0) เรียกว่าอะไร และถูกแปลงเป็น address จริงใน RAM ด้วยฮาร์ดแวร์ใด</p>
+          <button class="choice" data-k="A">ก. logical address (หรือ virtual address) แปลงเป็น physical address ด้วย MMU</button>
+          <button class="choice" data-k="B">ข. physical address แปลงกลับเป็น logical address ด้วย TLB</button>
+          <button class="choice" data-k="C">ค. logical address ซึ่งก็คือ address จริงใน RAM นั่นเอง</button>
+          <button class="choice" data-k="D">ง. ทั้งสองคือสิ่งเดียวกัน เพราะโปรแกรมถูกโหลดลงที่ไบต์ 0 ของ RAM เสมอ</button>
+          <div class="q-explain">เฉลย ก: logical (virtual) address ออกจาก CPU ส่วน physical address คือตำแหน่งจริงใน RAM เพราะโปรแกรมถูกโหลดตามที่ OS จัดสรร (ไม่ใช่ไบต์ 0) ตัวแปลงคือ MMU (เช่น relocation register 14,000 + ไบต์ที่ 346 = 14,346)</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-text">17) ระบบมีช่องว่างหน่วยความจำขนาด 16, 14, 5 และ 30 MB มี process ใหม่ต้องการ 13 MB ถ้าใช้ Best Fit จะจัดสรรลงช่องใด และเหลือช่องว่างเท่าไร</p>
+          <button class="choice" data-k="A">ก. ลงช่อง 16 MB เหลือ 3 MB</button>
+          <button class="choice" data-k="B">ข. ลงช่อง 30 MB เหลือ 17 MB</button>
+          <button class="choice" data-k="C">ค. ลงช่อง 5 MB เพราะค้นเจอเร็วที่สุด</button>
+          <button class="choice" data-k="D">ง. ลงช่อง 14 MB เหลือ 1 MB (ต้องไล่ดูทุกช่องจึงช้าที่สุดแต่จัดสรรดีที่สุด)</button>
+          <div class="q-explain">เฉลย ง: Best Fit ไล่ดูทุกช่อง (16, 14, 5, 30) แล้วเลือกช่องที่พอดีที่สุดกับ 13 MB คือช่อง 14 MB เหลือเพียง 1 MB จัดสรรดีที่สุดแต่ช้าที่สุดเพราะต้องค้นครบทุกช่อง (เทียบ: First Fit ลง 16 MB เพราะเร็ว, Worst Fit ลง 30 MB เพื่อเหลือช่องใหญ่ไว้ใช้ต่อ)</div>
+        </div>
+
+        <h3 id="q-vm">Virtual Memory</h3>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">18) หลักการของ demand paging คือข้อใด</p>
+          <button class="choice" data-k="A">ก. โหลดทุก page ของโปรแกรมเข้า memory ตั้งแต่เริ่มรัน</button>
+          <button class="choice" data-k="B">ข. นำ page เข้า memory เฉพาะเมื่อจำเป็นต้องใช้เท่านั้น</button>
+          <button class="choice" data-k="C">ค. สลับ process ทั้งตัวออกจาก memory เมื่อไม่ได้รัน</button>
+          <button class="choice" data-k="D">ง. จอง memory ให้โปรแกรมล่วงหน้าตามขนาดสูงสุด</button>
+          <div class="q-explain">เฉลย ข: demand paging นำ page เข้า memory เมื่อ needed เท่านั้น ทำให้ I/O น้อยลง, ใช้ memory น้อยลง, response เร็วขึ้น และรองรับ user มากขึ้น (เชื่อมกับ lazy swapper/pager)</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">19) ในระบบ demand paging เมื่อ process อ้างถึงเพจที่ "มีสิทธิ์ใช้ แต่ยังไม่ถูกโหลดเข้า memory" เหตุการณ์นี้เรียกว่าอะไร และ OS ดำเนินการอย่างไร</p>
+          <button class="choice" data-k="A">ก. segmentation fault และโปรแกรมถูกยกเลิกทันที</button>
+          <button class="choice" data-k="B">ข. page fault เกิด interrupt ให้ OS หา frame ว่าง โหลดเพจจาก storage เข้ามา อัปเดต page table (bit เปลี่ยนเป็น valid) แล้วให้คำสั่งเดิมทำงานซ้ำ</button>
+          <button class="choice" data-k="C">ค. thrashing และ OS จะ suspend process นี้ทันที</button>
+          <button class="choice" data-k="D">ง. TLB miss และ OS จะล้างข้อมูลใน TLB ทิ้งทั้งหมด</button>
+          <div class="q-explain">เฉลย ข: page fault = การอ้างเพจที่มีสิทธิ์ใช้แต่ยังไม่อยู่ใน memory (valid/invalid bit เป็น invalid) ขั้นตอน: interrupt, OS หา frame ว่าง, โหลดเพจจาก storage, อัปเดต page table (เก็บ frame + เปลี่ยน bit เป็น valid), ให้คำสั่งเดิมทำงานซ้ำ คราวนี้จะไม่ fault อีก</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-text">20) ปรากฏการณ์ Belady's anomaly (เพิ่มจำนวน frame แล้วจำนวน page fault กลับเพิ่มขึ้น) เป็นคุณสมบัติที่พบกับอัลกอริทึมใด</p>
+          <button class="choice" data-k="A">ก. LRU</button>
+          <button class="choice" data-k="B">ข. Optimal</button>
+          <button class="choice" data-k="C">ค. LFU</button>
+          <button class="choice" data-k="D">ง. FIFO</button>
+          <div class="q-explain">เฉลย ง: สไลด์มีหัวข้อ "FIFO Illustrating Belady's Anomaly" คือเพิ่มจำนวน frame แล้ว page fault กลับเพิ่มขึ้น (Optimal และ LRU ไม่มีปรากฏการณ์นี้) ตัวอย่างการคำนวณอยู่ข้อ 30</div>
+        </div>
+
+        <h3 id="q-fs">File System</h3>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">21) ระบบไฟล์ใดที่ "ไม่มี journaling แต่เก็บไฟล์ใหญ่กว่า 4 GB ได้ และยัง compatible กับหลาย OS เหมาะกับ USB flash drive / SD card"</p>
+          <button class="choice" data-k="A">ก. FAT32</button>
+          <button class="choice" data-k="B">ข. NTFS</button>
+          <button class="choice" data-k="C">ค. exFAT</button>
+          <button class="choice" data-k="D">ง. APFS</button>
+          <div class="q-explain">เฉลย ค: exFAT อยู่ตรงกลางระหว่าง FAT32 กับ NTFS: เก็บไฟล์ใหญ่กว่า 4 GB ได้ (FAT32 จำกัดไฟล์เดี่ยว 4 GB), volume ได้ถึง 128 PB แต่ไม่มี journaling (ต่างจาก NTFS/ext4/APFS ที่มีระบบช่วย recover) และ compatible กับหลาย OS เหมือน FAT จึงนิยมใช้กับ USB/SD card/external drive</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">22) สร้าง soft link (symbolic link) ด้วย <code>ln -s</code> ไปยังไฟล์ต้นทาง แล้วลบไฟล์ต้นทาง จะเกิดอะไรขึ้น</p>
+          <button class="choice" data-k="A">ก. ลิงก์ยังใช้ได้ปกติเพราะลิงก์ชี้ไปที่ inode ของไฟล์โดยตรง</button>
+          <button class="choice" data-k="B">ข. ลิงก์กลายเป็น broken link (dangling link) ยังอยู่แต่เปิดไฟล์ไม่ได้ ต่างจาก hard link ที่ยังอ่านข้อมูลได้ตราบเท่าที่ reference counter ยังไม่เป็น 0</button>
+          <button class="choice" data-k="C">ค. ระบบจะลบตัวลิงก์ทิ้งให้อัตโนมัติทันที</button>
+          <button class="choice" data-k="D">ง. ไฟล์ต้นทางจะถูกกู้คืนให้เองจาก journaling ของระบบไฟล์</button>
+          <div class="q-explain">เฉลย ข: soft link เป็น "shortcut" ชี้ไปยังตัวไฟล์ (path) ไม่ใช่ inode ต้นทางลบเมื่อไรจึงกลายเป็น broken/dangling link ทันที ส่วน hard link ชี้ที่ inode และระบบใช้ reference counter (การลบ = ลด counter) จึงยังอ่านข้อมูลได้ครบตราบที่ counter ยังไม่เป็น 0 ข้อดี soft link คือข้าม file system ได้และทำกับโฟลเดอร์ได้</div>
+        </div>
+
+        <h3 id="q2-sched">อัตนัย: Process และ CPU Scheduling</h3>
+
+        <div class="q">
+          <p class="q-text">23) จงอธิบายความแตกต่างระหว่าง "program" กับ "process" พร้อมบอกว่า process มีข้อมูล (data) อะไรของตัวเองบ้าง และ process เรียกอีกอย่างว่าอะไรในระบบ time-sharing และ batch system</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <ul>
+              <li><strong>Program</strong> = inactive entity เป็นแค่ไฟล์เก็บบนดิสก์</li>
+              <li><strong>Process</strong> = program in execution เป็น active entity ที่ต้องการชุด resources</li>
+              <li>Process มีข้อมูลของตัวเอง: <strong>program counter, stack, data section</strong> (สถานะทั้งหมดถูกเก็บใน PCB)</li>
+              <li>ใน time-sharing system เรียก process ว่า <strong>Task</strong> ใน batch system เรียกว่า <strong>Job</strong></li>
+            </ul>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">24) ให้ตาราง process (หน่วยเวลา = ms): P1 มาเวลา 0 ใช้ 7 | P2 มาเวลา 2 ใช้ 4 | P3 มาเวลา 4 ใช้ 1 | P4 มาเวลา 5 ใช้ 4</p>
+          <table>
+            <tr><th>Process</th><th>Arrival Time</th><th>Burst Time</th></tr>
+            <tr><td>P1</td><td>0</td><td>7</td></tr>
+            <tr><td>P2</td><td>2</td><td>4</td></tr>
+            <tr><td>P3</td><td>4</td><td>1</td></tr>
+            <tr><td>P4</td><td>5</td><td>4</td></tr>
+          </table>
+          <p class="q-text">(ก) จงวาด Gantt chart ของ SJF (non-preemptive) พร้อมหา waiting time รายตัวและค่าเฉลี่ย (ข) จงวาด Gantt chart ของ SRTF พร้อมหา waiting time เฉลี่ย และระบุว่าดีกว่า SJF กี่ ms (ค) เหตุใด SJF/SRTF จึง implement ใช้งานจริงได้ยาก</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p>(ก) SJF: เวลา 0 มีแต่ P1 (non-preemptive ทำจนจบ) ที่ 7 เลือก burst น้อยสุดคือ P3(1) ที่ 8 เหลือ P2 กับ P4 เสมอกันที่ 4 เลือกคนมาก่อน (P2 มาเวลา 2)</p>
+            <pre><code>| P1 (0-7) | P3 (7-8) | P2 (8-12) | P4 (12-16) |</code></pre>
+            <p>Waiting: P1 = 0, P2 = 8-2 = 6, P3 = 7-4 = 3, P4 = 12-5 = 7 ดังนั้นเฉลี่ย = (0 + 6 + 3 + 7)/4 = <strong>4 ms</strong></p>
+            <p>(ข) SRTF: P1 รัน 0-2 พอ t = 2 แล้ว P2 มา (burst 4 น้อยกว่า remaining ของ P1 = 5) จึงขัดจังหวะ ที่ t = 4 P3 มา (1 น้อยกว่า 2) ขัดอีก ที่ t = 5 P4 มา เหลือ P1(5), P2(2), P4(4)</p>
+            <pre><code>| P1 (0-2) | P2 (2-4) | P3 (4-5) | P2 (5-7) | P4 (7-11) | P1 (11-16) |</code></pre>
+            <p>Waiting: P1 = 16-7 = 9, P2 = 7-2-4 = 1, P3 = 0, P4 = 7-5 = 2 ดังนั้นเฉลี่ย = <strong>3 ms</strong> (ดีกว่า SJF อยู่ <strong>1 ms</strong>) ระวังตอนใช้สูตร: burst ของ P1 นับ "7 ทั้งหมด" ไม่ใช่เศษ 5</p>
+            <p>(ค) เพราะไม่รู้ burst time ล่วงหน้าของ process ในทางปฏิบัติ และ SRTF ยังมี overhead มากกว่าเพราะ OS ต้องคอยเช็คทุกครั้งที่มี process ใหม่เข้ามาแล้ว context switch</p>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">25) ให้ตาราง process: P1 มาเวลา 0 ใช้ 24 | P2 มาเวลา 2 ใช้ 3 | P3 มาเวลา 4 ใช้ 3 จัดสรร CPU แบบ Round Robin โดยมี time quantum = 4 ms</p>
+          <table>
+            <tr><th>Process</th><th>Arrival Time</th><th>Burst Time</th></tr>
+            <tr><td>P1</td><td>0</td><td>24</td></tr>
+            <tr><td>P2</td><td>2</td><td>3</td></tr>
+            <tr><td>P3</td><td>4</td><td>3</td></tr>
+          </table>
+          <p class="q-text">(ก) จงวาด Gantt chart (กฎ: process ใหม่ที่มาถึงพอดีตอนหมด quantum จะเข้าคิวก่อนตัวที่ถูกเตือนออก) (ข) หา turnaround time และ waiting time รายตัว (ใช้สูตร waiting = turnaround - burst) (ค) ถ้าเลือก quantum "ใหญ่เกินไป" และ "เล็กเกินไป" จะเกิดผลอย่างไร และถ้ามี n process รอใน ready queue quantum = q ตัวที่ต่อคิวท้ายสุดจะรอได้ไม่เกินเท่าใด</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p>(ก) P1 ทำ 0-4 (หมด quantum ยังไม่จบ) ตอน t = 4 ทั้ง P2, P3 มาถึงแล้ว P2 มาก่อน (t = 2) จึงได้ก่อน จากนั้น P2 จบที่ 7, P3 จบที่ 10 แล้ว P1 วนกลับรอบละ 4 จนครบ 24 หน่วย</p>
+            <pre><code>| P1 (0-4) | P2 (4-7) | P3 (7-10) | P1 (10-14) | P1 (14-18) | P1 (18-22) | P1 (22-26) | P1 (26-30) |</code></pre>
+            <p>(ข) Turnaround (จบ - มา): P1 = 30, P2 = 5, P3 = 6 จากนั้น Waiting (turnaround - burst): <strong>P1 = 6, P2 = 2, P3 = 3</strong> (เฉลี่ย ประมาณ 3.67 ms) RR ทำให้ response time ดีขึ้นแต่ turnaround แย่ลง</p>
+            <p>(ค) Quantum ใหญ่เกินไป จะเหมือนกลายเป็น FCFS / เล็กเกินไป จะ context switch ถี่เกิน เกิด overhead สูง และมีการรับประกันว่า process ท้ายสุดรอไม่เกิน <strong>(n-1) × q</strong></p>
+          </div></details>
+        </div>
+
+        <h3 id="q2-ipc">อัตนัย: IPC และ Pipe</h3>
+
+        <div class="q">
+          <p class="q-text">26) (ก) ระบุโมเดลของ IPC ทั้ง 3 แบบตามสไลด์ (ข) เมื่อ process ได้รับ signal process มีทางเลือกในการจัดการ signal ได้ 3 วิธี จงอธิบายแต่ละวิธีสั้น ๆ</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p>(ก) โมเดล IPC 3 แบบ: <strong>Signal, Shared memory, Message passing</strong></p>
+            <p>(ข) 3 วิธีจัดการ signal:</p>
+            <ol>
+              <li><strong>Catch</strong> เขียน routine (handler) ขึ้นมาเอง แล้วให้ OS เรียกเมื่อ signal มาถึง เช่น ผ่าน <code>signal(SIGINT, handler)</code></li>
+              <li><strong>ใช้ default action ของ OS</strong> ปล่อย OS จัดการตามค่าเริ่มต้นของ signal นั้น (เช่น terminate, ignore, stop/continue)</li>
+              <li><strong>Mask</strong> สั่งให้ OS รีบัด (หน่วง) signal ประเภทนั้น ๆ ไว้ จนกว่า process จะถอด signal mask ออก</li>
+            </ol>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">27) ให้โครงโปรแกรม pipe แม่-ลูก ดังนี้</p>
+          <pre><code>pipe(pfd);              /* pfd[0] = ปลายอ่าน, pfd[1] = ปลายเขียน */
+pid = fork();
+if (pid == 0) {         /* ลูก = คนอ่าน */
+    close(pfd[1]);
+    while ((nread = read(pfd[0], buffread, 5)) != 0) printf("%s", buffread);
+} else {                /* แม่ = คนเขียน */
+    close(pfd[0]);
+    sleep(2);
+    write(pfd[1], buff, strlen(buff) + 1);
+    close(pfd[1]);
+    wait();
+}</code></pre>
+          <p class="q-text">(ก) เพราะเหตุใดจึงต้องเรียก pipe() ก่อน fork() (ข) ระหว่าง 2 วินาทีที่แม่ sleep(2) อยู่ ลูกทำงานอยู่ในสถานะ/พฤติกรรมใด (เกี่ยวข้องกับคุณสมบัติของ read()) (ค) ถ้าแม่เปลี่ยนบรรทัด write เป็น write(pfd[1], buff, strlen(buff)); (ตัด +1 ออก) อาจเกิดปัญหาอะไรกับผลลัพธ์ที่ลูกพิมพ์ออกมา</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p>(ก) เพราะหลัง fork() ลูกได้รับ copy ทุกอย่างจากแม่รวมถึง file descriptor การสร้าง pipe ก่อน fork ทำให้ลูกได้ปลาย pipe ชุดเดียวกับแม่ ถ้าสร้างหลัง fork ลูกจะไม่รู้จัก pipe</p>
+            <p>(ข) read() เป็น <strong>blocking</strong> ลูกเรียก read ก่อนแต่ยังไม่มีข้อมูล จึง block รออยู่กับที่จนกว่าแม่จะเขียนข้อมูลเข้า pipe (แม่ sleep(2) ตั้งใจสาธิต blocking พอดี)</p>
+            <p>(ค) strlen(buff) ไม่นับ '\0' จึงไม่ได้ส่งตัวปิดท้ายไปด้วย โปรแกรมทำงานเหมือนปกติแต่<strong>ตัวสุดท้ายจะมีตัวอักษรขยะ</strong> (เศษข้อมูลเก่าค้างใน buffer) โผล่มา ฟังก์ชัน string ของ C อาศัย '\0' จึงต้องเขียน strlen(buff) + 1</p>
+          </div></details>
+        </div>
+
+        <h3 id="q2-deadlock">อัตนัย: Deadlock</h3>
+
+        <div class="q">
+          <p class="q-text">28) ระบบมี 5 process (P0 ถึง P4) และ resource 3 ประเภท A (10 instances), B (5 instances), C (7 instances) ณ ขณะหนึ่งมีสถานะดังนี้ (ใช้ Banker's Algorithm) โดย Available = (3, 3, 2)</p>
+          <table>
+            <tr><th>Process</th><th>Allocation (A B C)</th><th>Max (A B C)</th></tr>
+            <tr><td>P0</td><td>0 1 0</td><td>7 5 3</td></tr>
+            <tr><td>P1</td><td>2 0 0</td><td>3 2 2</td></tr>
+            <tr><td>P2</td><td>3 0 2</td><td>9 0 2</td></tr>
+            <tr><td>P3</td><td>2 1 1</td><td>2 2 2</td></tr>
+            <tr><td>P4</td><td>0 0 2</td><td>4 3 3</td></tr>
+          </table>
+          <p class="q-text">(ก) จงหาเมทริกซ์ Need (ข) จงแสดงว่าระบบอยู่ใน safe state โดยหา safe sequence หนึ่งลำดับ พร้อมแสดงการไล่ค่า Work อย่างย่อ</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p>(ก) Need = Max - Allocation:</p>
+            <table>
+              <tr><th>Process</th><th>Need (A B C)</th></tr>
+              <tr><td>P0</td><td>7-0, 5-1, 3-0 = <strong>7 4 3</strong></td></tr>
+              <tr><td>P1</td><td>3-2, 2-0, 2-0 = <strong>1 2 2</strong></td></tr>
+              <tr><td>P2</td><td>9-3, 0-0, 2-2 = <strong>6 0 0</strong></td></tr>
+              <tr><td>P3</td><td>2-2, 2-1, 2-1 = <strong>0 1 1</strong></td></tr>
+              <tr><td>P4</td><td>4-0, 3-0, 3-2 = <strong>4 3 1</strong></td></tr>
+            </table>
+            <p>(ข) เริ่ม Work = Available = (3, 3, 2) แล้วไล่ Safety Algorithm:</p>
+            <ul>
+              <li><strong>P1</strong>: Need (1, 2, 2) ไม่เกิน (3, 3, 2) รันจบ, Work = (3, 3, 2) + Allocation P1 (2, 0, 0) = <strong>(5, 3, 2)</strong></li>
+              <li><strong>P3</strong>: Need (0, 1, 1) ไม่เกิน (5, 3, 2) รันจบ, Work = (5, 3, 2) + (2, 1, 1) = <strong>(7, 4, 3)</strong></li>
+              <li><strong>P4</strong>: Need (4, 3, 1) ไม่เกิน (7, 4, 3) รันจบ, Work = (7, 4, 3) + (0, 0, 2) = <strong>(7, 4, 5)</strong></li>
+              <li><strong>P2</strong>: Need (6, 0, 0) ไม่เกิน (7, 4, 5) รันจบ, Work = (7, 4, 5) + (3, 0, 2) = <strong>(10, 4, 7)</strong></li>
+              <li><strong>P0</strong>: Need (7, 4, 3) ไม่เกิน (10, 4, 7) รันจบ, Finish ครบทุกตัว จึง<strong>ระบบอยู่ใน safe state</strong></li>
+            </ul>
+            <p>Safe sequence = &lt;P1, P3, P4, P2, P0&gt; (ตรงกับตัวอย่างในสไลด์ อาจมี sequence อื่นที่ safe ได้เช่นกัน)</p>
+          </div></details>
+        </div>
+
+        <h3 id="q2-memory">อัตนัย: Memory และ Virtual Memory</h3>
+
+        <div class="q">
+          <p class="q-text">29) ระบบ paging หนึ่งมี logical address ขนาด m = 5 บิต และ page size = 4 ไบต์ โดย page table ระบุว่า page 0 ไป frame 5, page 1 ไป frame 4, page 2 ไป frame 1, page 3 ไป frame 7</p>
+          <p class="q-text">(ก) address space มีขนาดเท่าใด แบ่งบิตเป็น page number กี่บิต กับ offset กี่บิต และมีเพจได้ทั้งหมดกี่เพจ (ข) หา physical address ของอักษร C ที่อยู่ (page 0, offset 2) และอักษร K ที่อยู่ (page 2, offset 2) ใช้สูตร physical = frame × page size + offset (ค) เพราะเหตุใดการอ่านข้อมูล 1 ครั้งจึงต้องเข้าถึง memory 2 ครั้งเมื่อมี page table ใน RAM และถ้า memory access = 1 µs, TLB access = 0.1 µs, hit ratio = 0.8 จงหาค่า Effective Access Time (EAT)</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p>(ก) Address space = 2^5 = <strong>32 ไบต์</strong> offset ใช้ n = 2 บิต (เพราะ 2^2 = 4 = page size) page number = 5 - 2 = <strong>3 บิต</strong> จึงมีได้ 2^3 = <strong>8 เพจ</strong> (8 × 4 = 32 ไบต์พอดี)</p>
+            <p>(ข) C: page 0 ไป frame 5 ได้ physical = 5 × 4 + 2 = <strong>ไบต์ที่ 22</strong> / K: page 2 ไป frame 1 ได้ physical = 1 × 4 + 2 = <strong>ไบต์ที่ 6</strong></p>
+            <p>(ค) เพราะ Page Table อยู่ใน RAM ครั้งแรกต้องอ่าน Page Table เพื่อรู้ว่าเพจอยู่ frame ไหน ครั้งที่สองจึงไปยัง address จริง คำนวณ EAT แบบถ่วงน้ำหนัก: EAT = 0.8 × (0.1 + 1) + 0.2 × (0.1 + 2) = 0.88 + 0.42 = <strong>1.3 µs</strong> (ลดจาก 2 µs เมื่อไม่มี TLB เพราะ TLB hit ช่วยให้ไม่ต้องเข้าถึง page table)</p>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">30) ระบบมี frame ว่าง 3 ช่อง (เริ่มต้นว่างหมด) และมี reference string ดังนี้: 7, 0, 1, 2, 0, 3, 0, 4</p>
+          <p class="q-text">(ก) จงแสดงผลการทำงานของอัลกอริทึม FIFO ทีละขั้น และนับจำนวน page fault ทั้งหมด (ข) จงแสดงผลการทำงานของอัลกอริทึม LRU ทีละขั้น และนับจำนวน page fault ทั้งหมด (ค) อัลกอริทึมใดให้ page fault น้อยกว่า และเพราะเหตุใดอัลกอริทึม Optimal จึงให้ผลดีที่สุดในทางทฤษฎีแต่ใช้งานจริงไม่ได้</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p>(ก) <strong>FIFO</strong> แทนที่เพจที่เข้ามาก่อนสุด:</p>
+            <table>
+              <tr><th>อ้าง</th><th>7</th><th>0</th><th>1</th><th>2</th><th>0</th><th>3</th><th>0</th><th>4</th></tr>
+              <tr><td>Frame</td><td>7</td><td>7</td><td>7</td><td>2</td><td>2</td><td>2</td><td>2</td><td>4</td></tr>
+              <tr><td></td><td></td><td>0</td><td>0</td><td>0</td><td>0</td><td>3</td><td>3</td><td>3</td></tr>
+              <tr><td></td><td></td><td></td><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td></tr>
+              <tr><td>Fault</td><td>ใช่</td><td>ใช่</td><td>ใช่</td><td>ใช่</td><td>-</td><td>ใช่</td><td>ใช่</td><td>ใช่</td></tr>
+            </table>
+            <p>2 แทนที่ 7 (เข้ามาก่อนสุด), 3 แทนที่ 0, 0 แทนที่ 1, 4 แทนที่ 2 รวม page fault <strong>7 ครั้ง</strong></p>
+            <p>(ข) <strong>LRU</strong> แทนที่เพจที่ไม่ถูกใช้มานานที่สุด (มองย้อนอดีต):</p>
+            <table>
+              <tr><th>อ้าง</th><th>7</th><th>0</th><th>1</th><th>2</th><th>0</th><th>3</th><th>0</th><th>4</th></tr>
+              <tr><td>Frame</td><td>7</td><td>7</td><td>7</td><td>2</td><td>2</td><td>2</td><td>2</td><td>4</td></tr>
+              <tr><td></td><td></td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+              <tr><td></td><td></td><td></td><td>1</td><td>1</td><td>1</td><td>3</td><td>3</td><td>3</td></tr>
+              <tr><td>Fault</td><td>ใช่</td><td>ใช่</td><td>ใช่</td><td>ใช่</td><td>-</td><td>ใช่</td><td>-</td><td>ใช่</td></tr>
+            </table>
+            <p>2 แทนที่ 7 (ไม่ถูกใช้นานสุด), 3 แทนที่ 1, 4 แทนที่ 2 รวม page fault <strong>6 ครั้ง</strong></p>
+            <p>(ค) LRU (6 ครั้ง) น้อยกว่า FIFO (7 ครั้ง) เพราะใช้ข้อมูล "เพจไหนเพิ่งถูกใช้" ซึ่ง OS เก็บได้จริง ส่วน Optimal ให้ผลดีที่สุดในทางทฤษฎี (บน reference string เต็มของคลิป: Optimal 9 &lt; LRU 12 &lt; FIFO 15 ครั้ง) เพราะแทนที่เพจที่ "จะไม่ถูกใช้อีกนานที่สุดในอนาคต" แต่ต้องมองเห็นอนาคตล่วงหน้าซึ่งทำได้ยากมาก/ใช้จริงไม่ได้ จึงนิยมใช้เป็น <strong>benchmark</strong> ให้อัลกอริทึมอื่นเทียบ (เชื่อมกับ Belady's anomaly ในข้อ 20 และ 28)</p>
+          </div></details>
+        </div>
+
+        <button class="quiz-reset">ลองทำใหม่ทั้งชุด</button>
+
+        <p>ทบทวนเนื้อหาก่อนกลับมาทำควิซ: อ่านสรุปได้ที่ <a href="os.html">หน้า OS (os.html)</a> และ <a href="os-2.html">หน้า OS ต่อ (os-2.html)</a></p>
+      </section>
+    </article>
+  </main>
+</div>
+<script src="assets/site.js"></script>
+</body>
+</html>

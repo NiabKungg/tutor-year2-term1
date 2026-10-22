@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BA/BPM: Business Analysis and Process Management | ติวสอบ ปี 2 เทอม 1</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-subject="bpm">
+<header class="topbar">
+  <a class="brand" href="index.html">ติวสอบ <span>ปี 2 เทอม 1</span></a>
+  <nav class="subject-nav">
+    <a href="dsa.html">DSA</a>
+    <a href="os.html">OS</a>
+    <a href="os-2.html">OS (ต่อ)</a>
+    <a href="os-quiz.html">OS ควิซ</a>
+    <a href="oslab.html">OS Lab</a>
+    <a href="bpm.html" class="active">BA/BPM</a>
+    <a href="linear.html">พีชคณิตเชิงเส้น</a>
+    <a href="seminar.html">Seminar</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="toc">
+    <div class="toc-title">สารบัญหน้านี้</div>
+    <a href="#sec1">1. บทบาทของ Business Analyst</a>
+    <a href="#sec2">2. Business Needs</a>
+    <a href="#sec3">3. Business Intentions</a>
+    <a href="#sec4">4. Process Analysis and Design</a>
+    <a href="#sec5">5. Process Modelling (BPMN)</a>
+    <a href="#sec6">6. Business Rules</a>
+    <a href="#sec7">7. Process Discovery</a>
+    <a href="#sec8">8. Qualitative Process Analysis</a>
+    <a href="#sec9">9. Voice of the Users</a>
+    <a href="#sec10">10. Requirements Elicitation</a>
+    <a href="#sec11">11. Use Cases</a>
+    <a href="#sec12">12. Business Requirements</a>
+    <a href="#sec13">13. FR และ NFR</a>
+    <a href="#sec14">14. Process Redesign (BPR)</a>
+    <a href="#sec15">15. Sequence Diagram</a>
+    <a href="#quiz">แบบทดสอบ</a>
+  </aside>
+  <main>
+    <article>
+      <h1>Business Analysis and Process Management (05506234)</h1>
+      <p class="page-sub">สรุปจากสไลด์ 23 ชุดเรียงตามลำดับการเรียน 15 หัวข้อ จากบทบาท BA ถึง Sequence Diagram พร้อมประเด็นที่ออก Quiz ซ้ำและแบบทดสอบ 25 ข้อ</p>
+
+      <section id="sec1" class="card">
+        <h2>1. บทบาทของ Business Analyst (The Evolving Role of the BA)</h2>
+        <p>BA ยุคใหม่เดิมทีเป็น "data modeler" แล้วพัฒนามาเป็น "business analyst" หรือ "enterprise architect" หน้าที่หลักมี 4 อย่าง:</p>
+        <ul>
+          <li>ค้นหาข้อเท็จจริงของธุรกิจ (business facts)</li>
+          <li>อำนวยความสะดวกในการสื่อสารระหว่างผู้เชี่ยวชาญ</li>
+          <li>ช่วยระบุวิธีที่ธุรกิจจะทำงาน</li>
+          <li>ส่งมอบ specification ให้ทีมเทคนิคนำไป implement</li>
+        </ul>
+        <div class="keypoints"><div class="kp-title">นิสัยสำคัญของ analyst</div>
+          <ul>
+            <li>"tolerate chaos, ambiguity, and lack of knowledge and to function effectively in spite of them" คือ ทนต่อความโกลาหล ความกำกวม และข้อมูลไม่ครบ แล้วทำงานได้อย่างมีประสิทธิภาพ</li>
+          </ul>
+        </div>
+        <h3>Business Analysis แบ่งเป็น 3 ส่วน</h3>
+        <table>
+          <tr><th>ส่วน</th><th>ความหมาย</th></tr>
+          <tr><td><strong>Discovery</strong></td><td>เข้าใจและบันทึก business facts ปัจจุบัน (as-is)</td></tr>
+          <tr><td><strong>Assessment</strong></td><td>ระบุ business conditions และ possibilities</td></tr>
+          <tr><td><strong>Specification</strong></td><td>นิยาม business requirements (to-be)</td></tr>
+        </table>
+        <h3>5 Aspects of Business กับ 5 Kinds of Business Models</h3>
+        <table>
+          <tr><th>Aspect</th><th>คำถาม</th><th>Model</th><th>ตัวอย่าง Diagram</th></tr>
+          <tr><td>Objects / Data (What)</td><td>ต้องรู้อะไรเกี่ยวกับ "สิ่งของ"</td><td>Business Object (Data) Model</td><td>ERD (Entity-Relationship)</td></tr>
+          <tr><td>Process (How)</td><td>งานทำอย่างไร</td><td>Business Process Model</td><td>Process Map / DFD / Activity Diagram / Use Case Diagram</td></tr>
+          <tr><td>Event (When)</td><td>อะไรกระตุ้นงาน, สถานะเปลี่ยนเมื่อไร</td><td>Business Event Model</td><td>State Transition Diagram</td></tr>
+          <tr><td>Location (Where)</td><td>ทำงานที่ไหน, ของเดินทางอย่างไร</td><td>Business Location Model</td><td>Location-Channel / Site Channel Diagram</td></tr>
+          <tr><td>Socio-Political (Who)</td><td>ใครรับผิดชอบ, โครงสร้างองค์กร</td><td>Business Socio-Political Model</td><td>Party Affiliation Diagram / Org Chart</td></tr>
+        </table>
+        <ul>
+          <li>โมเดลทั้ง 5 เป็นเรื่องเดียวกันมองจากหลายมุม (interrelated)</li>
+          <li>โครงสร้างของโมเดล = <strong>Nodes</strong> (องค์ประกอบหลัก เช่น entity, activity, state, location, party) + <strong>Links</strong> (ความสัมพันธ์ที่มีความหมาย)</li>
+          <li>แบ่งตามระยะ: current state ("as-is") กับ future state ("to-be") และตามระดับรายละเอียด: framing กับ detailed</li>
+        </ul>
+        <p><strong>Motivation chain:</strong> Business intentions เป็นตัวจัดตั้ง Projects และ Business models สนับสนุน project intentions</p>
+        <div class="example"><div class="ex-title">ตัวอย่าง: กรณีศึกษา Calvert County</div>
+          <ol>
+            <li>กระบวนการอนุมัติแบบ serial ที่ยาว แก้ด้วยการทำ concurrent review ให้ทำงานขนานกัน</li>
+            <li>ผู้สมัครต้องไปเจอ provider 17 แห่งเอง แก้ด้วยการสร้าง role ใหม่ชื่อ "Permit Coordinator" คอยจับคู่ให้</li>
+          </ol>
+        </div>
+        <div class="exam-box"><div class="kp-title">ออก Quiz แล้ว</div>
+          <ul>
+            <li>จับคู่ 5W (What/How/When/Where/Who) กับโมเดล 5 ชนิด และ diagram ประจำโมเดล เช่น Event/สถานะเปลี่ยน = State Transition Diagram, Data = ERD</li>
+            <li>3 องค์ประกอบของ Business Analysis (Discovery/Assessment/Specification) ผูกกับ as-is และ to-be</li>
+            <li>ความต่างระหว่าง nodes กับ links ของโมเดลธุรกิจ</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec2" class="card">
+        <h2>2. Business Needs (ความต้องการของธุรกิจ)</h2>
+        <p><strong>Business Need</strong> คือสิ่งที่บริษัททุกแห่งต้องมีเพื่อดำเนินงานอย่างมีประสิทธิภาพและไล่ตาม mission/objectives เป็นการระบุจุดประสงค์เชิงกลยุทธ์ที่ให้ทิศทางแก่องค์กร</p>
+        <ul>
+          <li>อีกชื่อหนึ่งคือ <strong>Enterprise Analysis</strong> = การวิเคราะห์ เข้าใจ และระบุเป้าหมายเฉพาะของบริษัท เพื่อบรรลุ strategic vision</li>
+          <li><strong>Business Need vs Business Requirement:</strong> Need = การระบุจุดประสงค์เชิงกลยุทธ์ (sense of direction), Requirement = สิ่งที่ต้องมีเพื่อให้บรรลุ objective นั้น เช่น พนักงานต้องมีอะไรเพื่อทำงานให้สำเร็จ</li>
+        </ul>
+        <h3>Objectives ของธุรกิจ 7 ข้อ</h3>
+        <p>Survival, Profit, Providing a quality service, Customer Satisfaction, Growth, Market Share, Social Responsibility</p>
+        <h3>Strategic vs Functional Needs</h3>
+        <table>
+          <tr><th>ประเภท</th><th>ลักษณะ</th></tr>
+          <tr><td><strong>Strategic</strong></td><td>นิยาม vision/mission/purpose อย่างมีคุณภาพ หมุนรอบ 3 เรื่อง: Profit maximization, Competitive advantage, Cost leadership</td></tr>
+          <tr><td><strong>Functional</strong></td><td>ทำ business goals ให้เป็นรูปธรรมผ่าน project ระบุจุดแข็ง/จุดอ่อนและ gaps แล้วแก้ gap ด้วย input, tools, คนที่มีทักษะ, system</td></tr>
+        </table>
+        <div class="exam-box"><div class="kp-title">ออก Quiz แล้ว</div>
+          <ul>
+            <li><strong>IRACIS</strong> สูตรคิดมูลค่าทางธุรกิจ: <strong>I</strong>ncrease <strong>R</strong>evenues (เพิ่มรายได้), <strong>A</strong>void <strong>C</strong>osts (หลีกเลี่ยง/ลดต้นทุน), <strong>I</strong>mprove <strong>S</strong>ervice (ปรับปรุงบริการ)</li>
+            <li>ต้นทุน Fixed/Variable: ค่าเช่า = Fixed, ค่าวัตถุดิบ = Variable (ออกแนวจำแนกรายจ่ายซ้ำบ่อย)</li>
+            <li>แยก Business Need กับ Business Requirement</li>
+            <li>Business Needs ช่วยลดสิ่งใด: conflicts, poorly defined requirements, inefficiency</li>
+          </ul>
+        </div>
+        <h3>ต้นทุน Fixed กับ Variable</h3>
+        <table>
+          <tr><th>ประเภท</th><th>ความหมาย</th><th>ตัวอย่าง</th></tr>
+          <tr><td><strong>Fixed Cost</strong></td><td>คงที่ ไม่ขึ้นกับปริมาณการผลิต</td><td>ค่าเช่า, ค่าประกัน, เงินเดือนประจำ, ค่าเช่าอุปกรณ์</td></tr>
+          <tr><td><strong>Variable Cost</strong></td><td>แปรผันตามปริมาณการผลิต/การขาย</td><td>ต้นทุนวัตถุดิบ (raw material), ค่าแรงที่ขึ้นกับจำนวนการผลิต, ค่าขนส่งต่อชิ้น, ค่าคอมมิชชันตามยอดขาย</td></tr>
+        </table>
+        <div class="example"><div class="ex-title">ตัวอย่าง: จำแนกรายจ่ายโรงงานผลิตขนม</div>
+          <ol>
+            <li>ค่าเช่าโรงงานรายเดือน = Fixed (จ่ายเท่าเดิมไม่ว่าผลิตมากน้อย)</li>
+            <li>ค่าวัตถุดิบแป้งและน้ำตาล = Variable (ยิ่งผลิตมากยิ่งใช้มาก)</li>
+            <li>ค่าไฟฟ้าส่วนออฟฟิศ = Fixed</li>
+            <li>ค่าคอมมิชชันตามยอดขาย = Variable (ผูกกับปริมาณขาย)</li>
+          </ol>
+        </div>
+        <details class="more"><summary>อ่านเพิ่ม: ประเภทของ Business Needs ทั้งหมด</summary>
+          <div>Talent, Infrastructure, Knowledge, Tools, Financial, Facilities, Intellectual property, Market opportunity, Processes, Systems, Product &amp; service, Customer experience, Production plan, Human capital, Application, Data</div>
+        </details>
+      </section>
+
+      <section id="sec3" class="card">
+        <h2>3. Business Intentions (เจตนารมณ์ทางธุรกิจ)</h2>
+        <h3>Strategic Intent Hierarchy (5 ระดับ เรียงจากบนลงล่าง)</h3>
+        <ol>
+          <li><strong>Vision</strong> = blueprint อนาคตของบริษัท "ที่องค์กรอยากไปถึง" เป็น dream/แรงบันดาลใจ และเป็นฐานของ planning</li>
+          <li><strong>Mission</strong> = ธุรกิจของบริษัทคืออะไร เป้าหมายและวิธีไปถึงเป้าหมาย บอก <strong>เหตุผลการดำรงอยู่</strong> ของธุรกิจ และสิ่งที่บริษัททำได้ในปัจจุบัน</li>
+          <li><strong>Business Definition</strong> = ธุรกิจในแง่ customer needs, target audience, alternative technologies</li>
+          <li><strong>Business Model</strong> = กลยุทธ์การดำเนินงาน: แหล่งรายได้, customer base, แหล่งเงินทุน</li>
+          <li><strong>Goals and Objectives</strong> = <strong>Goals คือ end results</strong> ที่องค์กรพยายามไปให้ถึง, <strong>Objectives คือ time-based, measurable actions</strong> ที่ช่วยให้บรรลุ goals</li>
+        </ol>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div>
+          <ul>
+            <li>สลับ Goals กับ Objectives: Objectives เป็น "การกระทำ" ที่วัดผลได้และมีกรอบเวลา ทำงานเพื่อพาไปถึง Goals ซึ่งเป็นผลลัพธ์ปลายทาง</li>
+            <li>สลับ Vision กับ Mission: Vision คือภาพฝันอนาคต, Mission คือเหตุผลการดำรงอยู่และสิ่งที่ทำได้ปัจจุบัน</li>
+          </ul>
+        </div>
+        <h3>Competitive Advantage</h3>
+        <p>นิยาม: ตำแหน่งที่ได้เปรียบที่องค์กรแสวงหาเพื่อ "มีกำไรมากกว่าคู่แข่ง" ตัวอย่างที่เจอบ่อย: ทีมงาน, เทคโนโลยี/วิธีผลิตเฉพาะที่ไม่มีใครมี (unique access to technology), สินค้าที่ไม่มีใครเสนอได้ (protected by IP/patent), ผลิตและขายได้ต้นทุนต่ำกว่า (cost leadership), Brand and reputation เช่น iPhone ของ Apple</p>
+        <h3>Sustainable Competitive Advantage 3 ประเภท</h3>
+        <table>
+          <tr><th>ประเภท</th><th>ลักษณะ</th></tr>
+          <tr><td><strong>Differentiation</strong></td><td>ปรับกลยุทธ์ให้แตกต่าง/โดดเด่นชัดเจนจากคู่แข่ง</td></tr>
+          <tr><td><strong>Cost Leadership</strong></td><td>ตั้งราคาต่ำกว่าคู่แข่ง ลูกค้าเลือกจากความคุ้มค่าทางการเงิน</td></tr>
+          <tr><td><strong>Focus Advantage</strong></td><td>ล็อกกลุ่มเป้าหมายเฉพาะส่วน เพื่อสร้าง satisfaction และ loyalty สูงในกลุ่มนั้น</td></tr>
+        </table>
+        <h3>Value Chain</h3>
+        <ul>
+          <li><strong>Primary activities</strong> = กิจกรรมหลักที่สร้าง "value" โดยตรง: Plan → Procure → Produce → Warehouse → Sell → Deliver → Pay and collect</li>
+          <li><strong>Supporting/Secondary activities</strong> = สนับสนุนให้ primary ทำงานได้ ไม่ก่อ value โดยตรง: HR, ICT, Finance, Legal, Maintenance, QC, PR, R&amp;D ฯลฯ</li>
+        </ul>
+        <div class="exam-box"><div class="kp-title">ออก Quiz แล้ว</div>
+          <ul>
+            <li>ลำดับ Strategic Intent Hierarchy และนิยาม Vision ต่างจาก Mission</li>
+            <li>Goals vs Objectives: Objectives ต้อง measurable และ time-based และทำงานเพื่อพาไปถึง Goals</li>
+            <li>3 ประเภท sustainable competitive advantage กับ scenario เช่น ล็อกกลุ่มลูกค้าเฉพาะส่วน = Focus Advantage</li>
+            <li>แยก primary/supporting activities ใน value chain</li>
+          </ul>
+        </div>
+        <details class="more"><summary>อ่านเพิ่ม: Level of Intentions 4 ระดับ และ Meaningful Purpose</summary>
+          <div>
+            <p><strong>Level of Intentions (4 ระดับ)</strong></p>
+            <ol>
+              <li>Acting Intention: กำหนดว่าพนักงานหน้างาน (frontline) ควรทำงานอย่างไร</li>
+              <li>Experience Theme: intention ที่องค์กรใช้ทรัพยากรออกแบบประสบการณ์ (experience design) ของ offering และครอบ acting intentions</li>
+              <li>Strategic Intention: บริษัทวางแผนเปลี่ยนโครงสร้างโลกผ่านอุตสาหกรรมของตนอย่างไร เข้าใจว่าทำไมธุรกิจมีอยู่เหนือการหากำไร</li>
+              <li>Meaningful Purpose: ทำสิ่งที่ต่างออกไปเพื่อรักษา competitive advantage ด้วยการ innovate เร็วกว่า ecosystem</li>
+            </ol>
+            <p><strong>Meaningful Purpose ต้องทำ 6 อย่าง:</strong> Enriches humanity, เสริมพลังคนในองค์กร, Align ผู้ร่วมงานทุกฝ่าย, เป็น two-edged sword (ใช้ตัดสิน in/out), ใช้ได้กับคนที่เลือกร่วม, concise evocative memorable</p>
+            <p><strong>Value vs Effort:</strong> Value = revenue potential, Effort = ชั่วโมง/ทรัพยากร/การลงทุนที่ต้องใช้ ถ้า feature ใช้ effort สูงต้องให้ value สูงตามจึงคุ้ม</p>
+            <p><strong>Business value ของ enterprise systems:</strong> ให้ข้อมูล firm-wide เพื่อการตัดสินใจ, เพิ่ม operational efficiency, ตอบ customer request ได้ไว, ผลิต/จัดซื้อ/ส่งในปริมาณที่ถูกต้อง, บังคับใช้มาตรฐาน, ผู้บริหารเห็นผลการดำเนินงานได้ทันที</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="sec4" class="card">
+        <h2>4. Business Process Analysis and Design + Types of BPM</h2>
+        <p><strong>Process</strong> คือลำดับ/การไหลของ activities ในองค์กร เพื่อทำงานให้สำเร็จ แสดงเป็นภาพกราฟิกที่มี activities, events, gateways, sequence flows</p>
+        <ul>
+          <li>Continuum ของงาน: Analysis &amp; Design → Development &amp; Implementation → Operation &amp; Management</li>
+          <li>Processes มีอยู่เพื่อ implement requirements, กำหนด functionality ของระบบ, เชื่อมระบบกับงาน manual, และ govern การพัฒนา</li>
+          <li>โซลูชันจริงผสม <strong>automated + manual processes</strong> จึงต้องเห็นภาพรวมทั้งหมด และนิยาม process แบบไม่กำกวม (unambiguous)</li>
+        </ul>
+        <div class="keypoints"><div class="kp-title">สาเหตุความล้มเหลวของ project</div>
+          <ul>
+            <li>มักมาจาก weakness ใน business analysis: สองฝั่ง Business กับ IT ใช้ภาษาคนละภาษา (Tower of Babel), notation ไม่สม่ำเสมอ, branching ไม่ระบุ, รายละเอียดมาก/น้อยเกินไป, ขาด partnership</li>
+            <li>ทางแก้คือ <strong>single process design language</strong> ที่ business เข้าใจและ IT มั่นใจในความเข้งวด: ใช้ 2 ระดับ high-level สำหรับ business กับ detailed low-level สำหรับ development และกราฟิกดีกว่า pure text</li>
+            <li>Complexity ต้องสมดุล: มากไปเกิด analysis paralysis, น้อยไปเกิด disconnect ระหว่างที่ business คิดกับที่ IT ส่งมอบ</li>
+          </ul>
+        </div>
+        <h3>Elements of a Process Design / Documentation</h3>
+        <table>
+          <tr><th>องค์ประกอบ</th><th>ความหมาย</th></tr>
+          <tr><td>Process Triggers</td><td>อะไรจุดชนวนให้ process เริ่ม</td></tr>
+          <tr><td>Process Outcomes</td><td>ผลลัพธ์ที่คาดหวัง</td></tr>
+          <tr><td><strong>Preconditions</strong></td><td>อะไรต้อง "เกิดขึ้นแล้ว/เป็นจริง" ก่อน process เริ่มได้ เช่น ต้องลงทะเบียนสอบก่อนจึงเข้าสอบได้</td></tr>
+          <tr><td><strong>Prerequisites (t1)</strong></td><td>Process อื่นที่ต้อง "ทำเสร็จก่อน" (preceding process)</td></tr>
+          <tr><td>Inputs</td><td>สิ่งที่ process ต้องใช้เพื่อทำงาน</td></tr>
+          <tr><td>Processing</td><td>process ทำอะไร</td></tr>
+          <tr><td><strong>Dependencies (t2)</strong></td><td>process นี้ขึ้นกับอะไร (resource dependency เริ่มหรือเสร็จไม่ได้จนกว่าอีกอันเสร็จ)</td></tr>
+          <tr><td>Outputs</td><td>สิ่งที่ process สร้าง</td></tr>
+          <tr><td>Timelines</td><td>เวลาที่คาดหวังของ process</td></tr>
+          <tr><td>Reporting / Performance Measures</td><td>วัดผลอย่างไร</td></tr>
+          <tr><td>Roles &amp; Responsibilities</td><td>ใครทำอะไร</td></tr>
+          <tr><td>Skills &amp; Capabilities</td><td>ทักษะที่ต้องมี</td></tr>
+          <tr><td>Requirements Being Delivered (Traceability)</td><td>โยงกลับว่า requirement ข้อไหน</td></tr>
+          <tr><td>Issues / Assumptions</td><td>ประเด็นค้าง และข้อสมมติ</td></tr>
+        </table>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div>
+          <ul>
+            <li>Prerequisites = process ที่ต้อง DONE ก่อน, Preconditions = เงื่อนไขที่ต้องเป็นจริงก่อนเริ่ม, Dependencies = process อื่นที่ตัวเองพึ่งพา (t2) สามคำนี้ออก Quiz แยกกันบ่อย</li>
+          </ul>
+        </div>
+        <h3>Diagram vs Map vs Model</h3>
+        <table>
+          <tr><th>รูปแบบ</th><th>ระดับรายละเอียด</th></tr>
+          <tr><td><strong>Diagram</strong></td><td>notation ง่ายของ workflow หลัก ตัดรายละเอียดรองทิ้ง</td></tr>
+          <tr><td><strong>Map</strong></td><td>ละเอียดกว่า: บอก performer (actors), events และความสัมพันธ์สำคัญ ภาพรวมครบกว่า</td></tr>
+          <tr><td><strong>Model</strong></td><td>แม่นที่สุด: แสดง performance ของสิ่งที่ model ต้องมี data + ปัจจัยที่มีผลต่อ performance มักใช้เครื่องมือที่มี simulation/reporting</td></tr>
+        </table>
+        <h3>Notations (ภาษา/สัญลักษณ์)</h3>
+        <ul>
+          <li><strong>BPMN</strong> (Business Process Modeling Notation): มาตรฐานหลัก ใช้ flowchart-like คล้าย UML activity diagram และแปลงเป็น BPEL ได้</li>
+          <li>อื่น ๆ: Flow Charting, Swim Lanes (แบ่ง lane ตาม role/หน่วยงาน เห็น hand-off), EPC (Event Process Chain จาก ARIS), Value Chain, UML (เน้น systems analysis), IDEF-0 (function model ของ US Air Force/FIPS), LOVEM-E (IBM, Line of Visibility), SIPOC (Supplier, Input, Process, Output, Customer ของ Six Sigma), Systems Dynamics, Value Stream Mapping (Lean)</li>
+          <li>Notation ที่ Business กับ IT ใช้ร่วมกันได้: <strong>BPMN, UML, LOVEM-E</strong></li>
+        </ul>
+        <details class="more"><summary>อ่านเพิ่ม: Flow Objects ของ BPMN และ Process Attributes</summary>
+          <div>
+            <p><strong>Flow Objects เชิง design:</strong></p>
+            <ul>
+              <li>Activities (Task / Subprocess / Transaction) โดย Task types ได้แก่ Service, Send, Receive, User, Script, Manual, Business Rule</li>
+              <li>Events: Start (trigger, รับ input), End (ผลลัพธ์, ปล่อย output), Intermediate (กลางทาง)</li>
+              <li>Gateways: Exclusive (เลือก 1 เส้นทาง), Inclusive (1 หรือหลายเส้นทาง ต้อง merge คืน), Parallel (ขนาน), Complex</li>
+              <li>Artifacts: Data object, Group, Annotation และ Data แบบ data inputs/outputs/stores/collections</li>
+            </ul>
+            <p><strong>Types of Process:</strong> Standard/Orchestration process = นิยาม flow ของ activities ระหว่าง participants ในมุมมองฝ่ายใดฝ่ายหนึ่ง, Choreography = การแลกเปลี่ยน messages ระหว่าง participants มองจากภายนอก</p>
+            <p><strong>Process Attributes</strong> (องค์ประกอบที่ใช้บรรยาย process เวลา simulate): Inputs/Outputs, Events/Results, Value Add, Roles/Organizations, Data, Probabilities, Queuing, Transmission/Wait Time, Arrival Patterns, Costs, Entry/Exit/Branching/Join Rules, Work Handling Time, Servers (จำนวนคนที่ทำ task)</p>
+          </div>
+        </details>
+        <h3>Types of BPM (แบ่งตามศูนย์กลาง)</h3>
+        <table>
+          <tr><th>ประเภท</th><th>ลักษณะ</th></tr>
+          <tr><td><strong>Document-centric BPM</strong></td><td>สร้างเอกสารหลังผ่านการอนุมัติ/input หลายรอบ มักใช้ใน procurement, accounting, law, contract management</td></tr>
+          <tr><td><strong>Integration-centric BPM</strong></td><td>เชื่อม software ทั้งบริษัทกับ point solutions ของแต่ละแผนก ให้ data ไหลลื่นระหว่างเครื่องมือ</td></tr>
+          <tr><td><strong>Human-centric BPM</strong></td><td>เน้น task/กิจกรรม/ทักษะมนุษย์ที่ระบบทำแทนไม่ได้ เช่น การตัดสินใจ การชี้ขาด การอนุมัติ การสร้าง proposal, ระบบช่วยด้วย notification/alert/deadline</td></tr>
+        </table>
+        <details class="more"><summary>อ่านเพิ่ม: Human-centric BPM และ 10 ขั้นตอนนิยาม human activity</summary>
+          <div>Human-centric BPM มี goal คือแพ็กกิจกรรมมนุษย์เป็น "packages" ให้เป็นมาตรฐาน คุณสมบัติ: ยืดหยุ่น, adaptive, reassign work ได้, งานค้างได้, mobile access ได้ ขั้นตอนนิยาม human activity 10 ขั้น: ตั้งเป้า → ระบุ labor → เกณฑ์เสร็จ → เรียง task → ใครทำอะไร → ข้อมูลที่ใช้ → สิทธิ์เข้าถึง → deadline → การนำเสนอข้อมูล → integrate</div>
+        </details>
+        <h3>PPT Framework (People-Process-Technology, Golden Triangle)</h3>
+        <ul>
+          <li><strong>People</strong> (skills + communication + relationships) ทำงาน, <strong>Process</strong> ทำให้งาน efficient, <strong>Technology</strong> ช่วยคนและ automate process</li>
+          <li>ลำดับ: เริ่มที่ People → ปรับ Process → เสริมด้วย Technology เปรียบเหมือนโต๊ะ 3 ขา ต้องสมดุล เปลี่ยน tech ต้องปรับคนและ process ตาม</li>
+          <li>สไลด์เดิมมี 4 องค์ประกอบ: People, Technology, Structure, Tasks โดยรวม Structure + Tasks = "Process"</li>
+        </ul>
+        <p>เรื่อง <strong>Value Contribution of Processes (VA/BVA/NVA)</strong> อธิบายละเอียดพร้อมตารางใน <a href="#sec8">หัวข้อ 8 Qualitative Process Analysis</a></p>
+        <div class="exam-box"><div class="kp-title">ออก Quiz แล้ว</div>
+          <ul>
+            <li>แยก Prerequisites (process ต้อง done ก่อน) vs Preconditions (เงื่อนไขต้องจริงก่อน) vs Dependencies (process ที่ตัวเองพึ่งพา)</li>
+            <li>องค์ประกอบของ process ที่ quiz ถาม: <strong>People, Activities, Event, Product</strong></li>
+            <li>IT มักตอบคำถาม <strong>"How"</strong> ของ business process</li>
+            <li>ภาษากลางระหว่าง Business กับ IT: BPMN / UML / LOVEM-E</li>
+            <li>BPM 3 ประเภท (document/integration/human-centric): อ่าน scenario แล้วจำแนก เช่น งานใช้ดุลพินิจมนุษย์ + ระบบแจ้งเตือน = Human-centric</li>
+            <li>PPT framework: ลำดับเริ่มที่ People ก่อนเสมอ</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec5" class="card">
+        <h2>5. Process Modelling (BPMN)</h2>
+        <h3>Business Process Lifecycle (6 ขั้น เป็นวงกลม)</h3>
+        <ol>
+          <li>Process identification → ได้ process architecture</li>
+          <li>Process discovery → ได้ <strong>As-is process model</strong> (conceptual)</li>
+          <li>Process analysis → ได้ insights on weaknesses และ impact</li>
+          <li>Process redesign → ได้ <strong>To-be process model</strong> (conceptual)</li>
+          <li>Process implementation (automation, testing) → ได้ <strong>Executable process model</strong></li>
+          <li>Process monitoring and controlling → conformance &amp; performance insights → วนกลับข้อ 1</li>
+        </ol>
+        <ul>
+          <li>จุดประสงค์ของ process modelling: Communication, Documentation, Analysis (เช่น simulation)</li>
+          <li>BPMN เป็น OMG standard (BPMN 2.0) ใช้ได้ทั้ง conceptual และ executable</li>
+          <li>องค์ประกอบหลักของ BPMN 4 อย่าง: <strong>Events, Activities, Gateways, Sequence Flows</strong></li>
+        </ul>
+        <div class="example"><div class="ex-title">ตัวอย่าง: ตีความโจทย์ Order-to-cash</div>
+          <ol>
+            <li>Trigger: รับ purchase order → ตรวจสอบสต็อก (XOR)</li>
+            <li>ไม่มีของ: Reject order → end event "Order rejected"</li>
+            <li>มีของ: Confirm order → (AND) Emit invoice ขนานกับ Ship goods → Archive order → end event "Order fulfilled"</li>
+          </ol>
+        </div>
+        <h3>Token game (การเดินโมเดล)</h3>
+        <ul>
+          <li>Start event = <strong>token source</strong> (สร้าง token 1 ตัวต่อ 1 process instance)</li>
+          <li>End event = <strong>token sink</strong> (กิน token = จบ instance)</li>
+          <li>ติดตาม token วิ่งตาม sequence flow เพื่อตรวจ logic ของโมเดล</li>
+        </ul>
+        <h3>Naming Conventions</h3>
+        <table>
+          <tr><th>องค์ประกอบ</th><th>รูปแบบ</th><th>ตัวอย่าง</th></tr>
+          <tr><td><strong>Event</strong></td><td>noun + past participle (V3)</td><td>"Purchase order received", "Insurance claim lodged", "Invoice received"</td></tr>
+          <tr><td><strong>Activity / Task</strong></td><td>verb + noun</td><td>"Check stock availability", "Assess credit risk", "Issue driver licence"</td></tr>
+        </table>
+        <ul>
+          <li>ติด label <strong>condition บนเส้นออกของ XOR-split ทุกเส้น</strong> เช่น "Items in stock"</li>
+          <li>หลีกเลี่ยง generic verbs เช่น Handle, Record</li>
+        </ul>
+        <h3>Gateways</h3>
+        <table>
+          <tr><th>Gateway</th><th>Split</th><th>Join</th></tr>
+          <tr><td><strong>XOR</strong> (exclusive, decision)</td><td>เลือกเส้นทางออก 1 เส้นตามเงื่อนไข</td><td>ไปต่อเมื่อ 1 เส้นเข้าเสร็จ</td></tr>
+          <tr><td><strong>AND</strong> (parallel)</td><td>แตกทุกเส้นทางออกพร้อมกัน</td><td>รอให้ทุกเส้นเข้าเสร็จ (synchronize)</td></tr>
+          <tr><td><strong>OR</strong> (inclusive)</td><td>เลือก 1 หรือหลายเส้นทางตามเงื่อนไข (n จาก m)</td><td>รอให้ทุกเส้นที่ active เสร็จ</td></tr>
+        </table>
+        <ul>
+          <li><strong>Default flow</strong> = เส้นทางที่เลือกอัตโนมัติเมื่อเงื่อนไขอื่นของ (X)OR-split เป็น false ทั้งหมด</li>
+          <li><strong>Rework/repetition</strong> ใช้ XOR-join เป็น entry จุดย้อนกลับ + XOR-split เป็น exit เช่น ตัวอย่าง ministerial correspondence: ไม่อนุมัติ → เขียนใหม่วนจนกว่าจะอนุมัติ</li>
+          <li>ควรวาง gateway แบบ explicit ให้ชัดเจนเสมอ อย่า merge/split แบบไม่มีสัญลักษณ์ (implicit)</li>
+        </ul>
+        <div class="example"><div class="ex-title">ตัวอย่าง: Order distribution สองคลัง (Silom/Ladkrabang)</div>
+          <ol>
+            <li>โจทย์: ส่ง sub-order ไปคลังใดก็ได้ที่มีสินค้า ตั้งแต่ 1 คลังขึ้นไป</li>
+            <li>แก้ด้วย <strong>OR gateway</strong> (สั้นที่สุด) หรือใช้ XOR ซ้อน AND</li>
+          </ol>
+        </div>
+        <h3>Pools, Lanes และกฎ Flow</h3>
+        <ul>
+          <li><strong>Pool</strong> = resource class ใหญ่ ปกติคือองค์กรหรือคู่สัญญาทั้งฝ่าย ทำเป็น black box ได้</li>
+          <li><strong>Lane</strong> = หน่วยย่อยใน pool (แผนก, role, ระบบเช่น ERP/CRM) ช่วยเห็นว่า "ใครทำอะไร, เมื่อไร, ตอบสนองอะไร" และช่วยหา duplicate task</li>
+        </ul>
+        <div class="keypoints"><div class="kp-title">กฎ syntactic สำคัญ</div>
+          <ul>
+            <li>Sequence Flow ข้ามขอบ Pool <strong>ไม่ได้</strong></li>
+            <li>Sequence Flow และ Message Flow ข้าม lane ได้</li>
+            <li>Message Flow เชื่อม <strong>ระหว่าง Pool เท่านั้น</strong> ห้ามเชื่อม element สองตัวภายใน pool เดียวกัน ดังนั้นสิ่งที่ไหลข้าม pool/lane ได้คือ Message Flow</li>
+          </ul>
+        </div>
+        <h3>Information Artifacts</h3>
+        <table>
+          <tr><th>ชนิด</th><th>หน้าที่</th><th>ตัวอย่าง</th></tr>
+          <tr><td><strong>Data Object</strong></td><td>input/output ของ activity</td><td>Purchase Order[checked]</td></tr>
+          <tr><td><strong>Data Store</strong></td><td>ที่เก็บถาวร ใช้เก็บ/ดึงข้อมูลที่ต้อง persist เกินอายุ process instance</td><td>Warehouse DB, Orders DB</td></tr>
+          <tr><td><strong>Text Annotation</strong></td><td>หมายเหตุ ไม่มีผลต่อ token</td><td>คอมเมนต์กำกับในโมเดล</td></tr>
+        </table>
+        <div class="exam-box"><div class="kp-title">ออก Quiz แล้ว</div>
+          <ul>
+            <li>ตั้งชื่อ Event แบบ Noun + V3 เช่น "Purchase order received" / Task แบบ Verb + Noun เช่น "Check stock availability"</li>
+            <li>เลือก gateway ให้ตรง scenario: เลือกเส้นเดียว = XOR, ขนานทุกเส้น = AND, 1 หรือหลายเส้น = OR และอ่านโมเดลด้วย token</li>
+            <li>กฎ Message Flow กับ Sequence Flow ข้าม pool กับ lane</li>
+            <li>Default flow, condition labels บน XOR-split, การจับคู่ split-join</li>
+            <li>Information Artifacts: การรับ/ส่งข้อมูล (Data Object), จัดเก็บข้อมูล (Data Store)</li>
+          </ul>
+        </div>
+        <details class="more"><summary>อ่านเพิ่ม: Guidelines การเขียนโมเดลให้ดี และ 7PMG</summary>
+          <div>
+            <p><strong>Guidelines:</strong></p>
+            <ol>
+              <li>ตั้งชื่อ event/task ทุกตัว</li>
+              <li>Task = Verb + Business object</li>
+              <li>Message event = object + V3</li>
+              <li>เลี่ยง verb กั๊ก เช่น Handle</li>
+              <li>ใส่ condition ทุกเส้นออกของ XOR-split</li>
+              <li>Model in blocks: จับคู่ AND-split/AND-join และ XOR-split/XOR-join (ยกเว้น XOR-split ที่ไปต่าง end event)</li>
+            </ol>
+            <p><strong>7PMG:</strong> G1 ใช้ element น้อยที่สุด, G2 ลด routing path, G3 มี 1 start event/trigger และ 1 end event/outcome, G4 โมเดลแบบ structured, G5 เลี่ยง OR เมื่อทำได้, G6 ใช้ Verb+Object, G7 ถ้าเกินราว 30 elements ให้ decompose</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="sec6" class="card">
+        <h2>6. Business Rules กับ Processes</h2>
+        <h3>ส่วนประกอบของ Business Process</h3>
+        <ol>
+          <li><strong>Activities</strong> = เปลี่ยน resources/information จากประเภทหนึ่งไปอีกประเภท ทำตาม rules และ procedures (manual/automated)</li>
+          <li><strong>Resources</strong> = ของมีค่า เช่น คน, ลูกค้า, supplier</li>
+          <li><strong>Facilities</strong> = โครงสร้างที่ใช้ใน process เช่น database, โรงงาน, อุปกรณ์</li>
+          <li><strong>Information</strong> = ความรู้ที่ derive จาก data ภายในบริบท ("data presented in a meaningful context")</li>
+        </ol>
+        <p><strong>Characteristics of Good Information 5 ข้อ:</strong> Accurate (ถูกต้องครบถ้วน), Timely (ทันการใช้), Relevant (ตรงบริบท), Just barely sufficient (พอดี ไม่ฟุ่มเฟือย), Worth its cost (คุ้มค่าใช้จ่าย)</p>
+        <h3>การตัดสินใจ (Decisions) กับระบบสนับสนุน</h3>
+        <table>
+          <tr><th>ระดับการตัดสินใจ</th><th>ระบบรองรับ</th></tr>
+          <tr><td><strong>Strategic</strong> (ผู้บริหารสูงสุด)</td><td><strong>EIS</strong> (Executive Information System)</td></tr>
+          <tr><td><strong>Managerial</strong> (บริหาร/จัดสรรทรัพยากร)</td><td><strong>MIS</strong> (Management Information System)</td></tr>
+          <tr><td><strong>Operational</strong> (งานประจำวัน)</td><td><strong>TPS</strong> (Transaction Processing System)</td></tr>
+        </table>
+        <div class="example"><div class="ex-title">ตัวอย่าง: ร้านอาหาร 3 ระดับการตัดสินใจ</div>
+          <ol>
+            <li>Strategic: เจ้าของตั้งเป้าให้บริการเยี่ยม</li>
+            <li>Managerial (tactical): manager ออกนโยบายของหวานฟรีเมื่อลูกค้าร้องเรียน</li>
+            <li>Operational: พนักงานเสิร์ฟพิจารณาให้เป็นเคสต่อเคส</li>
+          </ol>
+        </div>
+        <ul>
+          <li><strong>ตามโครงสร้าง:</strong> Structured = มีวิธีตัดสินที่ยอมรับแล้ว เช่น สั่งของสำนักงาน, เช็ก prerequisite; Unstructured = ไม่มีวิธีตกลงร่วม ต้องใช้วิจารณญาณ เช่น business planning, นโยบายเทคโนโลยีใหม่; Semi-structured = ผสม เช่น การสรรหา (บางส่วนอิงประวัติ/การศึกษา บางส่วนอิงดุลพินิจมนุษย์)</li>
+        </ul>
+        <h3>ลำดับจาก Policy ถึง Rule</h3>
+        <p>Policy (แถลงทิศทางทั่วไป ประกอบจาก policy ย่อย) → Business Rule Statement (แถลงเชิงประกาศเรื่องโครงสร้าง/ข้อจำกัดที่ธุรกิจกำหนดให้ตัวเอง) → Business Rule (นิยาม/กำหนด aspect ของธุรกิจแบบ <strong>atomic แตกย่อยไม่ได้อีก</strong>) → Formal Rule Statement (แสดง 1 atomic rule ด้วยไวยากรณ์เฉพาะ)</p>
+        <h3>นิยาม Business Rule</h3>
+        <ul>
+          <li>กฎที่ defines/constrains บางด้านของธุรกิจ <strong>และตัดสินได้เสมอว่า true หรือ false</strong></li>
+          <li>บอก operations, definitions, constraints ขององค์กร ใช้กับคน, process, พฤติกรรมองค์กร, ระบบคอมพิวเตอร์</li>
+        </ul>
+        <div class="keypoints"><div class="kp-title">Rules กับ Process ต่างกันอย่างไร</div>
+          <ul>
+            <li><strong>Business process = doing the right things</strong> (สิ่งที่ทำเพื่อสร้าง value-add)</li>
+            <li><strong>Business rules = doing things right</strong> (สิ่งที่ทำให้ value-add ถูกต้อง)</li>
+            <li>Rules ใช้ข้าม process/procedure ได้ ("Rules apply across processes") ทั้งคู่เป็น complementary ต้องมีทั้งสองอย่าง แทนกันไม่ได้</li>
+          </ul>
+        </div>
+        <h3>Business Rule Documentation และ ECA</h3>
+        <ul>
+          <li>กฎส่วนใหญ่จบลงที่ 2 ประเภท: <strong>Decisions</strong> (if-this-then-that) และ <strong>Calculations</strong> (สูตรประเมินข้อมูล)</li>
+          <li><strong>ECA Rule</strong> = Event-Condition-Action: "ON event IF condition DO action" เมื่อ event เกิดและ condition เป็นจริง จะ execute action อัตโนมัติ</li>
+          <li>ECA เน้นที่ <strong>events</strong> แทนที่จะเป็น activities แบบ process description มี composite event (event ประกอบจากหลาย event) และ condition ถูกเช็กเมื่อ event เกิดเท่านั้น</li>
+        </ul>
+        <div class="example"><div class="ex-title">ตัวอย่าง: เอกสารกฎ PO101 และ PD101</div>
+          <ol>
+            <li>PO101 (อนุมัติ PO): ยอด &lt; $200 ให้ผู้จัดการแผนกอนุมัติ, ยอด &gt; $200 ให้หัวหน้าบัญชีอนุมัติ</li>
+            <li>PD101 (สูตร ROI): Lifetime Sales ÷ Development Cost × 100 ผล &lt; 20% ปฏิเสธไอเดีย, 20% ถึง 25% ทบทวน feature/ต้นทุน, &gt; 25% ไปขั้นถัดไป</li>
+          </ol>
+        </div>
+        <details class="more"><summary>อ่านเพิ่ม: 7 ขั้นตอนจัดทำ Business Rule Documentation และ Behavioral vs Decision Rules</summary>
+          <div>
+            <p><strong>7 steps ของ Business Rule Documentation:</strong> เลือกระบบเอกสาร → ตั้งชื่อ/label rule → เขียนคำอธิบายภาษาง่าย + จุดประสงค์ → ใส่ตัวอย่าง/แผนภาพ → ระบุแหล่งที่มา → เชื่อมโยง rule ที่เกี่ยวข้อง → เก็บ history การเปลี่ยนแปลง</p>
+            <p><strong>Behavioral rules</strong> = ควบคุมการดำเนินงานต่อเนื่องโดยเฝ้าดูการละเมิด (obligations) พบใน กฎหมาย, regulation, contract, MOU, terms &amp; conditions, warranty, license, business policy ตั้งบนสมมติฐานว่า violation ตรวจจับได้เพื่อ enforce</p>
+            <p><strong>Decision rules</strong> = แนวทางตัดสินใจ/คำนวณ ปกติอยู่ในรูป decision table หรือ decision logic</p>
+          </div>
+        </details>
+        <h3>Structured vs Unstructured Processes</h3>
+        <table>
+          <tr><th>ประเภท</th><th>ลักษณะ</th></tr>
+          <tr><td><strong>Structured</strong></td><td>นิยาม end-to-end ครบทุก permutation, predictable, อิง data มากกว่าคน, input/output ชัด, ลำดับขั้นตอนเหมือนเดิมทุกครั้ง</td></tr>
+          <tr><td><strong>Unstructured</strong></td><td>ทุก instance ต่างกันตามบริบท/เนื้อหา/ทักษะคน เป็น human processes (alias: manual, expert processes, case management)</td></tr>
+          <tr><td><strong>Semi-structured</strong></td><td>บางส่วน structured บางส่วน ad hoc (นิยมเรียกว่า unstructured เมื่อเกิด exception)</td></tr>
+        </table>
+        <p>วิธีรับมือ unstructured work: กำหนด deliverable + deadline ให้ชัด, นัด check-in สม่ำเสมอ, นิยาม policy/procedure ให้ชัดและคาดหวังให้ทำตาม</p>
+        <div class="exam-box"><div class="kp-title">ออก Quiz แล้ว</div>
+          <ul>
+            <li>จำแนก decision ตามระดับ → ระบบที่รองรับ: Strategic = EIS, Managerial = MIS, Operational = TPS</li>
+            <li>นิยาม business rule: ต้องตัดสินได้ว่า true/false และเป็น atomic</li>
+            <li>ความต่าง rule กับ process: process = doing the right things, rules = doing things right</li>
+            <li>โครงสร้าง ECA: ON event IF condition DO action</li>
+            <li>Business Policy มีเจตนารมณ์เพื่อทำให้ธุรกิจไปถึงเป้าหมายอย่างมีประสิทธิภาพ</li>
+            <li>Business Rule ใน process modeling มีจุดประสงค์เป็นแนวทางปฏิบัติ (guidance) ของกิจกรรมในกระบวนการ และช่วยเพิ่มประสิทธิภาพ control flow</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec7" class="card">
+        <h2>7. Process Discovery (การค้นพบกระบวนการ)</h2>
+        <h3>4 งานหลักของ Process Discovery</h3>
+        <ol>
+          <li><strong>Defining the setting</strong> = ประกอบทีมรับผิดชอบ process</li>
+          <li><strong>Gathering information</strong> = สร้างความเข้าใจ process ด้วยวิธี discovery ต่าง ๆ</li>
+          <li><strong>Conduct the modeling</strong> = ลงมือสร้างโมเดล</li>
+          <li><strong>Assure model quality</strong> = รับประกันว่าโมเดลผ่านเกณฑ์คุณภาพ</li>
+        </ol>
+        <p>ผู้เกี่ยวข้องคือ <strong>Process analysts</strong> และ <strong>Domain experts</strong> โจทย์ทักษะคลาสสิก: George มีประสบการณ์ 10 ปีในธุรกิจนั้นแต่ไม่เคย modeling, Sarah เป็น process analyst 5 ปีรู้หลาย notation/เครื่องมือ ทางที่ดีคือผสมกัน นักวิเคราะห์ต้องทั้งเข้าใจ process จริงและมีทักษะ modeling</p>
+        <p><strong>3 ความท้าทาย:</strong> Fragmented process knowledge (ความรู้แตกกระจายในหลายคน), Domain experts คิดระดับ instance (นึกถึงเคสจริงไม่ใช่ pattern), ความรู้เรื่อง process modeling ไม่แพร่หลาย</p>
+        <h3>Process Discovery Methods</h3>
+        <table>
+          <tr><th>วิธี</th><th>ประเภท</th><th>จุดแข็ง</th><th>จุดอ่อน</th></tr>
+          <tr><td><strong>Document Analysis</strong></td><td>Evidence-based</td><td>ข้อมูล structured, ไม่ขึ้นกับความพร้อมของ stakeholder</td><td>เอกสารล้าสมัย, level of abstraction ผิด</td></tr>
+          <tr><td><strong>Observation</strong></td><td>Evidence-based</td><td>เห็นบริบทจริงของงาน (context-rich)</td><td>น่ารำคาญ/intrusive, คนประพฤติตัวไม่เหมือนเดิม, เห็นเคสน้อย</td></tr>
+          <tr><td><strong>Automated Process Discovery / Process Mining</strong></td><td>Evidence-based</td><td>เคสจำนวนมาก, objective data (ต้องมี activity name, timestamp, case ID เสริมได้ด้วย resource, cost, case attributes)</td><td>คุณภาพ/abstraction ของ data</td></tr>
+          <tr><td><strong>Interview</strong></td><td>Interview-based</td><td>สืบรายละเอียดลึก มีทั้งแบบ forward/backward, structured/unstructured</td><td>ใช้เวลา stakeholder, ต้องหลายรอบกว่า sign-off, กับดักคือ exceptional behavior มักถูกลืม</td></tr>
+          <tr><td><strong>Workshop</strong></td><td>Workshop-based</td><td>แก้ความเห็นขัดแย้งได้ตรงจุด สร้าง shared understanding (facilitator + domain experts + process owner, brown-paper, 3-5 ครึ่งวัน)</td><td>ต้องมีหลายคนพร้อมพร้อมกัน</td></tr>
+        </table>
+        <p>เลือกวิธีตาม <strong>context + budget</strong> และต้องเข้าใจ <strong>culture</strong> ขององค์กรก่อน: องค์กรแบบ open ใช้ workshop คุ้ม, องค์กรลำดับชั้นสูงต้องจัดสรรเวทีให้ทุกคนพูดเท่ากัน</p>
+        <h3>Stepwise Modeling Method (5 ขั้น)</h3>
+        <ol>
+          <li><strong>Identify process boundaries</strong> = trigger คืออะไร, outcomes บวก/ลบ, มองจาก perspective ใด (เช่น seller), input/output artifacts</li>
+          <li>Identify activities and events</li>
+          <li>Identify resources and their handovers</li>
+          <li>Identify the control flow</li>
+          <li>Identify additional elements (data objects, event ประเภทต่าง ๆ, exception handling)</li>
+        </ol>
+        <h3>Model Quality Assurance (3 ระดับ)</h3>
+        <table>
+          <tr><th>ระดับ</th><th>กิจกรรม</th><th>ตรวจอะไร</th></tr>
+          <tr><td><strong>Syntactic quality</strong></td><td><strong>Verification</strong></td><td>ถูกตามกฎภาษา: Structural correctness (activity มี incoming + outgoing อย่างน้อย 1 เส้น, start event ไม่มี incoming, end event ไม่มี outgoing, split gateway 1 in กับ 2 หรือมากกว่า out, ทุก node อยู่บนเส้นทาง start ถึง end ไม่มี dangling) และ Behavioral correctness = Soundness</td></tr>
+          <tr><td><strong>Semantic quality</strong></td><td><strong>Validation</strong></td><td>โมเดลสอดคล้องกับโลกจริง: Valid (ทุก instance ในโมเดลถูกต้องและ relevant) + Complete (ครอบคลุมทุก instance ที่เป็นไปได้)</td></tr>
+          <tr><td><strong>Pragmatic quality</strong></td><td><strong>Certification</strong></td><td>ใช้งานได้จริง: Understandability, Maintainability, Learning ปัจจัยคือ size, structural complexity, layout</td></tr>
+        </table>
+        <div class="keypoints"><div class="kp-title">Soundness 3 เงื่อนไข</div>
+          <ul>
+            <li>Option to complete: ทุก instance ต้องจบได้ ไม่เกิด deadlock</li>
+            <li>Proper completion: ตอนจบแต่ละ token ต้องอยู่คนละ end event ไม่มี token ค้าง</li>
+            <li>No dead activities: ทุก activity ต้องถูก execute ได้ในอย่างน้อย 1 instance</li>
+          </ul>
+        </div>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย: Defect ที่ต้องจำ</div>
+          <ul>
+            <li><strong>Deadlock</strong> = instance จบไม่ได้ เช่น token ติดค้างที่ AND-join เพราะเงื่อนไข XOR เลือกได้เส้นเดียว (เกิดจากการวางแผน control flow ไม่เหมาะสม) ละเมิด option to complete</li>
+            <li><strong>Livelock</strong> = วน loop ไม่รู้จบ (infinite loop)</li>
+            <li><strong>Dead activity</strong> = activity ที่ไม่มีวันรัน มักพบพร้อม deadlock</li>
+            <li><strong>No proper completion</strong> = token 2 ตัวชน end event เดียว ขาด synchronization</li>
+          </ul>
+        </div>
+        <p>Modeling guidelines/conventions ปรับ 4 ด้าน: <strong>Vocabulary, Structure, Semantics, Appearance</strong> (เช่น ห้าม OR, จำกัดไม่เกิน 30 nodes, layout จาก top-left ไป bottom-right)</p>
+        <div class="exam-box"><div class="kp-title">ออก Quiz แล้ว</div>
+          <ul>
+            <li>4 งานของ discovery, 3 ความท้าทาย, โปรไฟล์ analyst ที่ดี</li>
+            <li>เลือกวิธี discovery ตามสถานการณ์: มี system log (activity name, timestamp, case ID) → automated process discovery (evidence-based), ต้องเคลียร์ความขัดแย้ง → workshop</li>
+            <li>Soundness 3 เงื่อนไข และจำแนก deadlock/livelock/dead activity จากโมเดล</li>
+            <li>Verification (syntactic) vs Validation (semantic) vs Certification (pragmatic)</li>
+            <li>ขั้นตอน stepwise modeling และการกำหนด process boundaries (trigger, outcomes, perspective, artifacts)</li>
+          </ul>
+        </div>
+        <details class="more"><summary>อ่านเพิ่ม: โปรไฟล์ expert analyst 4 ข้อ</summary>
+          <div>นักวิเคราะห์มือเก่งมีลักษณะ: (1) ดึงคนที่ใช่เข้ามาช่วย (2) มี working hypotheses หลายระดับ (3) จับ pattern จากข้อมูลที่เก็บมา (4) ใส่ใจ model quality อยู่เสมอ</div>
+        </details>
+      </section>
+
+      <section id="sec8" class="card">
+        <h2>8. Qualitative Process Analysis</h2>
+        <p>เทคนิควิเคราะห์เชิงคุณภาพมี 4 อย่าง: <strong>Value-Added &amp; Waste Analysis, Root-Cause Analysis, Pareto Analysis, Issue Register</strong></p>
+        <h3>Value-Added Analysis (VA / BVA / NVA)</h3>
+        <table>
+          <tr><th>ประเภท</th><th>เกณฑ์แยกแยะ</th><th>เป้าหมาย / การจัดการแบบ Lean</th><th>ตัวอย่าง</th></tr>
+          <tr><td><strong>Value-adding (VA)</strong></td><td>ตอบ "ใช่" ทุกข้อ: ลูกค้ายอมจ่ายขั้นตอนนี้? ลูกค้าเห็นว่าจำเป็นต่อเป้าหมายเขา? ตัดออกแล้วลูกค้ารู้สึกของมีค่าน้อยลง?</td><td>Maximize / Optimize &amp; Standardize</td><td>Confirm delivery date, Deliver products / Assess application, Notify outcome</td></tr>
+          <tr><td><strong>Business value-adding (BVA)</strong></td><td>ลูกค้าไม่จ่ายตรง ๆ แต่จำเป็นต่อการรันธุรกิจ: เก็บรายได้/เติบโต? ตัดแล้วธุรกิจเสียหายระยะยาว? ลดความเสี่ยง? จำเป็นตามกฎระเบียบ?</td><td>Minimize / Question &amp; Reduce</td><td>Check credit worthiness, Issue invoice / Verify completeness, ตรวจสอบวุฒิ</td></tr>
+          <tr><td><strong>Non-value-adding (NVA)</strong></td><td>ไม่เข้าเกณฑ์ข้างบน มักเป็น handover, context switch, การรอ, rework</td><td>Remove / Eliminate</td><td>Forward PO to warehouse, Receive rejected products / Forward applications to committee</td></tr>
+        </table>
+        <div class="example"><div class="ex-title">ตัวอย่าง: Equipment Rental</div>
+          <ol>
+            <li>Fill request = VA, Send request to clerk = NVA</li>
+            <li>Check equipment availability = VA, Record recommended equipment = BVA</li>
+            <li>Forward to works engineer = NVA (handover ล้วน ๆ)</li>
+          </ol>
+        </div>
+        <h3>Waste Analysis: 7 Wastes ของ Taiichi Ohno (Toyota)</h3>
+        <table>
+          <tr><th>กลุ่ม</th><th>Waste</th><th>ความหมาย + ตัวอย่าง</th></tr>
+          <tr><td rowspan="2"><strong>Move</strong></td><td><strong>Transportation</strong></td><td>การส่ง/รับ สินค้าหรือเอกสารเป็น input/output ของกิจกรรม เช่น ส่ง request ระหว่างหน่วยงาน, พิมพ์ฟอร์มส่งไปรษณีย์</td></tr>
+          <tr><td><strong>Motion</strong></td><td>การเคลื่อนที่ของ resource ภายใน เช่น พนักงานเดินไปเก็บลายเซ็น</td></tr>
+          <tr><td rowspan="2"><strong>Hold</strong></td><td><strong>Inventory</strong></td><td>วัสดุคงค้าง / WIP เช่น ใบสมัคร 3000 ใบกองรอ</td></tr>
+          <tr><td><strong>Waiting</strong></td><td>task รอข้อมูล/รอ resource หรือ resource รองาน เช่น รอ works engineer อนุมัติ</td></tr>
+          <tr><td rowspan="3"><strong>Over-do</strong></td><td><strong>Defects</strong></td><td>แก้ไข/ทำซ้ำจากความผิดพลาด เช่น ส่งใบขอกลับมาแก้ (rework loop)</td></tr>
+          <tr><td><strong>Over-processing</strong></td><td>ทำเกินความจำเป็น/perfectionism เช่น อนุมัติแล้วยังตัดงบ 10%</td></tr>
+          <tr><td><strong>Over-production</strong></td><td>สร้าง instance ที่ไม่จำเป็น เช่น ออกใบเสนอราคาที่ 50% ไม่เกิดออเดอร์, รับสมัคร 3000 คนแต่ qualify 600 คน</td></tr>
+        </table>
+        <h3>Stakeholder Analysis 5 กลุ่ม</h3>
+        <ol>
+          <li><strong>Customer(s) ของ process</strong> = กังวล cycle time ช้า, defect, ขาด transparency/traceability</li>
+          <li><strong>Process participants</strong> = กังวล utilization สูง, stress, defect จาก handoff, waste</li>
+          <li><strong>External parties</strong> (supplier, subcontractor) = ต้องการงานต่อเนื่อง, วางแผนงานล่วงหน้าได้, ทำตาม contract ได้</li>
+          <li><strong>Process owner + operational managers</strong> = กังวล performance (cycle/processing time), defect, compliance</li>
+          <li><strong>Sponsor + executive managers</strong> = กังวล strategic alignment, KPI contribution, ความสามารถปรับตัวตามตลาด</li>
+        </ol>
+        <h3>Issue Register</h3>
+        <ul>
+          <li>โครงสร้าง: <strong>Issue identifier, Short name, Description, Assumptions, Impact (qualitative + quantitative), Possible improvement actions</strong></li>
+        </ul>
+        <div class="example"><div class="ex-title">ตัวอย่าง: คำนวณ quantitative impact ใน Issue Register</div>
+          <ol>
+            <li>ปัญหา: เครื่องถูกเก็บเกินจำเป็น 10% ของเคส จาก 3000 ชิ้น/ปี เกินเฉลี่ย 2 วัน ค่าเสียหายวันละ 100</li>
+            <li>คำนวณ: 0.1 × 3000 × 2 × 100 = <strong>60,000 ต่อปี</strong></li>
+          </ol>
+        </div>
+        <h3>Pareto Analysis และ Root-Cause Analysis</h3>
+        <ul>
+          <li><strong>Pareto chart</strong> = bar chart เรียงตาม impact + เส้น cumulative % ใช้หลัก <strong>80/20</strong>: 80% ของปัญหามาจาก 20% ของสาเหตุ เพื่อเลือก issue ที่คุ้มค่าแก้</li>
+          <li><strong>PICK chart</strong> = จัดลำดับไอเดีย 2 มิติ: Implement / Consider / Probably kill / Kill</li>
+          <li><strong>Why-why diagram</strong> = ถาม "ทำไม" ซ้อน 5 ชั้น (<strong>Five Whys</strong>) จาก issue ย้อนไปหา contributing factors</li>
+          <li><strong>Cause-effect (Fishbone) diagram</strong> = แยกสาเหตุตาม <strong>Six Ms</strong></li>
+        </ul>
+        <table>
+          <tr><th>Six Ms</th><th>ตัวอย่างสาเหตุ</th></tr>
+          <tr><td><strong>Machine</strong></td><td>เทคโนโลยี/ระบบ: ฟีเจอร์ไม่พอ, UI แย่, ระบบไม่ integrate</td></tr>
+          <tr><td><strong>Method</strong></td><td>วิธีออกแบบ/เข้าใจ/ปฏิบัติ process: ความรับผิดชอบไม่ชัด, คำแนะนำกำกวม, ขาด training</td></tr>
+          <tr><td><strong>Material</strong></td><td>input วัตถุ/ข้อมูล: ข้อมูลหาย, ผิด, เก่า</td></tr>
+          <tr><td><strong>Man</strong></td><td>คน: ขาด training, ขาดแรงจูงใจ, ภาระสูงเกิน</td></tr>
+          <tr><td><strong>Measurement</strong></td><td>การประเมิน: estimate ไม่แม่น, คำนวณผิด</td></tr>
+          <tr><td><strong>Milieu</strong></td><td>สิ่งแวดล้อมนอก process: คู่สัญญาตอบช้า, workload พุ่ง</td></tr>
+        </table>
+        <div class="exam-box"><div class="kp-title">ออก Quiz แล้ว</div>
+          <ul>
+            <li>จำแนกขั้นตอนเป็น VA/BVA/NVA และการจัดการแบบ Lean: VA = Optimize &amp; Standardize, BVA = Question &amp; Reduce, NVA = Eliminate</li>
+            <li>จำแนก 7 wastes จาก scenario เช่น การรอคอย = Waiting, การส่งเอกสารข้ามหน่วยงาน = Transportation, งานส่งกลับมาแก้ = Defects</li>
+            <li>หมวด Six Ms ใน fishbone เช่น แบบฟอร์มคำแนะนำกำกวม = Method</li>
+            <li>โครงสร้าง issue register และการคำนวณ quantitative impact</li>
+            <li>5 กลุ่ม stakeholder กับความกังวลประจำกลุ่ม</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec9" class="card">
+        <h2>9. Finding the Voice of the Users + Understanding User Requirements</h2>
+        <p>ความสำเร็จของ requirements คือการนำ "เสียงของผู้ใช้" (voice of the user) เข้าใกล้ "หูของ developer" ทำได้ใน 3 ขั้น:</p>
+        <ol>
+          <li>ระบุ <strong>user classes</strong> ต่าง ๆ</li>
+          <li>เลือกตัวแทนของแต่ละ class</li>
+          <li>ตกลงว่าใครเป็น <strong>requirements decision makers</strong></li>
+        </ol>
+        <ul>
+          <li><strong>Customer involvement คือวิธีที่ดีที่สุดป้องกัน expectation gap</strong></li>
+          <li>"wants" ของผู้ใช้ ไม่เท่ากับสิ่งที่เขาต้องใช้ทำงานจริง BA ต้องเก็บ input ให้กว้าง วิเคราะห์ ชี้แจง แล้ว specify ให้ตรงงาน ไม่งั้นเกิด rework, miss deadline, cost overrun</li>
+        </ul>
+        <h3>User Classes</h3>
+        <ul>
+          <li>ลำดับ subset: <strong>users เป็น subset ของ customers, customers เป็น subset ของ stakeholders</strong> คน 1 คนอยู่หลาย class ได้ และ class ไม่จำเป็นต้องเป็นมนุษย์ (bot ก็ได้)</li>
+          <li><strong>Favored user class</strong> = กลุ่มที่ความพอใจ <strong>สอดคล้องกับ business objectives ของโปรเจกต์มากที่สุด</strong> จึงได้สิทธิ์เหนือกว่าเวลาเกิด conflicts/priorities (ไม่ใช่กลุ่มที่จ่ายเงินมากที่สุดหรือมีอิทธิพลทางการเมืองสูงสุด)</li>
+          <li><strong>Disfavored user class</strong> = กลุ่มที่ "ห้าม" ใช้ผลิตภัณฑ์ (ด้วยกฎหมาย/ความปลอดภัย) ต้องออกแบบให้ใช้ยาก เช่น lock account หลัง log-in ผิด 4 ครั้ง, one-time code, usage logging</li>
+          <li><strong>Ignored user class</strong> = ใช้จริงแต่ไม่ได้ออกแบบเพื่อเขา</li>
+          <li>เกณฑ์แบ่ง class: สิทธิ์เข้าถึง, งานที่ทำ, feature ที่ใช้, ความถี่, ประสบการณ์, platform, ภาษา, โต้ตอบโดยตรงหรือทางอ้อม</li>
+        </ul>
+        <div class="example"><div class="ex-title">ตัวอย่าง: เทคนิคหา user classes</div>
+          <ol>
+            <li><strong>Expand then contract</strong>: ถาม sponsor → brainstorm ให้ได้ class เยอะ → รวมกลุ่ม → เหลือไม่เกิน 15 classes</li>
+            <li><strong>Organization chart analysis</strong>: ใช้ผังองค์กรช่วยหา users/stakeholders ที่ลืม เช่น แผนกที่เกี่ยวกับ process, user class ข้ามแผนก</li>
+            <li><strong>User persona</strong>: คำอธิบายคนสมมุติแทนกลุ่มผู้ใช้ลักษณะเดียวกัน ใช้เมื่อไม่มี user จริงติดต่อ ต้องสร้างจาก market/demographic research จริง</li>
+            <li><strong>Focus group</strong> ที่มีทั้งมือใหม่และมือเก่า เพื่อให้ทุก class มีคนพูดแทน</li>
+          </ol>
+        </div>
+        <h3>Product Champions และ Product Owner</h3>
+        <ul>
+          <li><strong>Product champion</strong> = user ตัวจริงที่พูดแทน user class ของตน ตัดสินใจระดับ <strong>user requirements</strong> ภายในกรอบ business requirements ส่วน <strong>management sponsor</strong> ยังถืออำนาจเรื่อง vision/scope/priority/schedule/budget</li>
+          <li>กับดัก (traps): manager ข้ามคำตัดสินของ champion, champion พูดแทนตัวเองอย่างเดียว, champion ไม่มี vision จนยัดทุกอย่างให้ BA ตัดสิน, ส่งมือใหม่มาเป็น champion แล้ว senior ปล่อยเฉย, มีคนอ้างว่าพูดแทน class ที่ตัวเองไม่ได้อยู่</li>
+          <li><strong>Agile: Product Owner (PO)</strong> ทำหน้าที่ voice of customer กำหนด vision + จัดลำดับ <strong>product backlog</strong> (user stories แบ่งเป็น <strong>sprints</strong> ใน Scrum) PO ครอบคลุม <strong>3 ระดับ requirements: business, user, functional</strong> และใช้ร่วมกับ product champion ได้</li>
+        </ul>
+        <h3>สะพานไป Use Case: User Story</h3>
+        <ul>
+          <li>3 มุมมอง: <strong>Product-centric</strong> (feature ที่ขายได้), <strong>User-centric</strong> (user stories), <strong>Usage-centric</strong> (necessary functionality → use case)</li>
+          <li><strong>Use case</strong> = ลำดับการโต้ตอบระหว่างระบบกับ external actor ที่ทำให้ actor ได้ผลลัพธ์ที่มีค่า ตั้งชื่อแบบ <strong>verb + object</strong> เช่น "Submit Subscription Order"</li>
+          <li><strong>User story</strong> = คำอธิบายสั้นจากมุมผู้ต้องการ ตาม template: <strong>"As a &lt;type of user&gt;, I want &lt;some goal&gt; so that &lt;some reason&gt;"</strong> โดย user class ใน story คือ primary actor ของ use case</li>
+          <li>ต่างกัน: user story กระชับแต่ขาด structure/context อาจพลาด acceptance tests, use case มี structure + context ใช้นำการ elicitation (แต่ไม่ลง design specifics)</li>
+        </ul>
+        <div class="exam-box"><div class="kp-title">ออก Quiz แล้ว</div>
+          <ul>
+            <li>นิยาม favored user class (สอดคล้อง business objectives มากที่สุด) และ disfavored user class (ห้ามใช้ ต้องออกแบบให้ใช้ยาก)</li>
+            <li>บทบาท product champion vs product owner และ 3 ระดับ requirements ที่ PO ครอบ (business, user, functional)</li>
+            <li>เขียน user story ตาม template "As a ... I want ... so that ..."</li>
+            <li>ประโยชน์ของ persona และเทคนิค expand-then-contract (เหลือไม่เกิน 15 classes)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec10" class="card">
+        <h2>10. Requirements Elicitation Techniques</h2>
+        <p>เทคนิคเก็บความต้องการได้แก่: Stakeholder analysis, วิเคราะห์ระบบ/เอกสารเดิม + background reading, Discourse analysis, Task observation / <strong>Ethnography</strong>, Questionnaires, <strong>Interviews</strong>, <strong>Brainstorming</strong>, <strong>JAD</strong>, <strong>Prototyping</strong>, Pilot system, <strong>Use cases &amp; scenarios</strong>, Risk analysis</p>
+        <h3>เปรียบเทียบเทคนิค Data-Gathering หลัก</h3>
+        <table>
+          <tr><th>เทคนิค</th><th>เหมาะกับ</th><th>ข้อดี</th><th>ข้อเสีย</th></tr>
+          <tr><td>Questionnaires</td><td>ตอบคำถามเจาะจง (quantitative + qualitative)</td><td>แตะคนได้เยอะ ทรัพยากรต่ำ</td><td>design สำคัญมาก, response rate ต่ำ</td></tr>
+          <tr><td>Interviews</td><td>สำรวจ issues (ส่วนใหญ่ qualitative)</td><td>ผู้สัมภาษณ์นำทางได้ สร้าง contact</td><td>กินเวลา, บรรยากาศกดดัน</td></tr>
+          <tr><td>Focus groups / Workshops</td><td>รวมหลายมุมมอง</td><td>เห็นจุดร่วมและขัดแย้ง, สร้าง contact</td><td>ตัวละครเด่นบังคับบทสนทนา</td></tr>
+          <tr><td>Naturalistic observation</td><td>เข้าใจบริบทงานจริง (qualitative)</td><td>insight ที่เทคนิคอื่นไม่มี</td><td>เปลืองเวลามาก ข้อมูลมหาศาล</td></tr>
+          <tr><td>Studying documentation</td><td>เรียนรู้ procedure/ระเบียบ (quantitative)</td><td>ไม่เบียดเวลา user</td><td>งานจริงมักไม่ตรงที่เขียนไว้</td></tr>
+        </table>
+        <ul>
+          <li><strong>วิเคราะห์ระบบเดิม:</strong> ดูว่าใช้อะไร/ไม่ใช้อะไร/ขาดอะไร, งานจริงต่างจากที่ออกแบบหรือไม่, feature legacy ตัดได้ไหม</li>
+          <li><strong>Discourse analysis</strong> = ศึกษาการใช้คำในเอกสาร/คำพูด</li>
+          <li><strong>Ethnography</strong> ("เขียนถึงวัฒนธรรม" จากมานุษยวิทยา) = สังเกตงานจริงเพื่อค้น factor ทางสังคม/มนุษย์/การเมือง ทำให้ implicit กลายเป็น explicit</li>
+        </ul>
+        <h3>Interviews</h3>
+        <ul>
+          <li><strong>3 วัตถุประสงค์:</strong> บันทึกข้อมูลเป็น input ของ analysis, ค้นข้อมูลให้แม่นและคุ้ม, ทำให้ interviewee รู้สึกว่าความเข้าใจของเขาถูกฟังและมีค่า</li>
+          <li><strong>4 ขั้นตอน:</strong> Planning &amp; preparation → Interview session → Consolidation of information → Follow-up</li>
+          <li>คำถามเปิดแบบ context-free ของ Weinberg: ใครอยู่เบื้องหลัง request, ใครใช้, benefit เศรษฐกิจอะไร, มี solution สำเร็จรูปไหม, เมื่อไรต้องได้, prioritize/constraints อย่างไร</li>
+        </ul>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อยของการสัมภาษณ์</div>
+          <ul>
+            <li>ไม่ได้สัมภาษณ์คนให้ครบมุมมอง</li>
+            <li>ถาม direct question เร็วไป เช่น ถาม "ต้องการกี่แรงม้า?" ทั้งที่ควรถาม "นั่งกี่คน ไปไกลแค่ไหน"</li>
+            <li>สัมภาษณ์คนเดียวแทนกลุ่มเล็ก เพราะกลุ่มเกิด synergy</li>
+            <li>เชื่อว่า stated needs ถูกต้องแล้ว ทั้งที่ user มักขอ "สิ่งที่เขากินอยู่"</li>
+            <li>อยากโชว์ว่าตัวเองเก่ง กลับกันควรทำให้ stakeholder รู้สึกเก่ง (ตัวอย่างลิฟต์: ผู้ใช้บอก "ช้า" แต่ปัญหาจริงคือ "throughput ต่ำ")</li>
+          </ul>
+        </div>
+        <h3>Brainstorming</h3>
+        <ul>
+          <li>ใช้เมื่อต้อง invent วิธีใหม่ / ยังไม่รู้ข้อมูลมาก / ต้องการ innovation</li>
+          <li>สองเฟส: <strong>The Storm</strong> (ยิงไอเดีย เน้น quantity, "wild is good", ห้ามวิจารณ์) → <strong>The Calm</strong> (อธิบาย, จัดหมวด maybe/no, combine, แล้ว vote เช่น ทุกคนมี n โหวต, แจก $100 สมมุติ, weighted scoring, campaign speeches)</li>
+          <li>Roles: <strong>Scribe</strong> (จดทุกไอเดีย) + <strong>Moderator</strong> (traffic cop คุมกติกา / agent provocateur ยั่วยุไอเดียเสริม) + participants, meeting มีสมาธิราว 90-120 นาที</li>
+        </ul>
+        <h3>Joint Application Design (JAD)</h3>
+        <ul>
+          <li>"Structured brainstorming" แบบ <strong>IBM ยุค 1970s</strong> เข้มข้นเป็นวัน ๆ</li>
+          <li><strong>4 tenets:</strong> ใช้ group dynamics อย่างมีประสิทธิภาพ (facilitated sessions เพื่อ common understanding + buy-in), ใช้ visual aids, มี defined process, ใช้ standardized forms บันทึกผล</li>
+          <li><strong>6 roles:</strong> Session leader (facilitator), Analyst (scribe++, เขียนเอกสาร), Executive sponsor (ผู้รับผิดชอบสูงสุด ตัดสินใจ), User representatives, Information system representatives (บอกว่าอะไรง่าย/ยาก/แพง แต่ไม่ตัดสินใจ), Specialists</li>
+          <li>วางแผนด้วย <strong>6 Ps:</strong> Purpose, Participants, Principles, Products, Place, Process</li>
+        </ul>
+        <h3>Prototyping</h3>
+        <ul>
+          <li><strong>Prototype</strong> = mock-up หรือ implementation บางส่วน ช่วย clarify requirements ตอบ "I'll know it when I see it" และแก้กลุ่มอาการ "Yes, But" กับ "Undiscovered Ruins"</li>
+          <li><strong>Horizontal</strong> = ลึกชั้นเดียวทั้งระบบ (เช่น UI ทั้งระบบ) / <strong>Vertical</strong> = slice จริงของระบบบางส่วน</li>
+          <li><strong>Evolutive</strong> = พัฒนาต่อเป็นของจริง / <strong>Throw-away</strong> = ทำเพื่อ elicitation/validation แล้วทิ้ง เน้นส่วนที่เข้าใจน้อย</li>
+          <li><strong>Fidelity:</strong> High-fidelity (กดแล้วทำงานจริง แพง เสี่ยง false sense of security) / Low-fidelity (paper ถูก เร็ว กระตุ้น creativity)</li>
+          <li>ความเสี่ยง: prototype UI เบียด functionality, customer คาดหวังว่าเสร็จแล้ว, <strong>ห้ามเผลอเอา throw-away ไปใช้ใน production ประกาศวัตถุประสงค์ของ prototype ก่อนสร้างเสมอ</strong></li>
+        </ul>
+        <h3>Use Cases &amp; Scenarios (สรุป รายละเอียดในหัวข้อ 11)</h3>
+        <ul>
+          <li>Use case = ลำดับ interaction ระบบกับ actor เพื่อเป้าหมาย (ของ Ivar Jacobson) เขียนให้เป็น essential (technology-free) หรือ concrete ก็ได้</li>
+          <li><strong>Scenario = instance ของ use case</strong> (specific actor, time, data) 1 use case มี <strong>1 primary scenario (happy path) + 0 ถึง n secondary (alternative/exception)</strong></li>
+          <li>ประเภท scenario: As-is, Visionary, Evaluation, Training</li>
+          <li>ต้องคิด <strong>Negative scenario</strong> และ <strong>Misuse case</strong>: misactor คือ hostile agent ความสัมพันธ์มี <strong>threatens</strong> (misuse → use case), <strong>mitigates</strong> (use case → misuse) บวก aggravates / conflicts with ใช้กับ security/risk analysis</li>
+        </ul>
+        <div class="exam-box"><div class="kp-title">ออก Quiz แล้ว</div>
+          <ul>
+            <li>จับคู่เทคนิคกับสถานการณ์ เช่น มี transaction log → evidence-based / process mining</li>
+            <li>JAD: ที่มา IBM, 4 tenets, 6 roles, 6 Ps</li>
+            <li>Interview mistakes และคำถาม context-free</li>
+            <li>Prototype แบบ horizontal/vertical, throwaway/evolutionary, high/low fidelity</li>
+            <li>Misuse case: misactor และความสัมพันธ์ threatens/mitigates</li>
+          </ul>
+        </div>
+        <details class="more"><summary>อ่านเพิ่ม: บทเรียนจาก Ethnography และหมวดคำถามสัมภาษณ์</summary>
+          <div>
+            <p><strong>ตัวอย่างเรียนรู้จาก Ethnography:</strong> Air traffic control: controller ปิด alarm เพราะ "ไม่ชอบถูกทำให้เหมือนคนโง่" ไม่ใช่เพราะไม่ชอบ alarm ตัว alarm / ตลาดหุ้น: การมองเห็นกันของ dealer คือสื่อกลางการค้าขายจริง ถ้าแทน paper ticket ด้วย touch screen เท่ากับทำลายช่องทางสื่อสาร</p>
+            <p><strong>หมวดคำถามเจาะลึกตอนสัมภาษณ์:</strong> functional (system ทำอะไร/เมื่อไร/คำนวณอะไร), design constraints (สภาพแวดล้อม, interface, standards), performance (speed/response/throughput), usability &amp; human factors, security, reliability &amp; availability (MTBF, backup), maintainability, precision &amp; accuracy</p>
+            <p><strong>กิจกรรม JAD:</strong> Preparation (pre-session planning + pre-work) → Working session (set-up → สร้างความเข้าใจร่วม → consensus → deliverables ด้วยแบบฟอร์ม JAD) → Follow-up &amp; wrap-up</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="sec11" class="card">
+        <h2>11. Use Cases (Modeling System Requirements with Use Cases)</h2>
+        <p><strong>Use-case modeling</strong> = การ model ฟังก์ชันของระบบผ่าน business events, ผู้กระตุ้น event, และการตอบสนองของระบบ (user-centered development)</p>
+        <p><strong>Use case</strong> = behaviorally related sequence of steps (scenario) ทั้ง automated และ manual เพื่อทำ 1 business task ให้สำเร็จ เขียนจากมุมมอง external user ด้วยภาษาที่เขาเข้าใจ</p>
+        <p>ประโยชน์: เก็บ <strong>functional requirements</strong>, decompose ระบบ, สื่อสารกับผู้ใช้, ประมาณ scope/effort/schedule, ทำ test plan, requirements traceability, ตั้งต้นทำ user manual</p>
+        <h3>สัญลักษณ์พื้นฐาน</h3>
+        <ul>
+          <li>Use case = วงรี, <strong>Actor</strong> = ใครก็ได้ (human, organization, ระบบอื่น, device, <strong>แม้แต่เวลา</strong>) ที่โต้ตอบแลกข้อมูลกับระบบ</li>
+          <li><strong>Temporal event</strong> = event ที่เวลาเป็นตัวกระตุ้น โดย actor คือ <strong>Time</strong> เช่น ระบบส่งแจ้งเตือนอัตโนมัติตอน 08:00 น.</li>
+        </ul>
+        <h3>4 ประเภท Actor</h3>
+        <table>
+          <tr><th>Actor</th><th>นิยาม</th><th>ตัวอย่าง</th></tr>
+          <tr><td><strong>Primary business actor</strong></td><td>stakeholder ที่ได้ประโยชน์จาก use case โดยตรง</td><td>พนักงานที่รับ paycheck</td></tr>
+          <tr><td><strong>Primary system actor</strong></td><td>ผู้ที่ interface กับระบบเพื่อ initiate/trigger event</td><td>พนักงานธนาคารกรอกข้อมูลฝาก</td></tr>
+          <tr><td><strong>External server actor</strong></td><td>ผู้ตอบ request จาก use case</td><td>บริษัทเครดิต bureau อนุมัติบัตร</td></tr>
+          <tr><td><strong>External receiver actor</strong></td><td>ผู้รับของมีค่าจาก use case แต่ไม่ใช่ primary actor</td><td>คลังสินค้าที่รับ packing slip</td></tr>
+        </table>
+        <ul>
+          <li>Actor ตั้งชื่อด้วย <strong>noun/noun phrase</strong> และเป็น <strong>role</strong> ไม่ใช่คนเฉพาะราย เช่น ใช้ "Pension Clerk" ไม่ใช่ชื่อคน</li>
+          <li>Use case ตั้งชื่อด้วย <strong>verb phrase</strong> ตามเป้าหมายของ actor</li>
+        </ul>
+        <h3>ความสัมพันธ์ (Relationships)</h3>
+        <table>
+          <tr><th>ความสัมพันธ์</th><th>ลักษณะ</th></tr>
+          <tr><td><strong>Association</strong></td><td>เส้นทึบ actor กับ use case มีลูกศรชี้ use case = actor เป็น initiator, ไม่มีลูกศร = receiver actor</td></tr>
+          <tr><td><strong>&lt;&lt;extend&gt;&gt;</strong></td><td>extension use case เพิ่มขั้นตอนเสริม/กรณีพิเศษให้ use case หลัก ลูกศรจาก extension ชี้ไปที่ use case ที่ถูกขยาย <strong>base ทำงานต่อได้แม้ไม่มี extension</strong> ต้องประกาศ extension point และใช้อย่างประหยัด</td></tr>
+          <tr><td><strong>&lt;&lt;uses&gt;&gt; / &lt;&lt;include&gt;&gt;</strong></td><td>abstract use case รวมขั้นตอนที่ซ้ำกัน <strong>base ขาด included ไม่ได้</strong> เมื่อ included จบแล้ว control กลับมาที่ base จุดอ่อนคือต้องดูหลายที่</td></tr>
+          <tr><td><strong>&lt;&lt;depends on&gt;&gt;</strong></td><td>ระบุว่า use case อื่นต้องทำก่อน</td></tr>
+          <tr><td><strong>Inheritance (actor generalization)</strong></td><td>รวมพฤติกรรมเดียวกันของ actor หลายตัวไว้ที่ abstract actor ให้ inherit (ต้องเป็น is-a)</td></tr>
+        </table>
+        <h3>ขั้นตอนสร้าง Use-Case Model (4 ขั้น)</h3>
+        <ol>
+          <li><strong>Identify business actors</strong> = ถามว่า ใคร/อะไรให้ input, รับ output, มี interface กับระบบอื่นไหม, มี event ตามเวลาไหม, ใครดูแลข้อมูล</li>
+          <li><strong>Identify business use cases</strong> = main task ของ actor, ข้อมูลที่ต้องการ/ให้, การแจ้งเตือน เลือกเฉพาะ use case ที่สำคัญ (essential use cases)</li>
+          <li><strong>Construct use-case model diagram</strong></li>
+          <li><strong>Document use-case narratives</strong> = เริ่ม high-level แล้วขยายเป็น expanded narrative พร้อม typical course of events + alternate courses</li>
+        </ol>
+        <p><strong>Use-Case Narrative มีองค์ประกอบ:</strong> Name (verb+object), Identifier, Primary actor + participants, Goal, <strong>Preconditions</strong> (สถานะก่อนเริ่ม), <strong>Postconditions</strong> (สถานะหลังจบ, minimal guarantee), Trigger, Main flow (steps), Alternate/exception flows, Related requirements/use cases, Special (non-functional) requirements</p>
+        <h3>User Stories</h3>
+        <ul>
+          <li>คำอธิบาย feature จากมุม end-user พร้อม <strong>acceptance criteria</strong> = เงื่อนไขที่ product ต้องผ่านจึงถูกยอมรับ</li>
+          <li>คุณภาพดีตาม <strong>INVEST</strong>: <strong>I</strong>ndependent, <strong>N</strong>egotiable, <strong>V</strong>aluable, <strong>E</strong>stimable, <strong>S</strong>mall, <strong>T</strong>estable</li>
+        </ul>
+        <div class="exam-box"><div class="kp-title">ออก Quiz แล้ว</div>
+          <ul>
+            <li>4 ประเภท actor และ temporal event ที่ actor คือ Time</li>
+            <li>เปรียบเทียบ &lt;&lt;include&gt;&gt; กับ &lt;&lt;extend&gt;&gt;: extend ใช้กับ option/exception และ base ทำงานต่อได้แม้ไม่มี extension, include ใช้ reuse ขั้นตอนบังคับและ base ขาดไม่ได้</li>
+            <li>ตั้งชื่อ actor ด้วย noun (เป็น role) / use case ด้วย verb phrase</li>
+            <li>4 ขั้นสร้าง use-case model และองค์ประกอบ narrative (pre/postconditions, main/alternate flow)</li>
+            <li>INVEST ย่อมาจากอะไร</li>
+          </ul>
+        </div>
+        <details class="more"><summary>อ่านเพิ่ม: Use Case กับการบริหารโปรเจกต์ และ Rules of thumb</summary>
+          <div>
+            <p><strong>Use-case ranking &amp; priority matrix</strong> = ให้คะแนน 1-5 ตาม 6 เกณฑ์: ผลต่อ architectural design, ทำง่ายแต่ฟังก์ชันสำคัญ, risky/time-critical/complex, ต้องวิจัย/เทคโนโลยีใหม่, primary business function, เพิ่มรายได้/ลดต้นทุน</p>
+            <p><strong>Use-case dependency diagram</strong> = เห็นลำดับความเกี่ยวพัน ช่วยหา use case ที่ลืม และจัด build cycle</p>
+            <p><strong>Rules of thumb:</strong> อย่า over-specify (main flow สั้น 1 หน้า focus ที่ what ไม่ใช่ how), อย่า under-specify (อย่าลืม alternative และ exception ระบุพฤติกรรมทั้ง input ถูกและผิด), ชื่อ/ข้อมูลเป็น abstract ระดับ user, เลี่ยง functional decomposition ซ้อน &lt;&lt;include&gt;&gt; ลึก ๆ, เขียน use case (text) ก่อนวาด diagram เพราะ text description สำคัญที่สุด, use case เยอะเกิน = ลงรายละเอียดมากไป ("If in doubt, leave it out")</p>
+            <p><strong>ข้อจำกัดของ use case:</strong> NFR ไม่ค่อยเข้า, scalability/maintainability, ต้อง validate</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="sec12" class="card">
+        <h2>12. Establishing the Business Requirements + Vision &amp; Scope</h2>
+        <p><strong>Business requirements</strong> = ชุดข้อมูลที่บรรยายความจำเป็นที่นำไปสู่ project และ business outcome ที่ต้องการ ประกอบด้วย 4 อย่าง:</p>
+        <ol>
+          <li><strong>Business opportunities</strong></li>
+          <li><strong>Business objectives</strong></li>
+          <li><strong>Success metrics</strong></li>
+          <li><strong>Vision statement</strong></li>
+        </ol>
+        <ul>
+          <li>ต้อง resolve business requirements ก่อนจะ specify FR/NFR ได้เต็ม</li>
+          <li>เป็น benchmark ตัดสิน requirement ใหม่ว่า in หรือ out of scope (แปะ vision/scope ไว้ทุก elicitation session)</li>
+        </ul>
+        <h3>Business benefits</h3>
+        <ul>
+          <li>อย่าเริ่ม project โดยไม่รู้ value ตั้ง objective แบบ <strong>measurable</strong> แล้วกำหนด success metrics</li>
+          <li><strong>การรวม 2 ระบบเป็นระบบเดียว ไม่ใช่ business objective ที่ดี</strong> เพราะลูกค้าไม่แคร์ objective จริงคือเพิ่มรายได้/ลดต้นทุน ส่วน project ด้าน compliance/legal ก็มี objective ชัด มักเป็น risk avoidance</li>
+          <li>BA ทำหน้าที่: ให้ stakeholder ที่ใช่เป็นคนกำหนด + facilitate elicitation/prioritization/conflict resolution</li>
+        </ul>
+        <h3>Product Vision vs Project Scope</h3>
+        <table>
+          <tr><th>เรื่อง</th><th>Vision</th><th>Scope</th></tr>
+          <tr><td>ความหมาย</td><td>บรรยาย product สุดท้ายที่จะทำให้ถึง business objective (ปลายทาง)</td><td>ระบุว่า project/iteration นี้จะทำ "ส่วนไหน" ของ vision เป็นเส้นแบ่ง in/out</td></tr>
+          <tr><td>ความถี่การเปลี่ยน</td><td>เปลี่ยนช้า ๆ ตามกลยุทธ์</td><td>เปลี่ยนบ่อยกว่า ตาม schedule/budget/resource/quality ของแต่ละ release</td></tr>
+        </table>
+        <h3>Vision and Scope Document</h3>
+        <ul>
+          <li>รวม business requirements เป็น deliverable เดียว โดย <strong>Vision and Scope document = Project Charter = Business Case document</strong></li>
+          <li>ฝ่าย commercial อาจทำ <strong>MRD</strong> (Market Requirements Document) เพิ่ม</li>
+          <li><strong>เจ้าของเอกสาร = executive sponsor / funding authority</strong> โดย BA ช่วยเขียน</li>
+          <li>ส่วนสำคัญ: Business requirements (1. Business opportunity: ปัญหาที่แก้ไม่ได้ถ้าไม่มีระบบนี้ ตลาด/แนวโน้ม/strategy alignment, 2. Business objectives: ประโยชน์เชิงปริมาณที่วัดได้) + Scope ของ project</li>
+        </ul>
+        <h3>เทคนิคแทน Scope</h3>
+        <table>
+          <tr><th>เทคนิค</th><th>ใช้ทำอะไร</th></tr>
+          <tr><td><strong>Context diagram</strong></td><td>ระบบอยู่กลาง ลูกศร data/physical flow กับ external entities (user class, องค์กร, ระบบอื่น, อุปกรณ์)</td></tr>
+          <tr><td><strong>Ecosystem map</strong></td><td>ระบบทั้งหมดที่เชื่อมกัน รวมที่ไม่มี direct interface บอกว่าอะไรต้องถูกแก้ด้วย</td></tr>
+          <tr><td><strong>Feature tree</strong></td><td>feature จัดกลุ่มเป็น tree L1/L2/L3 เหมาะโชว์ executive</td></tr>
+          <tr><td><strong>Event list</strong></td><td>ชื่อ external/temporal/signal events ที่กระตุ้นระบบ (วิธีตอบจะอยู่ใน SRS ผ่าน event-response table)</td></tr>
+        </table>
+        <h3>การใช้ Scope</h3>
+        <ul>
+          <li>"A scope definition is a structure, not a straitjacket" เปลี่ยน scope ได้ถ้าทำ consciously โดยคนใช่ด้วยเหตุผลธุรกิจ</li>
+          <li><strong>Business objectives คือปัจจัยสำคัญที่สุดของ scope decision</strong> ทำ feature ที่เพิ่ม value มากที่สุดก่อน ถ้า scope โตต้อง renegotiate budget/schedule/resources และ quality มักเสีย</li>
+          <li><strong>Project เสร็จเมื่อ success metrics ชี้ว่าจะถึง business objectives แล้ว</strong> objective กำกวม = project ไม่มีวันจบ</li>
+        </ul>
+        <div class="exam-box"><div class="kp-title">ออก Quiz แล้ว</div>
+          <ul>
+            <li>องค์ประกอบ business requirements 4 อย่าง: opportunity + objectives + success metrics + vision</li>
+            <li>Vision vs Scope: ความถี่การเปลี่ยนและขอบเขต (vision = ปลายทาง, scope = เส้นแบ่ง in/out ของรอบนี้)</li>
+            <li>เทคนิคแทน scope 4 แบบ ใช้เมื่อไร</li>
+            <li>เจ้าของ vision &amp; scope document คือ executive sponsor / funding authority</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec13" class="card">
+        <h2>13. Functional Requirements (FR) vs Non-Functional Requirements (NFR)</h2>
+        <h3>Level of Requirements (3 ระดับ)</h3>
+        <table>
+          <tr><th>ระดับ</th><th>มุมมอง</th><th>คำถาม</th></tr>
+          <tr><td><strong>Business requirements</strong> (High)</td><td>Business view</td><td><strong>Why</strong> is the project needed?</td></tr>
+          <tr><td><strong>User requirements</strong> (Mid)</td><td>User view</td><td><strong>What</strong> do users need the system to do?</td></tr>
+          <tr><td><strong>System requirements</strong> (Detailed)</td><td>System view</td><td><strong>What</strong> does the system need to do?</td></tr>
+        </table>
+        <h3>Classification แบบ BABOK</h3>
+        <ul>
+          <li><strong>Business requirements</strong> = แถลงระดับสูงของ goals/objectives/needs</li>
+          <li><strong>Stakeholder requirements</strong> = ความคาดหวังของกลุ่ม stakeholder ต่อ solution</li>
+          <li><strong>Transition requirements</strong> = สิ่งที่องค์กรต้องมีเพื่อย้ายจาก current state ไป desired state ด้วย product ใหม่</li>
+          <li><strong>Solution requirements</strong> = <strong>Functional</strong> (product ต้อง behave อย่างไร, features &amp; functions) + <strong>Non-functional</strong> (คุณสมบัติทั่วไป = quality attributes)</li>
+        </ul>
+        <h3>Functional Requirements (FR)</h3>
+        <ul>
+          <li>บอก <strong>ระบบต้องทำอะไร</strong>: รับ input อะไร, ผลิต output อะไร, เก็บ data อะไร, คำนวณอะไร, timing/synchronization</li>
+          <li>รูปแบบที่นิยม: <strong>SRS document, Use cases, User stories, WBS decomposition, Prototypes, Models &amp; diagrams</strong></li>
+          <li><strong>SRS</strong> (มาตรฐาน ISO/IEC/IEEE 29148:2011) แจ้ง functions/capabilities, characteristics, constraints เป็นฐานของ planning/design/coding/testing/manual</li>
+          <li><strong>SRS ไม่ควรมี design/construction/testing/project management details</strong> (ยกเว้น design constraints ที่รู้แล้ว)</li>
+          <li>ส่วนของ SRS: <strong>Purpose</strong> (นิยาม, overview, background), <strong>Overall description</strong> (assumptions, constraints, business rules, product vision), <strong>Specific requirements</strong> (system attributes, FR, database requirements)</li>
+        </ul>
+        <h3>Non-Functional Requirements (NFR)</h3>
+        <ul>
+          <li><strong>NFR = Constraints ที่ต้องยึดระหว่าง development (design &amp; implementation)</strong> เป็น quality attributes ของระบบ กระทบ end-user experience มหาศาล</li>
+          <li>ทุก requirement ต้อง <strong>verifiable</strong> และบางส่วนต้อง <strong>measurable</strong></li>
+          <li>วิธีแยกอย่างง่าย: ถ้าเป็น "functionality หลักของ app" เช่น performance ของ real-time system, reliability ของ safety-critical app = FR ถ้าเป็น "ข้อจำกัด/ข้อกำหนด design" = NFR</li>
+        </ul>
+        <table>
+          <tr><th>หมวด NFR</th><th>ตัวอย่าง</th></tr>
+          <tr><td><strong>Quality NFRs</strong></td><td>Response time (&lt; 2 วินาที), Throughput (transactions/นาที), Resource usage (memory), <strong>Reliability = MTBF</strong> (Mean Time Between Failures), <strong>Availability</strong> (% เวลาที่ up เช่น 95%), <strong>Recovery = MTTR</strong> (Mean Time To Repair), Reusability</td></tr>
+          <tr><td><strong>Environment &amp; Technology constraints</strong></td><td>Platform (OS, พื้นที่ disk), เทคโนโลยี (ภาษา, database)</td></tr>
+          <tr><td><strong>Project plan &amp; development methods</strong></td><td>Process (SDLC/RUP/Agile/Scrum/XP/FDD), วิธี test, Cost &amp; Delivery dates, Traceability</td></tr>
+        </table>
+        <ul>
+          <li>ตาม Bittner &amp; Spence NFR แบ่ง: Legal &amp; Regulatory, Application development standards, Quality attributes (usability, reliability, performance, supportability), Design/implementation constraints (OS, ภาษา)</li>
+          <li><strong>Typical NFR list:</strong> Usability, Security, Reliability, Performance, Availability, Scalability</li>
+          <li>เก็บที่ไหน: RUP ใส่ NFR รวม ๆ ไว้ใน <strong>Supplementary Specifications</strong> ส่วน NFR เฉพาะ use case เดียว ใส่ใน use case นั้นได้ ควร <strong>rank</strong> NFR เพราะบางอันแพงกว่า implement use case ("Infinite availability" มักไม่คุ้ม)</li>
+          <li>เทมเพลตตาราง NFR: Category | Number | Name | Description | Applies to Use Case(s) | Exceptions เช่น Persistency (student objects), Security (admin ต้อง authenticate), Availability (Profile DB 95%)</li>
+          <li>ใน UML ผูกกับ analysis class ด้วย tag: <code>{persistent}</code>, <code>{security}</code>, <code>{distributed}</code> (RUP เรียกว่า analysis mechanisms)</li>
+        </ul>
+        <h3>การเขียน FR ให้ดี</h3>
+        <ul>
+          <li><strong>Labeling:</strong> ทุก requirement ต้องมี unique &amp; persistent identifier เช่น sequence number (UC-9, <strong>FR-26</strong>), hierarchical numbering (3.2.4.3), hierarchical textual tags (Product.Cart.01) ตัวเลขที่ลบไปห้ามใช้ซ้ำ</li>
+          <li><strong>คุณสมบัติของ requirement statement:</strong> unitary (หนึ่งข้อหนึ่งเรื่อง), unambiguous, complete, consistent, feasible, <strong>verifiable</strong>, correct, conforming</li>
+          <li><strong>คุณสมบัติของชุด requirements:</strong> Complete, Consistent, Modifiable (มี history), Traceable (โยงย้อนไป origin และไปข้างหน้าถึง design/code/test)</li>
+          <li><strong>EARS</strong> (Easy Approach to Requirements Syntax): "เมื่อ [trigger/condition] ระบบ shall [action]"</li>
+          <li>แบบมุมมองระบบ: <strong>"The [system] shall &lt;action verb&gt; &lt;observable result&gt;"</strong> / แบบมุมมองผู้ใช้: <strong>"The [user class/actor] shall be able to &lt;do something&gt; &lt;to some object&gt; [&lt;quality/response condition&gt;]"</strong></li>
+          <li>สไตล์: punch line มาก่อน, ใช้ตาราง/ภาพช่วย, ใช้ <strong>active voice</strong>, ห้ามใช้หลายคำเรียก concept เดียวกัน (customer/user/client/patron เลือกคำเดียว)</li>
+          <li><strong>1 requirement ต่อ 1 statement:</strong> คำ "and, or, additionally, unless, except, but" ชี้ว่าอาจรวมหลาย requirement เลี่ยง "and/or"</li>
+          <li><strong>Granularity:</strong> เขียนให้ individually testable (คิด test cases ไม่กี่อันต่อ 1 requirement) รายละเอียดเยอะเมื่อ: ลูกค้าภายนอก, outsource, ทีมกระจายพื้นที่, test จาก requirements, ต้อง trace น้อยลงได้เมื่อ: ทำภายใน, developer มี domain experience, ใช้ package</li>
+        </ul>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div>
+          <ul>
+            <li><strong>คำกำกวมที่ต้องเลี่ยง:</strong> reasonably, appropriately, generally, approximately, usually, systematically, quickly, easy, sufficient, rapid, user-friendly, efficient, robust, seamless, flexible, better, adequate, superior, state-of-the-art, maximize, minimize, optimal, fast, reliable ให้แทนด้วยตัวเลข/เงื่อนไขชัด ๆ</li>
+            <li><strong>Boundary values</strong> ใช้ "through / inclusive / exclusive" ให้ชัด เช่น "ลาไม่เกิน 5 วัน (inclusive) ไม่ต้องอนุมัติ, มากกว่า 5 ถึง 10 วัน ต้องอนุมัติจากหัวหน้า, มากกว่า 10 วัน ต้องอนุมัติจาก management"</li>
+            <li>รูป A/B construct ("Delivery/Fulfillment Team") กำกวม ต้องระบุให้ชัด</li>
+            <li>Negative requirements ("ระบบไม่ควร...") ให้เขียนใหม่เป็น positive behavior ที่ชัดเจน</li>
+          </ul>
+        </div>
+        <div class="exam-box"><div class="kp-title">ออก Quiz แล้ว</div>
+          <ul>
+            <li>แยก FR/NFR จากประโยค: response time ไม่เกิน 2 วินาที / availability 99.5% = NFR, ระบบพิมพ์ใบเสร็จ / อัปเดตสถานะ = FR</li>
+            <li>3 ระดับ requirements: Why (business) / What users / What system</li>
+            <li>MTBF vs MTTR vs Availability</li>
+            <li>SRS มีส่วนอะไร และไม่ควรมี design/construction/testing/project management details</li>
+            <li>เทมเพลต "The system shall..." / "The [actor] shall be able to..." และคำกำกวมที่ต้องเลี่ยง</li>
+            <li>4 คุณสมบัติของ requirement collections: Complete, Consistent, Modifiable, Traceable</li>
+          </ul>
+        </div>
+        <details class="more"><summary>อ่านเพิ่ม: คนที่ใช้ SRS, Hedgehog Concept และ Requirement Continuum</summary>
+          <div>
+            <p><strong>คนใช้ SRS:</strong> customers/marketing/sales, project managers, developers, testers, maintenance/support, documentation writers, training, legal, subcontractors</p>
+            <p><strong>Hedgehog vs Fox:</strong> "fox knows many things, hedgehog knows one big thing" (Isaiah Berlin / Jim Collins) ผู้นำที่เยี่ยมทำ complex world ให้เหลือ single organizing idea</p>
+            <p><strong>BA Hedgehog = Requirement Continuum:</strong> Functional Decomposition (Capability → Feature → Function) → แตก Feature เป็น User Stories + Acceptance Criteria → QA validate ใน prototype → delivery team develop ใช้ได้ทั้ง Agile และ Waterfall พร้อม check &amp; balance ด้าน traceability</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="sec14" class="card">
+        <h2>14. Process Redesign &amp; Process Improvement (BPR)</h2>
+        <h3>2 แนวทางของ BPR</h3>
+        <ol>
+          <li><strong>Systematic re-design</strong> = ระบุ/เข้าใจ process เดิม แล้วทบทวนเพื่อ improvement ที่ relevant (ปรับของเดิม)</li>
+          <li><strong>Clean sheet approach</strong> = คิดใหม่ว่าจะส่งมอบ product/service อย่างไร แล้วออกแบบ process ใหม่ตั้งแต่ต้น ("รื้อตึกเก่าสร้างใหม่ แทนการอุดรอยรั่ว")</li>
+        </ol>
+        <ul>
+          <li>เริ่มต้นนิยาม process: ให้ executive ย้อนจากหน้าที่ตัวเอง, แยก major/minor process, จัดหมวดเป็น <strong>innovation, delivery, infrastructure</strong>, จับกลุ่ม process ที่เกี่ยวเนื่อง, กำหนด <strong>process boundaries</strong> (อะไรอยู่ใน control ของ process owner, ลูกค้าเกี่ยวตรงไหน)</li>
+        </ul>
+        <h3>เกณฑ์เลือก process มา re-engineer (4 ข้อ)</h3>
+        <ol>
+          <li>เป็น <strong>major contributors ต่อ core competencies</strong> (key processes เช่น marketing &amp; sales)</li>
+          <li><strong>Ready for change</strong> (risk รับได้ บาง process ใช้เวลาเปลี่ยนนาน)</li>
+          <li>ให้ <strong>early hits</strong> ได้ (ผลเร็ว / quick wins)</li>
+          <li><strong>Interrelated</strong> กับ process อื่น (ข้าม function/แผนก)</li>
+        </ol>
+        <h3>Visualisation</h3>
+        <p>คือการเดินจาก "As-is" ไป "To-be" รวมถึงการสร้าง creative vision ของ to-be ที่ทำได้จริง ได้แก่: เข้าใจว่าคนอื่นทำดีอย่างไร (benchmark), ตั้ง <strong>stretch goals</strong> ที่ท้าทายแต่ไปถึงได้, คิดแซงคู่แข่ง (competitive "edge"), ออกแบบระดับสูงให้เป็น pragmatic solution</p>
+        <h3>อุปสรรคการ redesign (5 อย่าง)</h3>
+        <p><strong>Motivation</strong> (ขาดแรงจูงใจ), <strong>Attitude</strong> (ต้านการเปลี่ยน), <strong>Knowledge</strong> (ไม่รู้ process ครบ), <strong>Creativity</strong> (ไอเดียไม่สร้างสรรค์), <strong>Innovation</strong> (ยาก ต้องคิดนอกกรอบ)</p>
+        <h3>BPR Project Structure: 5 Stages</h3>
+        <table>
+          <tr><th>Stage</th><th>เป้าหมาย</th><th>กิจกรรม</th><th>Deliverable</th></tr>
+          <tr><td><strong>Strategy</strong></td><td>Insight</td><td>Scope and plan, Interviews &amp; surveys, Develop assessment</td><td><strong>BPR plan</strong></td></tr>
+          <tr><td><strong>Analysis</strong></td><td>Insight</td><td>Current process, Problems/Assumptions, Metrics</td><td>Comprehensive understanding (baseline ของงานปัจจุบัน) + <strong>Quick hits</strong></td></tr>
+          <tr><td><strong>Visualisation</strong></td><td><strong>Invent</strong></td><td>Benchmarks/Best practice, Stretch goals, Invent new processes, Evaluate options</td><td>Implementable processes + <strong>Business case</strong></td></tr>
+          <tr><td><strong>Deployment</strong></td><td><strong>Implement</strong></td><td>Process design, Deployment plan, Implement new IT (พร้อม IT strategy), Staff training &amp; organisation</td><td>Processes ที่ implement ได้จริง</td></tr>
+          <tr><td><strong>Continuous Improvement</strong></td><td>Implement</td><td>Performance measurement, Fine-tune new processes, <strong>TQM</strong></td><td>Optimised processes + <strong>Measured improvement</strong></td></tr>
+        </table>
+        <h3>BPR Methodologies</h3>
+        <ul>
+          <li><strong>Generic (4 ขั้น):</strong> สร้าง Reengineering Framework → Identify customers &amp; determine needs → Map the existing process (เข้าใจ what &amp; why) → Measure process performance (เก็บ data แปลงเป็น redesign goals)</li>
+          <li><strong>Davenport &amp; Short:</strong> ระบุ process ที่จะ innovate → หา change levers (enabling technologies) → พัฒนา process vision → เข้าใจและปรับปรุง process เดิม → design &amp; prototype ใหม่</li>
+        </ul>
+        <div class="keypoints"><div class="kp-title">หลัก redesign ของ Hammer &amp; Champy (Hammer 1990)</div>
+          <ul>
+            <li><strong>Organize around outcomes, not tasks</strong></li>
+            <li>ให้ผู้ใช้ output ของ process เป็นคน perform process นั้น</li>
+            <li><strong>Subsume information-processing work into the real work</strong> ที่ผลิตข้อมูลนั้น</li>
+            <li>ปฏิบัติ resource ที่กระจายภูมิศาสตร์เหมือน centralized</li>
+            <li><strong>Link parallel activities</strong> แทนการเอาผลมา integrate ทีหลัง</li>
+            <li>วาง <strong>decision point ที่จุดทำงานจริง</strong> พร้อมสร้าง control ใน process</li>
+            <li><strong>Capture information once and at the source</strong></li>
+          </ul>
+        </div>
+        <h3>Barriers to BPR</h3>
+        <table>
+          <tr><th>ประเภท</th><th>รายการ</th></tr>
+          <tr><td><strong>Hard barriers</strong></td><td>ปัญหา Information Technology, Resource problems, Legal obstacles</td></tr>
+          <tr><td><strong>Soft barriers</strong></td><td>Internal individual resistance, Internal group resistance, External resistance</td></tr>
+          <tr><td><strong>สาเหตุ (causes)</strong></td><td>Project (content/management), People (personality/groups), Organisation (structure/culture), Environment (partner/public)</td></tr>
+        </table>
+        <div class="exam-box"><div class="kp-title">ออก Quiz แล้ว</div>
+          <ul>
+            <li>แยก Systematic re-design กับ Clean sheet approach</li>
+            <li>5 stages ของ BPR project: Strategy → Analysis → Visualisation → Deployment → Continuous Improvement พร้อม deliverable แต่ละ stage</li>
+            <li>หลัก Hammer &amp; Champy 7 ข้อ เช่น organize around outcomes, capture information once at the source</li>
+            <li>Hard vs Soft barriers และสาเหตุ 4 กลุ่ม</li>
+            <li>เกณฑ์เลือก process: ผู้กับ core competencies, ready for change, ให้ quick wins, interrelated</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec15" class="card">
+        <h2>15. Sequence Diagram</h2>
+        <p><strong>ตำแหน่งใน model:</strong> Requirements model (FR/NFR, Use Case Diagrams, Sequence Diagrams ระดับ system) → OO Analysis (Static: class diagrams, Dynamic: state diagrams / refined sequence diagrams ระดับ object)</p>
+        <p><strong>นิยาม:</strong> Sequence diagram = <strong>interaction diagram</strong> ที่บรรยายว่ากลุ่ม objects ทำงานร่วมกันอย่างไรและเรียงลำดับเมื่อไร (alias: event diagram, event scenario) ใช้เข้าใจ requirement ของระบบใหม่หรือ document process เดิม และแสดง object interactions ของ <strong>1 scenario ของ use case</strong></p>
+        <h3>องค์ประกอบ</h3>
+        <table>
+          <tr><th>องค์ประกอบ</th><th>รายละเอียด</th></tr>
+          <tr><td><strong>Actor</strong></td><td>อยู่ <strong>นอก scope ของระบบ</strong> เสมอ</td></tr>
+          <tr><td><strong>Objects</strong></td><td>เรียงซ้าย → ขวาตามลำดับเวลาที่เข้ามาเกี่ยวข้อง ถ้า diagram ระดับ code อาจติดชื่อ class</td></tr>
+          <tr><td><strong>Lifeline</strong></td><td>เส้นแนวตั้งแสดงการมีอยู่ของ actor/object ตามเวลา <strong>ลงล่าง = เวลาผ่านไปมากขึ้น</strong></td></tr>
+          <tr><td><strong>Activation box</strong></td><td>แสดงว่า object กำลัง active ทำ process ช่วงไหนนานเท่าไร (เช่น Bank Account มี activation น้อยกว่า ATM)</td></tr>
+          <tr><td><strong>Messages</strong></td><td>ลูกศรระหว่าง lifeline ดูรายละเอียดด้านล่าง</td></tr>
+          <tr><td><strong>Note</strong></td><td>คอมเมนต์ ไม่มี semantic force</td></tr>
+        </table>
+        <h3>Messages</h3>
+        <ul>
+          <li><strong>Request message</strong> = ขอ/สั่ง (ไม่ใช่การตอบ)</li>
+          <li><strong>Return/Reply message</strong> = ตอบกลับ request โดย <strong>ไม่จำเป็นต้องวิ่งขวา → ซ้ายเสมอ</strong> ต้องดูว่าเป็นการ "ตอบ" หรือไม่</li>
+          <li><strong>Self message</strong> = เรียกใช้ message บน lifeline ตัวเอง, <strong>Recursive message</strong> = เรียกตัวเองซ้อนบน activation เดิม, <strong>Create message</strong> = instantiate lifeline ใหม่, <strong>Destroy message</strong> = จบ lifecycle ของ lifeline, <strong>Duration message</strong> = ระยะเวลาระหว่าง 2 จุดเวลา</li>
+        </ul>
+        <h3>Sequence Fragments (UML 2.0)</h3>
+        <p>Combined fragment = กล่องล้อมส่วนของ interaction โดย operator มุมซ้ายบนบอกชนิด: <strong>ref, assert, loop, break, alt, opt, neg</strong></p>
+        <ul>
+          <li><strong>alt</strong> = เลือก 1 จากหลายลำดับ message (mutually exclusive) เช่น ATM: การ์ด valid → ถาม PIN / ไม่ valid → eject card</li>
+          <li><strong>opt</strong> = ทำถ้าเงื่อนไขจริงเท่านั้น, <strong>loop</strong> = วนซ้ำ, <strong>break</strong> = หลุดออก, <strong>neg</strong> = interaction ที่ห้ามเกิด, <strong>ref</strong> = อ้าง interaction อื่น, <strong>assert</strong> = ต้องเกิดจริง</li>
+        </ul>
+        <div class="example"><div class="ex-title">ตัวอย่าง: อ่าน ATM scenario เป็นขั้น</div>
+          <ol>
+            <li>ลูกค้าใส่บัตร → ATM ถาม Bank Server ว่าบัตร valid ไหม → server ตอบกลับ</li>
+            <li>(alt) valid: ATM ขอ PIN / ไม่ valid: eject บัตร</li>
+            <li>ผู้ใช้กรอก PIN (return message) → ATM ถาม server ว่า PIN ถูกไหม</li>
+            <li>(alt) ถูก: ถามจำนวนเงิน / ผิด: eject</li>
+            <li>กรอกจำนวน → ATM เปิด transaction กับ server → server ถาม Bank Account ว่าเงินพอไหม</li>
+            <li>พอ: หักเงิน สั่ง ATM จ่ายเงิน / ไม่พอ: ไม่สำเร็จ บัตรถูก eject ถ้า suspended/cancel</li>
+          </ol>
+        </div>
+        <div class="keypoints"><div class="kp-title">Model before code</div>
+          <ul>
+            <li>Sequence diagram ที่ดีอยู่เหนือระดับโค้ดจริงเล็กน้อย เป็น language neutral คนไม่เขียนโค้ดก็ทำได้ ทำเป็นทีม และใช้ทำ testing/UX wireframe ได้</li>
+          </ul>
+        </div>
+        <div class="exam-box"><div class="kp-title">ออก Quiz แล้ว</div>
+          <ul>
+            <li>เวลาไหลจากบนลงล่าง, objects เรียงซ้ายไปขวา, actor อยู่นอกระบบ</li>
+            <li>แยก Request vs Return/Reply message จากภาพ (reply ไม่จำเป็นต้องขวาไปซ้ายเสมอ)</li>
+            <li>fragment ประเภท alt/opt/loop ใช้เมื่อไร</li>
+            <li>สิ่งที่ activation box บอก</li>
+            <li>จัดลำดับ scenario (เช่น ATM) เป็น diagram</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="quiz" class="card quiz" data-quiz>
+        <h2>แบบทดสอบ (25 ข้อ)</h2>
+        <p>ข้อ 1-18 เป็นปรนัย กดตัวเลือกเพื่อเช็กคำตอบ ข้อ 19-25 เป็นอัตนัย ลองเขียนตอบเองแล้วเปิดดูแนวเฉลย</p>
+        <div class="quiz-status"></div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">1) "การวิเคราะห์ เข้าใจ และระบุเป้าหมายเฉพาะเจาะจงของบริษัท เพื่อบรรลุ strategic vision" คือนิยามของสิ่งใด</p>
+          <button class="choice" data-k="A">ก. Business Requirements</button>
+          <button class="choice" data-k="B">ข. Enterprise Analysis (Needs of Business)</button>
+          <button class="choice" data-k="C">ค. Functional Decomposition</button>
+          <button class="choice" data-k="D">ง. Requirements Elicitation</button>
+          <div class="q-explain">นิยาม "Needs of Business / Enterprise Analysis" คือการวิเคราะห์ เข้าใจ และระบุเป้าหมายเฉพาะของบริษัทเพื่อบรรลุ strategic vision ส่วน Business Requirements เป็นสิ่งที่ต้องมีเพื่อบรรลุ objective ไม่ใช่การวิเคราะห์เอง</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">2) หลักคิด IRACIS ที่ใช้ประเมินมูลค่าทางธุรกิจ ย่อมาจากอะไร</p>
+          <button class="choice" data-k="A">ก. Integrate Resources, Automate Costs, Improve Systems</button>
+          <button class="choice" data-k="B">ข. Increase Revenues, Avoid Costs, Improve Service</button>
+          <button class="choice" data-k="C">ค. Identify Requirements, Analyze Costs, Improve Solutions</button>
+          <button class="choice" data-k="D">ง. Increase Revenues, Add Customers, Innovate Service</button>
+          <div class="q-explain">IRACIS = Increase Revenues, Avoid Costs, Improve Service ซึ่งเป็นสูตรคิดมูลค่าธุรกิจในหัวข้อ Business Needs</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">3) บริษัทผลิตขนมแห่งหนึ่งมีรายจ่าย: (1) ค่าเช่าโรงงานรายเดือน (2) ค่าวัตถุดิบแป้งและน้ำตาล (3) ค่าไฟฟ้าส่วนออฟฟิศ (4) ค่าคอมมิชชันตามยอดขายของทีมขาย ข้อใดจัดเป็น Variable Cost ทั้งหมด</p>
+          <button class="choice" data-k="A">ก. (1) และ (2)</button>
+          <button class="choice" data-k="B">ข. (2) และ (4)</button>
+          <button class="choice" data-k="C">ค. (1) และ (3)</button>
+          <button class="choice" data-k="D">ง. (3) และ (4)</button>
+          <div class="q-explain">Variable cost คือต้นทุนที่แปรผันตามปริมาณการผลิต/ขาย คือค่าวัตถุดิบ (2) และค่าคอมมิชชันตามยอดขาย (4) ส่วนค่าเช่า (1) และค่าไฟออฟฟิศ (3) เป็น Fixed cost</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">4) ข้อความใดอธิบาย Mission ขององค์กรได้ถูกต้องที่สุด</p>
+          <button class="choice" data-k="A">ก. ภาพฝันของตำแหน่งอนาคตของบริษัท ใช้เป็นแรงบันดาลใจของการวางแผน</button>
+          <button class="choice" data-k="B">ข. คำอธิบายธุรกิจของบริษัท เป้าหมาย วิธีไปถึงเป้าหมาย และเหตุผลการดำรงอยู่</button>
+          <button class="choice" data-k="C">ค. กลยุทธ์การหาแหล่งรายได้ กลุ่มลูกค้า และแหล่งเงินทุน</button>
+          <button class="choice" data-k="D">ง. การกระทำที่วัดผลได้และมีกรอบเวลา เพื่อบรรลุเป้าหมายขององค์กร</button>
+          <div class="q-explain">Mission อธิบายว่าบริษัททำธุรกิจอะไร เป้าหมายคืออะไร เดินไปถึงเป้าหมายอย่างไร และบอกเหตุผลการดำรงอยู่ของธุรกิจ ส่วน ก. คือ Vision, ค. คือ Business Model, ง. คือ Objectives</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">5) ร้านกาแฟแห่งหนึ่งเลือกลงทุนเฉพาะกลุ่มลูกค้าที่ชอบกาแฟพร้อมดื่มระดับพรีเมียมในย่านออฟฟิศ เพื่อสร้างความพึงพอใจและความภักดีสูงสุดในกลุ่มนี้ นี่คือ Sustainable Competitive Advantage แบบใด</p>
+          <button class="choice" data-k="A">ก. Differentiation</button>
+          <button class="choice" data-k="B">ข. Cost Leadership</button>
+          <button class="choice" data-k="C">ค. Focus Advantage</button>
+          <button class="choice" data-k="D">ง. Market Share Leadership</button>
+          <div class="q-explain">การล็อกกลุ่มลูกค้าเฉพาะส่วนเพื่อสร้าง satisfaction/loyalty สูงสุดในกลุ่มนั้น = Focus Advantage (ถ้าเน้นความแตกต่างเด่น = Differentiation, เน้นราคาถูกกว่า = Cost Leadership)</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">6) โมเดลธุรกิจแบบใดเหมาะกับการอธิบาย "เมื่อสัญญาถูกลงนาม สถานะของรายการเปลี่ยนจาก ACTIVE เป็น UNDER CONTRACT"</p>
+          <button class="choice" data-k="A">ก. Business Process Model (Data Flow Diagram)</button>
+          <button class="choice" data-k="B">ข. Business Object (Data) Model</button>
+          <button class="choice" data-k="C">ค. Business Event Model (State Transition Diagram)</button>
+          <button class="choice" data-k="D">ง. Business Socio-Political Model</button>
+          <div class="q-explain">การเปลี่ยนสถานะ (state) ของวัตถุเมื่อเกิด event = Business Event Model ซึ่งใช้ State Transition Diagram (state ต่าง ๆ ของ entity + event ที่ทำให้เปลี่ยนสถานะ)</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">7) ทีม BA เขียนเอกสาร process design และระบุว่า "ก่อนเริ่ม process ตรวจสอบใบเสนอราคา ต้องรอ process จัดซื้อสร้างใบเสนอราคาเสร็จสิ้นก่อน" ข้อความนี้ตรงกับองค์ประกอบข้อใด</p>
+          <button class="choice" data-k="A">ก. Preconditions</button>
+          <button class="choice" data-k="B">ข. Prerequisites (t1)</button>
+          <button class="choice" data-k="C">ค. Dependencies (t2)</button>
+          <button class="choice" data-k="D">ง. Process Triggers</button>
+          <div class="q-explain">Prerequisites (t1) = process ก่อนหน้าที่ต้อง "ทำเสร็จ" ก่อน process นี้จะเริ่ม/เสร็จได้ ต่างจาก Preconditions (สถานะ/เงื่อนไขที่ต้องเป็นจริงก่อนเริ่ม) และ Dependencies (t2) (process อื่นที่ตัวเองพึ่งพา) จุดนี้ออก Quiz ถี่</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">8) แผนกตรวจสอบภายในประเมินพอร์ตสินเชื่อรายเดือน ซึ่งต้องใช้ดุลพินิจของผู้ตรวจสอบชี้ขาดกรณีเฉพาะราย ระบบช่วยเพียงแจ้งเตือนเมื่องานเกินกำหนด กระบวนการนี้เข้ากับแนวคิดข้อใดที่สุด</p>
+          <button class="choice" data-k="A">ก. Document-centric BPM</button>
+          <button class="choice" data-k="B">ข. Integration-centric BPM</button>
+          <button class="choice" data-k="C">ค. Human-centric BPM</button>
+          <button class="choice" data-k="D">ง. Fully automated BPM</button>
+          <div class="q-explain">งานที่ต้องใช้ดุลพินิจ การตัดสิน การประเมินของมนุษย์ และระบบทำได้แค่ notification/alert = Human-centric BPM (Document-centric เน้นเอกสารผ่านการอนุมัติหลายรอบ, Integration-centric เน้นเชื่อมระบบ)</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">9) ตามหลักการตั้งชื่อใน BPMN ชื่อของ Event ที่ถูกต้องคือข้อใด</p>
+          <button class="choice" data-k="A">ก. "Receive purchase order"</button>
+          <button class="choice" data-k="B">ข. "Purchase order received"</button>
+          <button class="choice" data-k="C">ค. "Check the purchase order status"</button>
+          <button class="choice" data-k="D">ง. "Purchasing department receives PO form"</button>
+          <div class="q-explain">Event ตั้งชื่อแบบ Noun + V3 (past participle) เช่น "Purchase order received" ส่วน Task/Activity ตั้งชื่อแบบ Verb + Noun เช่น "Receive purchase order"</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">10) ร้านค้าออนไลน์มีศูนย์รับซ่อมสองแห่ง: เชียงใหม่และขอนแก่น เมื่อรับงานซ่อมจะส่งงานไปเฉพาะศูนย์ที่มีอะไหล่ที่ต้องใช้ ถ้ามีอะไหล่ทั้งสองศูนย์ก็ส่งทั้งสองแห่งพร้อมกัน ถ้ามีแห่งเดียวก็ส่งแห่งเดียว จากนั้นลงทะเบียนงาน ควรใช้ gateway แบบใด</p>
+          <button class="choice" data-k="A">ก. XOR-split / XOR-join</button>
+          <button class="choice" data-k="B">ข. AND-split / AND-join</button>
+          <button class="choice" data-k="C">ค. OR-split / OR-join</button>
+          <button class="choice" data-k="D">ง. Complex gateway เท่านั้นที่ทำได้</button>
+          <div class="q-explain">ส่งไป "แห่งใดก็ได้ที่มีอะไหล่ ตั้งแต่ 1 แห่งขึ้นไป" = OR gateway (inclusive): เลือก 1 หรือหลายเส้นทางตามเงื่อนไข และ OR-join รอทุกเส้นทางที่ active เสร็จ เหมือนตัวอย่างคลัง Silom/Ladkrabang ในสไลด์ Process Modelling</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">11) เกี่ยวกับกฎของ Pools, Lanes และ Flows ใน BPMN ข้อใดถูกต้อง</p>
+          <button class="choice" data-k="A">ก. Sequence Flow ข้ามขอบเขตของ Pool ได้ หากระบุ condition</button>
+          <button class="choice" data-k="B">ข. Message Flow เชื่อมกิจกรรมสองกิจกรรมภายใน Pool เดียวกันได้</button>
+          <button class="choice" data-k="C">ค. Sequence Flow ข้ามขอบเขต Pool ไม่ได้ แต่ข้าม Lane ได้</button>
+          <button class="choice" data-k="D">ง. Message Flow ข้าม Lane ไม่ได้ ทุกกรณี</button>
+          <div class="q-explain">กฎ syntactic: Sequence Flow ข้ามขอบ Pool ไม่ได้ (แต่ Message Flow ข้ามได้) ทั้ง Sequence และ Message Flow ข้าม Lane ได้ และ Message Flow ห้ามเชื่อม element สองตัวภายใน Pool เดียวกัน</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">12) บริษัทมีระบบ ERP เก็บ transaction log ของกระบวนการจัดซื้อครบถ้วน (ชื่อกิจกรรม, timestamp, case ID) ทีม BA ต้องการโมเดล as-is ที่มีความ objective สูงและครอบคลุมหลายพันเคส ควรเลือกวิธี discovery ใดเป็นหลัก</p>
+          <button class="choice" data-k="A">ก. Workshop-based discovery</button>
+          <button class="choice" data-k="B">ข. Interview-based discovery</button>
+          <button class="choice" data-k="C">ค. Automated process discovery (process mining)</button>
+          <button class="choice" data-k="D">ง. Document analysis จากคู่มือปฏิบัติงาน</button>
+          <div class="q-explain">มี transaction log ครบ (activity name, timestamp, case ID) ต้องการ objective + ครอบคลุมหลายพันเคส = Automated process discovery / Process mining ซึ่งให้ "extensive set of cases, objective data" Workshop ใช้เมื่อต้องแก้ความเห็นขัดแย้ง, Document analysis มีข้อเสียคือเอกสารอาจล้าสมัย</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">13) จากโมเดลกระบวนการหนึ่ง: token สามารถวิ่งเข้าสู่ AND-join จากเส้นทางเดียว เพราะเงื่อนไขของ XOR-split บังคับให้เลือกได้เพียงเส้นเดียว ทำให้ instance หยุดค้างตลอดไป สถานการณ์นี้เรียกว่าอะไร และละเมิดเกณฑ์ใดของ soundness</p>
+          <button class="choice" data-k="A">ก. Livelock: ละเมิด proper completion</button>
+          <button class="choice" data-k="B">ข. Deadlock: ละเมิด option to complete</button>
+          <button class="choice" data-k="C">ค. Dead activity: ละเมิด no dead activities</button>
+          <button class="choice" data-k="D">ง. Structural incorrectness: ไม่เกี่ยวกับ soundness</button>
+          <div class="q-explain">Token ค้างที่ AND-join ทำให้ instance จบไม่ได้ตลอดไป = Deadlock ซึ่งละเมิดเงื่อนไขที่ 1 ของ soundness คือ Option to complete (Livelock คือวน loop ไม่รู้จบ, Dead activity คือ activity ที่ไม่มีวันถูกรัน)</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-text">14) ฝ่ายบริการตรวจสอบเครื่องถ่ายเอกสารให้ผู้เช่า: รับคำขอ (VA) → บันทึกใบคำขอ (BVA) → ส่งใบคำขอถึงพนักงานคลัง ( ) → พนักงานคลังเปิดอ่านและค้นหารุ่นเครื่อง ( ) เมื่อพิจารณาสองขั้นตอนในวงเล็บ ควรจัดเป็นประเภทใด</p>
+          <button class="choice" data-k="A">ก. NVA ทั้งสองขั้น: ควร Eliminate</button>
+          <button class="choice" data-k="B">ข. VA ทั้งสองขั้น: ควร Optimize</button>
+          <button class="choice" data-k="C">ค. BVA ทั้งสองขั้น: ควร Question &amp; Reduce</button>
+          <button class="choice" data-k="D">ง. ขั้นแรก BVA, ขั้นหลัง VA</button>
+          <div class="q-explain">"ส่งใบคำขอถึงพนักงานคลัง" = handover/transmission = NVA และ "เปิดอ่านและค้นหารุ่นเครื่อง" = งานเตรียมการที่ลูกค้าไม่ยอมจ่าย = NVA ทั้งคู่ควร Eliminate (BVA คือสิ่งจำเป็นต่อธุรกิจเช่นการบันทึก/ตรวจสอบ, VA คือสิ่งที่ลูกค้ายอมจ่ายเช่นคัดเครื่องให้ตรงความต้องการ)</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">15) ทีมวิเคราะห์พบว่าใบคำร้องถูกส่งกลับมาแก้ไขบ่อย เพราะแบบฟอร์มมีคำแนะนำกำกวม ทำให้ผู้ยื่นกรอกผิด ในการวิเคราะห์ด้วย Cause-effect (Fishbone) diagram สาเหตุนี้จัดอยู่ในหมวดใดของ Six Ms</p>
+          <button class="choice" data-k="A">ก. Machine</button>
+          <button class="choice" data-k="B">ข. Material</button>
+          <button class="choice" data-k="C">ค. Method</button>
+          <button class="choice" data-k="D">ง. Milieu</button>
+          <div class="q-explain">สาเหตุมาจาก "วิธีออกแบบ/คำแนะนำของ process ไม่ชัด" = Method (Machine = เทคโนโลยี/ซอฟต์แวร์, Material = ข้อมูล input เสีย, Milieu = ปัจจัยภายนอก)</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">16) ระบบใดรองรับการตัดสินใจระดับ Strategic ของผู้บริหารสูงสุดเป็นหลัก</p>
+          <button class="choice" data-k="A">ก. TPS (Transaction Processing System)</button>
+          <button class="choice" data-k="B">ข. MIS (Management Information System)</button>
+          <button class="choice" data-k="C">ค. EIS (Executive Information System)</button>
+          <button class="choice" data-k="D">ง. Workflow engine</button>
+          <div class="q-explain">Strategic decisions (ประเด็นระดับองค์กร ขอบเขตกว้าง) → EIS, Managerial (การจัดสรรทรัพยากร) → MIS, Operational (งานประจำวัน) → TPS</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">17) ทีมพัฒนาระบบร้านค้าออนไลน์พบว่า "นักช้อปประจำ" เป็นกลุ่มที่ความพึงพอใจสอดคล้องกับ business objectives ของโครงการมากที่สุด จึงให้สิทธิ์ตัดสินใจเรื่อง requirement ของกลุ่มนี้ก่อนกลุ่มอื่น กลุ่มนี้คืออะไร</p>
+          <button class="choice" data-k="A">ก. Disfavored user class</button>
+          <button class="choice" data-k="B">ข. Ignored user class</button>
+          <button class="choice" data-k="C">ค. Favored user class</button>
+          <button class="choice" data-k="D">ง. External receiver actor</button>
+          <div class="q-explain">กลุ่มที่ความพึงพอใจสอดคล้องกับ business objectives มากที่สุดและได้รับสิทธิ์เหนือกว่าเวลาจัด priority = Favored user class (ไม่ใช่กลุ่มที่จ่ายเงินมากที่สุดหรือมีอิทธิพลทางการเมือง)</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">18) ความสัมพันธ์ของ use case ในข้อใดที่ use case หลักยังคงทำงานได้สมบูรณ์แม้ไม่มี use case ที่ถูกชี้มา และใช้สำหรับพฤติกรรมเสริมหรือกรณีพิเศษ</p>
+          <button class="choice" data-k="A">ก. &lt;&lt;include&gt;&gt;</button>
+          <button class="choice" data-k="B">ข. &lt;&lt;extend&gt;&gt;</button>
+          <button class="choice" data-k="C">ค. &lt;&lt;depends on&gt;&gt;</button>
+          <button class="choice" data-k="D">ง. Association แบบมีลูกศร</button>
+          <div class="q-explain">&lt;&lt;extend&gt;&gt; = extension เสริมกรณี option/exception โดย base use case ทำงานต่อได้แม้ไม่มี extension และต้องประกาศ extension point ส่วน &lt;&lt;include&gt;&gt; นั้น base ขาด included ไปไม่ได้เลย</div>
+        </div>
+
+        <div class="q">
+          <p class="q-text">19) (จำแนก FR กับ NFR) จากข้อกำหนดของ "ระบบยืม-คืนห้องสมุด" ต่อไปนี้ จงจำแนกว่าข้อใดเป็น Functional Requirement (FR) และข้อใดเป็น Non-Functional Requirement (NFR) พร้อมระบุหมวดของ NFR (เช่น performance, security, availability, usability)</p>
+          <ol>
+            <li>ระบบต้องบันทึกการยืมหนังสือและอัปเดตสถานะหนังสือเป็น "ถูกยืม" ทันที</li>
+            <li>เวลาตอบสนองของการค้นหาทั่วไปต้องไม่เกิน 2 วินาที</li>
+            <li>ผู้ดูแลระบบ (Admin) ต้องผ่านการยืนยันตัวตนก่อนลบรายการประวัติการยืม</li>
+            <li>ระบบต้องรองรับผู้ใช้พร้อมกันอย่างน้อย 500 คนโดยประสิทธิภาพไม่ตก</li>
+            <li>ระบบต้องอนุญาตให้สมาชิกต่ออายุการยืมได้ 1 ครั้ง จำนวน 7 วัน</li>
+          </ol>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <table>
+              <tr><th>ข้อ</th><th>ประเภท</th><th>หมวด/เหตุผล</th></tr>
+              <tr><td>1</td><td><strong>FR</strong></td><td>บอกพฤติกรรมการทำงานของระบบ (บันทึกการยืม, อัปเดตสถานะ)</td></tr>
+              <tr><td>2</td><td><strong>NFR</strong></td><td>Performance (response time ไม่เกิน 2 วินาที เป็นข้อจำกัดคุณภาพ)</td></tr>
+              <tr><td>3</td><td><strong>NFR</strong></td><td>Security (การยืนยันตัวตน/สิทธิ์การเข้าถึงของ Admin)</td></tr>
+              <tr><td>4</td><td><strong>NFR</strong></td><td>Scalability/Performance (รองรับ 500 concurrent users)</td></tr>
+              <tr><td>5</td><td><strong>FR</strong></td><td>ฟังก์ชันการทำงาน (ต่ออายุ 1 ครั้ง, 7 วัน) เป็น "สิ่งที่ระบบต้องทำ"</td></tr>
+            </table>
+            <p>หลักตอบ: ถ้าประโยคบอก "ระบบทำอะไร (function/behavior)" = FR ถ้าเป็น "ข้อจำกัด/คุณภาพที่วัดเป็นตัวเลขและครอบหลาย use case" = NFR และทุก requirement ต้อง verifiable</p>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">20) (เขียน FR ให้ถูกหลัก) ข้อกำหนดนี้เขียนกำกวม: "ระบบควรตรวจสอบใบคืนสินค้าอย่างรวดเร็วและเหมาะสม โดยใบคืนไม่เกิน 7 วันได้เงินคืนเต็มจำนวน และ 7 วันขึ้นไปได้เงินคืนบางส่วน" จงเขียนใหม่เป็น functional requirements ที่ถูกหลักอย่างน้อย 2 ข้อ โดย (1) ใช้โครงสร้าง "The [actor/system] shall..." (2) กำจัดคำกำกวม เช่น rapidly, appropriate (3) แก้ปัญหา boundary value ให้ชัดว่าวันที่ 7 ตกอยู่ในเงื่อนไขใด</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <ul>
+              <li>The system shall process a returned product within 1 business day of receipt. (แทน "rapidly" ด้วยตัวเลขชัดเจน, active voice)</li>
+              <li>If the return date is within 7 days after delivery (inclusive), the system shall refund the customer the full amount.</li>
+              <li>If the return date is later than 7 days after delivery, the system shall refund a partial amount as defined in the refund policy table.</li>
+            </ul>
+            <p>ข้อสังเกต: แก้ boundary "ไม่เกิน 7 วัน" ด้วยคำ inclusive/through ให้ชัดว่าวันที่ 7 อยู่ฝั่งไหน แยกเป็น 1 requirement ต่อ 1 statement (คำ "และ" เดิมรวม 2 เงื่อนไข) ตัดคำกำกวม rapidly/appropriate และใช้ shall ไม่ใช่ ควร (should)</p>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">21) (ระบุ Actor และ Use Case) อ่านสถานการณ์: "ร้านเช่ากล้องออนไลน์ให้ลูกค้าค้นหาและจองกล้องผ่านเว็บไซต์ พนักงานรับเช่าตรวจสอบความพร้อมของกล้องและอนุมัติการจอง เมื่อถึงวันรับของ ระบบจะส่งข้อความแจ้งเตือนลูกค้าอัตโนมัติในเวลา 08:00 น. นอกจากนี้ระบบยังเชื่อมกับระบบบัญชีเพื่อออกใบเสร็จ และมีช่างเทคนิครับผิดชอบบันทึกผลซ่อมบำรุง" จงระบุ (1) Actors ทั้งหมดพร้อมประเภท (primary business / primary system / external server / external receiver หรือ temporal) และ (2) Use Cases อย่างน้อย 4 รายการโดยตั้งชื่อถูกหลัก (verb + object)</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p><strong>Actors:</strong></p>
+            <ul>
+              <li>Customer (ลูกค้า) = primary business actor (ผู้ได้ประโยชน์จากการจอง)</li>
+              <li>Rental Staff (พนักงานรับเช่า) = primary system actor (ผู้ใช้ระบบตรวจ/อนุมัติ)</li>
+              <li>Accounting System (ระบบบัญชี) = external server actor (ตอบ request ออกใบเสร็จ)</li>
+              <li>Technician (ช่างเทคนิค) = primary system actor (บันทึกผลซ่อม)</li>
+              <li>Time/Scheduler (เวลา 08:00 น.) = temporal actor กระตุ้นการแจ้งเตือนอัตโนมัติ</li>
+            </ul>
+            <p><strong>Use cases (verb + object):</strong> Search Camera, Reserve Camera, Approve Reservation, Send Pickup Reminder, Issue Receipt, Record Maintenance Result เป็นต้น</p>
+            <p>เกณฑ์ให้คะแนน: actor เป็น role ไม่ใช่ชื่อคนเฉพาะราย และใช้ noun, use case ใช้ verb phrase และอย่าลืม temporal event (การแจ้งเตือน 08:00 น.)</p>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">22) (สร้าง BPMN Model) อ่านกระบวนการ: "เมื่อได้รับใบสมัครงาน ฝ่าย HR จะตรวจคุณวุฒิของผู้สมัคร หากคุณวุฒิไม่ผ่านเกณฑ์ จะส่งอีเมลปฏิเสธและจบกระบวนการ หากผ่าน ระบบจะนัดสัมภาษณ์พร้อมกันทั้งสองรอบ คือสัมภาษณ์ฝ่ายบุคคลและสัมภาษณ์หัวหน้าแผนก (เรียงลำดับใดก็ได้) เมื่อสอบสัมภาษณ์ครบแล้ว HR จะสรุปผลและบันทึกลงระบบ" จง (1) เขียนลำดับองค์ประกอบของ BPMN model (start event, activities, gateways, end events) พร้อมชื่อที่ตั้งถูกหลัก และ (2) ระบุว่าใช้ gateway ประเภทใด กี่ตัว และเพราะเหตุใด</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p><strong>(1) องค์ประกอบเรียงลำดับ:</strong></p>
+            <ol>
+              <li>Start event: Application received (Noun + V3)</li>
+              <li>Task: Check applicant qualification (Verb + Noun)</li>
+              <li>XOR-split (เงื่อนไขบนเส้น: "Qualification not met" / "Qualification met")</li>
+              <li>เส้นไม่ผ่าน → Task: Send rejection email → End event: Application rejected</li>
+              <li>เส้นผ่าน → AND-split → Task: Schedule HR interview ขนานกับ Task: Schedule manager interview → AND-join</li>
+              <li>Task: Summarize results → Task: Record result in system → End event: Application processed</li>
+            </ol>
+            <p><strong>(2) Gateway:</strong> XOR 1 คู่ (การตัดสินใจเลือกเส้นทางเดียว: ผ่าน/ไม่ผ่าน) และ AND 1 คู่ (การนัดสัมภาษณ์ 2 รอบทำขนานกันได้เพราะ "เรียงลำดับใดก็ได้") รวม 2 ประเภท 4 ตัว จับคู่ split-join ตามหลัก model in blocks</p>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">23) (VA/BVA/NVA + Waste) กระบวนการอนุมัติวัสดุของโรงเรียน: (1) ครูผู้ขอกรอกใบขอซื้อ (2) ส่งใบขอซื้อถึงพนักงานธุรการ (3) พนักงานธุรการเปิดอ่านและคัดลอกข้อมูล (4) ตรวจสอบงบประมาณ (5) รอผู้อำนวยการลงนาม (งานกองไว้เฉลี่ย 5 วัน) (6) ส่งใบสั่งซื้อถึงร้านค้า จง: (1) จำแนกแต่ละขั้นเป็น VA / BVA / NVA พร้อมเหตุผลสั้น ๆ และ (2) ระบุ waste ที่พบอย่างน้อย 2 ประเภทจาก 7 wastes พร้อมขั้นตอนที่เกี่ยวข้อง</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <table>
+              <tr><th>ขั้นตอน</th><th>ประเภท</th><th>เหตุผล</th></tr>
+              <tr><td>(1) กรอกใบขอซื้อ</td><td><strong>VA</strong></td><td>จุดเริ่มของความต้องการที่ผู้ขอ (customer ของ process) ต้องการผลลัพธ์จริง</td></tr>
+              <tr><td>(2) ส่งใบขอซื้อถึงธุรการ</td><td><strong>NVA</strong></td><td>เป็น handover/transportation ล้วน ๆ</td></tr>
+              <tr><td>(3) เปิดอ่านและคัดลอกข้อมูล</td><td><strong>NVA</strong></td><td>งานเตรียม/คัดลอกซ้ำ ลูกค้าไม่ยอมจ่าย</td></tr>
+              <tr><td>(4) ตรวจสอบงบประมาณ</td><td><strong>BVA</strong></td><td>จำเป็นเพื่อความถูกต้องทางการเงิน/การควบคุม แม้ลูกค้าไม่จ่ายตรง ๆ</td></tr>
+              <tr><td>(5) รอผอ.ลงนาม 5 วัน</td><td><strong>NVA</strong> (ตัวการรอ = Waiting, การลงนามเอง = BVA)</td><td>การรอไม่สร้างค่า</td></tr>
+              <tr><td>(6) ส่งใบสั่งซื้อถึงร้านค้า</td><td><strong>VA</strong></td><td>นำไปสู่ของที่โรงเรียนต้องการใช้จริง</td></tr>
+            </table>
+            <p><strong>Waste ที่พบ:</strong> Transportation (ขั้น 2 และ 6: การส่งเอกสารข้ามหน่วยงาน), Waiting (ขั้น 5: รอลงนาม 5 วัน), Over-processing (ขั้น 3: คัดลอกข้อมูลซ้ำซ้อน) ตอบ 2 อย่างขึ้นไปพร้อมขั้นตอนที่อ้างถึง</p>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">24) (Issue Register) บริษัทเช่าเครื่องมือก่อสร้างพบว่า: ช่างหน้างานต่ออายุการเช่าเครื่องมือนานเกินจำเป็น ในปีหนึ่งเช่าทั้งหมด 5,000 ชิ้น จากนั้น 8% ของกรณีถูกต่อเกินจำเป็น 3 วัน ค่าเช่าเฉลี่ยวันละ 200 บาท และทำให้ตารางงานรวนและพนักงานเครียด จงเขียนรายการใน Issue Register สำหรับปัญหานี้ ครบทั้ง: ชื่อ issue (short name), description, assumptions, qualitative impact และ quantitative impact พร้อมแสดงวิธีคำนวณ</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <ul>
+              <li><strong>Short name:</strong> Equipment kept longer than needed (เครื่องมือถูกต่ออายุเกินจำเป็น)</li>
+              <li><strong>Description:</strong> ช่างหน้างานขอต่ออายุการเช่าเครื่องมือนานกว่าที่ต้องใช้จริง ทำให้บริษัทจ่ายค่าเช่าส่วนเกินและปิดงานช้า</li>
+              <li><strong>Assumptions:</strong> เช่า 5,000 ชิ้น/ปี, 8% ของเคสถูกต่อเกินจำเป็น 3 วัน, ค่าเช่าเฉลี่ย 200 บาท/วัน</li>
+              <li><strong>Qualitative impact:</strong> ตารางงานรวน (disrupted schedules), ความเครียด/ความไม่พอใจของพนักงาน, คลังวางแผนเครื่องมือผิด</li>
+              <li><strong>Quantitative impact:</strong> 0.08 × 5,000 × 3 × 200 = <strong>240,000 บาทต่อปี</strong> (สัดส่วน × จำนวนเคส × จำนวนวันเกิน × ค่าใช้จ่ายต่อวัน)</li>
+            </ul>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">25) (Business Rule แบบ ECA + User Story) (1) นโยบายคลังสินค้าระบุว่า: "เมื่อสต็อกสินค้าใกล้หมด เหลือน้อยกว่า 10 ชิ้น ระบบต้องแจ้งเตือนฝ่ายจัดซื้อให้ออกใบสั่งซื้อ" จงเขียนเป็น Business Rule รูปแบบ ECA ระบุ Event, Condition, Action ชัดเจน (2) ลูกค้า B2B ต้องการดูประวัติการสั่งซื้อย้อนหลังได้เพื่อวางแผนจัดซื้อรอบถัดไป จงเขียนเป็น User Story ตาม template "As a ..., I want ..., so that ..." พร้อมระบุ acceptance criteria อย่างน้อย 2 ข้อ</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p><strong>(1) ECA Rule:</strong></p>
+            <ul>
+              <li>Event: สต็อกสินค้าเปลี่ยนแปลง (stock updated)</li>
+              <li>Condition: จำนวนสต็อกคงเหลือ &lt; 10 ชิ้น</li>
+              <li>Action: ระบบส่งการแจ้งเตือนถึงฝ่ายจัดซื้อให้ออกใบสั่งซื้อ (purchase order)</li>
+            </ul>
+            <p>รูปประโยค: "On stock update, if stock level &lt; 10 units, do notify the purchasing department to create a purchase order."</p>
+            <p><strong>(2) User Story:</strong> "As a B2B customer, I want to view my complete order history, so that I can plan my next purchasing cycle accurately."</p>
+            <p>Acceptance criteria (ตัวอย่าง): ลูกค้าเห็นรายการสั่งซื้อย้อนหลังครบทุกสถานะ พร้อมวันที่ จำนวน และยอดเงิน / ค้นหาและกรองตามช่วงวันที่ได้ และผลลัพธ์แสดงภายใน 2 วินาที / ลูกค้าเห็นเฉพาะคำสั่งซื้อของบัญชีตนเองเท่านั้น (ทั้งหมดควรเป็น Independent, Negotiable, Valuable, Estimable, Small, Testable ตาม INVEST)</p>
+          </div></details>
+        </div>
+
+        <button class="quiz-reset">ลองทำใหม่ทั้งชุด</button>
+      </section>
+    </article>
+  </main>
+</div>
+<script src="assets/site.js"></script>
+</body>
+</html>

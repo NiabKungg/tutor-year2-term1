@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>พีชคณิตเชิงเส้น (05506250) | ติวสอบ ปี 2 เทอม 1</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-subject="linear">
+<header class="topbar">
+  <a class="brand" href="index.html">ติวสอบ <span>ปี 2 เทอม 1</span></a>
+  <nav class="subject-nav">
+    <a href="dsa.html">DSA</a>
+    <a href="os.html">OS</a>
+    <a href="os-2.html">OS (ต่อ)</a>
+    <a href="os-quiz.html">OS ควิซ</a>
+    <a href="oslab.html">OS Lab</a>
+    <a href="bpm.html">BA/BPM</a>
+    <a href="linear.html" class="active">พีชคณิตเชิงเส้น</a>
+    <a href="seminar.html">Seminar</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="toc">
+    <div class="toc-title">สารบัญหน้านี้</div>
+    <a href="#sec1">1. ระบบเชิงเส้นและเมทริกซ์</a>
+    <a href="#sec2">2. การแยกตัวประกอบและการแปลงเชิงเส้น</a>
+    <a href="#sec3">3. Eigenvalue และ Diagonalization</a>
+    <a href="#sec4">4. Orthogonality</a>
+    <a href="#sec5">5. ปริภูมิเวกเตอร์นามธรรม</a>
+    <a href="#sec6">สูตรที่ต้องจำก่อนสอบ</a>
+    <a href="#quiz">แบบทดสอบ 25 ข้อ</a>
+  </aside>
+  <main>
+    <article>
+      <h1>Linear Algebra for Computer Science (05506250)</h1>
+      <p class="page-sub">สรุปเนื้อหา 5 บทจากตำราพีชคณิตเชิงเส้นและสไลด์ Matrices พร้อมตัวอย่างคำนวณทีละขั้น สูตรรวม 40 สูตร และแบบทดสอบ 25 ข้อพร้อมเฉลยละเอียด</p>
+
+      <section id="sec1" class="card">
+        <h2>1. ระบบเชิงเส้นและเมทริกซ์</h2>
+
+        <h3>1.1 เมทริกซ์และระบบเชิงเส้น</h3>
+        <div class="keypoints"><div class="kp-title">นิยามสำคัญ</div>
+          <ul>
+            <li><strong>m × n matrix</strong>: ตารางจำนวนจริง m แถว n หลัก, สมาชิกตำแหน่งแถวที่ i หลักที่ j เขียน <code>a_ij</code> (แถวก่อนหลักเสมอ)</li>
+            <li>สมาชิกทแยงมุม (diagonal entry) คือ a11, a22, ... บนเส้นทแยงมุมหลัก (main diagonal)</li>
+            <li><strong>เมทริกซ์จัตุรัส (square matrix)</strong>: m = n / เวกเตอร์แถว 1×n, เวกเตอร์หลัก m×1 / <strong>zero matrix</strong>: ทุกสมาชิกเป็น 0</li>
+            <li><strong>สมการเชิงเส้น</strong>: รูป <code>a1x1 + a2x2 + ... + anxn = b</code> ไม่มีกำลัง ไม่มีผลคูณระหว่างตัวแปร เช่น <code>4x1 - 5x2 + 5 = x3</code> เป็นสมการเชิงเส้น แต่ <code>4x1x2 = x3 - 2</code> และ <code>x1 = √x2 + 3</code> ไม่ใช่</li>
+            <li><strong>ผลเฉลย (solution)</strong> คือชุดจำนวนจริงที่ทำทุกสมการเป็นจริง, สองระบบ<strong>สมมูลกัน (equivalent)</strong> ถ้ามีเซตผลเฉลยเดียวกัน</li>
+            <li><strong>coefficient matrix</strong> = ตัวเลข a_ij เท่านั้น / <strong>augmented matrix</strong> <code>[A | b]</code> = เอาหลักค่าคงตัวต่อท้าย</li>
+          </ul>
+        </div>
+
+        <p>ผลลัพธ์ของระบบเชิงเส้นมีได้แค่ 3 แบบ:</p>
+        <ol>
+          <li>ไม่มีผลเฉลย, ระบบเป็น <strong>inconsistent (ไม่ต้องกัน)</strong></li>
+          <li>มีผลเฉลยชุดเดียว</li>
+          <li>มีผลเฉลยอนันต์ชุด (แบบ 2, 3 เรียกรวมว่า <strong>consistent (ต้องกัน)</strong>)</li>
+        </ol>
+
+        <h4>การดำเนินการแถวขั้นมูลฐาน (elementary row operations)</h4>
+        <table>
+          <tr><th>ชนิด</th><th>สัญลักษณ์</th><th>ความหมาย</th></tr>
+          <tr><td>สับเปลี่ยน (interchange)</td><td><code>R_pq</code></td><td>สลับแถว p กับแถว q</td></tr>
+          <tr><td>แทนที่ (replacement)</td><td><code>R_p + cR_q</code></td><td>เปลี่ยนแถว p เป็น (แถว p) + c×(แถว q), โดย q ≠ p</td></tr>
+          <tr><td>ปรับมาตรา (scaling)</td><td><code>cR_p</code></td><td>คูณแถว p ด้วย c โดย c ≠ 0</td></tr>
+        </table>
+        <p>เมทริกซ์ B ที่ได้จาก A โดยการดำเนินการแถว เรียกว่า <strong>สมมูลแถว (row equivalent)</strong> เขียน A ∼ B ระบบที่เมทริกซ์แต่งเติมสมมูลกันมีเซตผลเฉลยเดียวกัน การบวก/คูณสเกลาร์ของเมทริกซ์ทำได้เฉพาะมิติเดียวกัน โดย <code>c_ij = a_ij + b_ij</code> และมีสมบัติ <code>c(A+B) = cA + cB</code>, <code>1A = A</code>, <code>A + (-A) = 0</code></p>
+
+        <div class="example"><div class="ex-title">ตัวอย่าง: แก้ระบบด้วยการดำเนินการแถว</div>
+          <p>ระบบ <code>x1 + x2 - x3 = 1</code>, <code>2x1 + x2 - 3x3 = 2</code>, <code>x2 - 5x3 = 6</code></p>
+          <ol>
+            <li>เขียนเมทริกซ์แต่งเติม แล้วลดรูปทีละขั้น</li>
+          </ol>
+<pre><code>[[1,  1, -1,  1],
+ [2,  1, -3,  2],
+ [0,  1, -5,  6]]        (เมทริกซ์แต่งเติม [A | b])
+
+~ [[1,  1, -1,  1],
+   [0, -1, -1,  0],      R2 - 2R1
+   [0,  1, -5,  6]]
+
+~ [[1,  1, -1,  1],
+   [0,  1,  1,  0],      คูณแถว 2 ด้วย -1
+   [0,  1, -5,  6]]
+
+~ [[1,  1, -1,  1],
+   [0,  1,  1,  0],      R3 - R2
+   [0,  0, -6,  6]]
+
+~ [[1,  1, -1,  1],
+   [0,  1,  1,  0],      R3 / (-6)
+   [0,  0,  1, -1]]
+
+~ [[1,  1,  0,  0],
+   [0,  1,  0,  1],      R1 + R3 และ R2 - R3
+   [0,  0,  1, -1]]
+
+~ [[1,  0,  0, -1],
+   [0,  1,  0,  1],      R1 - R2  (รูปขั้นบันไดลดรูป)
+   [0,  0,  1, -1]]</code></pre>
+          <ol start="2">
+            <li>อ่านค่าจากรูปขั้นบันไดลดรูป: x1 = -1, x2 = 1, x3 = -1</li>
+            <li>เซตผลเฉลย = {(-1, 1, -1)} (ตรวจ: (-1) + (1) - (-1) = 1 ถูกต้อง)</li>
+          </ol>
+        </div>
+
+        <h4>ชนิดของเมทริกซ์ (จากสไลด์ Matrices)</h4>
+        <table>
+          <tr><th>ชนิด</th><th>นิยาม</th></tr>
+          <tr><td>Column matrix/vector</td><td>จำนวนหลัก = 1</td></tr>
+          <tr><td>Row matrix/vector</td><td>จำนวนแถว = 1</td></tr>
+          <tr><td>Rectangular matrix</td><td>m ≠ n</td></tr>
+          <tr><td>Square matrix</td><td>m = n (บอก order m)</td></tr>
+          <tr><td>Diagonal matrix</td><td>จัตุรัส นอกทแยงมุมหลักเป็น 0</td></tr>
+          <tr><td>Unit/Identity matrix I</td><td>ทแยงมุมหลักเป็น 1 ทั้งหมด</td></tr>
+          <tr><td>Null (zero) matrix</td><td>ทุกสมาชิกเป็น 0</td></tr>
+          <tr><td>Upper triangular</td><td>ใต้ทแยงมุมหลักเป็น 0 (a_ij = 0 เมื่อ i &gt; j)</td></tr>
+          <tr><td>Lower triangular</td><td>เหนือทแยงมุมหลักเป็น 0 (a_ij = 0 เมื่อ i &lt; j)</td></tr>
+          <tr><td>Scalar matrix</td><td>diagonal matrix ที่ทแยงมุมหลักเท่ากันหมด</td></tr>
+          <tr><td>Symmetric matrix</td><td>A<sup>T</sup> = A</td></tr>
+        </table>
+
+        <h3>1.2 เมทริกซ์ขั้นบันไดและตำแหน่งตัวหลัก (Echelon Form และ Pivot)</h3>
+        <p><strong>echelon form</strong> ต้องมีเงื่อนไข 3 ข้อ:</p>
+        <ol>
+          <li>แถวที่มีแต่ 0 ล้วนต้องอยู่ต่ำกว่าแถวที่มีตัวไม่ใช่ 0</li>
+          <li>ตัวแรกที่ไม่ใช่ 0 ของแต่ละแถว เรียก <strong>สมาชิกนำ (leading entry)</strong> สมาชิกนำของแถวที่ต่ำกว่าต้องอยู่หลักทางขวาของสมาชิกนำแถวบน</li>
+          <li>ถ้าสมาชิกนำอยู่หลักใด สมาชิกแถวล่างกว่าในหลักนั้นต้องเป็น 0</li>
+        </ol>
+        <p><strong>reduced echelon form</strong> เพิ่มอีก 2 เงื่อนไข:</p>
+        <ol start="4">
+          <li>สมาชิกนำทุกตัวต้องเป็น 1 (เรียก 1 ตัวนำ หรือ leading 1)</li>
+          <li>ในหลักที่มี 1 ตัวนำ สมาชิกอื่นในหลักนั้นต้องเป็น 0</li>
+        </ol>
+        <div class="keypoints"><div class="kp-title">ประเด็นสำคัญ</div>
+          <ul>
+            <li>ทฤษฎี: ทุกเมทริกซ์ลดรูปเป็นขั้นบันไดได้ และลดรูปเป็น<strong>ขั้นบันไดลดรูปได้แบบเดียวเท่านั้น</strong></li>
+            <li><strong>pivot position / pivot column</strong>: ตำแหน่ง/หลักที่มีสมาชิกนำในรูปขั้นบันได</li>
+            <li><strong>basic variable</strong>: ตัวแปรที่สมนัยกับหลักตัวหลัก / <strong>free variable</strong>: ตัวแปรที่เหลือ</li>
+            <li><strong>general solution</strong>: เขียนตัวแปรพื้นฐานในรูปของค่าคงตัวและตัวแปรเสรี</li>
+          </ul>
+        </div>
+        <div class="exam-box"><div class="kp-title">มักออกสอบ: ทฤษฎีบทตัดสินจำนวนผลเฉลย</div>
+          <ul>
+            <li><strong>Existence Theorem</strong>: ระบบมีผลเฉลย ก็ต่อเมื่อ หลักขวาสุดของเมทริกซ์แต่งเติมไม่ใช่หลักตัวหลัก คือรูปขั้นบันไดไม่มีแถวรูป <code>[0 0 ... 0 | b]</code> เมื่อ b ≠ 0</li>
+            <li><strong>Uniqueness Theorem</strong>: ถ้ามีผลเฉลย, มีชุดเดียว ⟺ ไม่มีตัวแปรเสรี (ทุกหลักยกเว้นหลักขวาสุดเป็นหลักตัวหลัก) / มีอนันต์ชุด ⟺ มีตัวแปรเสรีอย่างน้อย 1 ตัว</li>
+          </ul>
+        </div>
+        <p><strong>วิธีแก้ระบบเชิงเส้นทีละขั้น:</strong></p>
+        <ol>
+          <li>เขียนเมทริกซ์แต่งเติม <code>[A | b]</code></li>
+          <li>ลดรูปจนได้รูปขั้นบันได แล้วใช้ Existence Theorem ตรวจว่ามีผลเฉลยหรือไม่</li>
+          <li>ถ้ามีผลเฉลย ลดรูปต่อจนได้รูปขั้นบันไดลดรูป แล้วระบุตัวแปรพื้นฐาน/ตัวแปรเสรี</li>
+          <li>เขียนผลเฉลยทั่วไป (parametric vector form)</li>
+        </ol>
+
+        <h3>1.3 การรวมเชิงเส้น, Span และสมการเมทริกซ์</h3>
+        <ul>
+          <li><strong>R^m</strong> = เซตของเวกเตอร์หลักมิติ m ทั้งหมด, เวกเตอร์ศูนย์เขียน <code>0</code></li>
+          <li><strong>linear combination</strong>: <code>y = c1v1 + c2v2 + ... + cpvp</code> โดย c_i เรียก น้ำหนัก (weight)</li>
+          <li><strong>Span{v1, ..., vp}</strong> = เซตของการรวมเชิงเส้นทั้งหมด <code>{c1v1 + ... + cpvp : ci ∈ R}</code>, ถ้า Span = R^m เรียกว่าเวกเตอร์แผ่ทั่ว R^m</li>
+          <li>ภาพเรขาคณิต: Span{v} = เส้นตรงผ่านจุดกำเนิด, Span{v1, v2} ที่ไม่เป็นพหุคูณกัน = ระนาบผ่านจุดกำเนิดใน R^3</li>
+          <li>สมการเวกเตอร์ <code>x1v1 + x2v2 + ... + xpvp = b</code> มีผลเฉลยเดียวกับระบบที่มีเมทริกซ์แต่งเติม <code>[v1 v2 ... vp | b]</code></li>
+          <li><code>Ax = x1v1 + x2v2 + ... + xnvn</code> คือการรวมเชิงเส้นของหลักของ A ด้วยน้ำหนักสมาชิกของ x</li>
+          <li><strong>เมทริกซ์เอกลักษณ์ I_n</strong>: เมทริกซ์ทแยงมุมมี 1 บนทแยงมุมหลัก มีสมบัติ <code>In·x = x</code></li>
+        </ul>
+        <div class="keypoints"><div class="kp-title">บทแทรกและทฤษฎีบทที่ใช้บ่อย</div>
+          <ul>
+            <li><code>Ax = b</code> มีผลเฉลย ⟺ b เป็นการรวมเชิงเส้นของหลักของ A ⟺ <code>[A | b]</code> ต้องกัน</li>
+            <li><strong>ทฤษฎีบท 1.3.4</strong> (สมมูลกัน 3 ข้อ): สำหรับทุก b ∈ R^m สมการ <code>Ax = b</code> มีผลเฉลย ⟺ หลักของ A แผ่ทั่ว R^m ⟺ A มีตำแหน่งตัวหลักในทุกแถว</li>
+          </ul>
+        </div>
+        <h4>การคูณเมทริกซ์และ transpose</h4>
+        <ul>
+          <li>AB มีความหมายเมื่อ <strong>จำนวนหลักของ A = จำนวนแถวของ B</strong> (conformable)</li>
+          <li>วิธีคิดทีละชิ้น: <code>(AB)_ik = ai1b1k + ai2b2k + ... + ainbnk</code> คือ แถวของ A คูณหลักของ B (row by column)</li>
+          <li>สมบัติ: <code>A(BC) = (AB)C</code>, <code>A(B+C) = AB + AC</code>, <code>(B+C)A = BA + CA</code>, <code>Im·A = A = A·In</code></li>
+          <li><strong>transpose</strong> A<sup>T</sup> คือสลับแถวกับหลัก มิติกลับด้าน: <code>(A^T)^T = A</code>, <code>(A+B)^T = A^T + B^T</code>, <code>(rA)^T = rA^T</code>, <strong><code>(AB)^T = B^T A^T</code></strong> (ผลคูณกลับอันดับ)</li>
+          <li><strong>symmetric matrix</strong>: เมทริกซ์จัตุรัสที่ <code>A^T = A</code> (I, diagonal matrix, scalar matrix เป็นสมมาตรเสมอ)</li>
+        </ul>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย (การคูณเมทริกซ์)</div>
+          <ul>
+            <li><strong>AB ≠ BA โดยทั่วไป</strong> (BA อาจคูณกันไม่ได้ด้วยซ้ำ) เช่น T·S ≠ S·T</li>
+            <li>ถ้า <strong>AB = 0 สรุปไม่ได้ว่า A = 0 หรือ B = 0</strong>, ถ้า <strong>AB = AC ตัด A ออกไม่ได้</strong> (สรุป B = C ไม่ได้)</li>
+            <li>ตัวอย่าง: <code>[[1,1],[0,0]] · [[2,3],[-2,-3]] = [[0,0],[0,0]]</code> ทั้งที่ไม่มีเมทริกซ์ตัวใดเป็นศูนย์</li>
+          </ul>
+        </div>
+
+        <h3>1.4 ระบบเอกพันธุ์และอิสระเชิงเส้น</h3>
+        <ul>
+          <li><strong>ระบบเอกพันธุ์ (homogeneous)</strong>: <code>Ax = 0</code> มีผลเฉลยชัด (trivial solution) = <code>0</code> เสมอ</li>
+          <li><strong>ผลเฉลยไม่ชัด (nontrivial solution)</strong> เกิดเมื่อมีตัวแปรเสรี คือ A มีหลักที่ไม่เป็นหลักตัวหลัก</li>
+          <li>เขียนผลเฉลยทั้งหมดเป็น parametric vector form เช่น <code>x = t·(5,1,1)</code> เมื่อ t ∈ R</li>
+          <li><strong>ระบบไม่เอกพันธุ์</strong> <code>Ax = b</code>: ผลเฉลยทั่วไป = <strong>ผลเฉลยเฉพาะ p</strong> + ผลเฉลยทั่วไปของระบบเอกพันธุ์ vh นั่นคือ <code>x = p + vh</code></li>
+          <li>เรขาคณิต: เซตผลเฉลยของระบบไม่เอกพันธุ์ = เส้น/ระนาบขนานกับของระบบเอกพันธุ์ (ของเอกพันธุ์ผ่านจุดกำเนิด)</li>
+        </ul>
+        <p><strong>อิสระเชิงเส้น (linear independence):</strong> เซต <code>{v1, ..., vp}</code> อิสระเชิงเส้น ⟺ สมการเอกพันธุ์ <code>x1v1 + ... + xpvp = 0</code> มีเพียงผลเฉลยชัด ถ้าไม่อิสระ จะมี c_i ไม่ใช่ศูนย์พร้อมกันทำให้การรวมเชิงเส้นเป็นศูนย์ ก็คือมีเวกเตอร์หนึ่งเป็นการรวมเชิงเส้นของตัวอื่น วิธีเช็ก: สร้าง A = [v1 ... vp] แล้วลดรูป, อิสระ ⟺ ทุกหลักเป็นหลักตัวหลัก</p>
+        <div class="exam-box"><div class="kp-title">มักออกสอบ: ข้อสังเกตสำเร็จรูปเรื่องอิสระเชิงเส้น</div>
+          <ol>
+            <li>เซตที่มีเวกเตอร์ศูนย์ → ไม่อิสระเชิงเส้น</li>
+            <li><code>{v}</code> อิสระ ⟺ v ≠ 0</li>
+            <li><code>{v1, v2}</code> ไม่อิสระ ⟺ v1 = c·v2 (เป็นพหุคูณสเกลาร์กัน)</li>
+            <li>มี p เวกเตอร์ใน R^m โดย <strong>p &gt; m</strong> → ไม่อิสระเชิงเส้น (หลักมากกว่าแถว ทุกหลักเป็นหลักตัวหลักไม่ได้)</li>
+          </ol>
+        </div>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย (บทที่ 1)</div>
+          <ul>
+            <li>คิดว่ารูปขั้นบันไดของเมทริกซ์แบบเดียว: จริง ๆ รูป<strong>ขั้นบันได</strong>มีได้หลายแบบ มีเพียงรูป<strong>ขั้นบันไดลดรูป</strong>ที่แบบเดียว</li>
+            <li>เงื่อนไข 1 ตัวนำและศูนย์เหนือ-ใต้ ใช้กับ<strong>ขั้นบันไดลดรูป</strong>เท่านั้น รูปขั้นบันไดธรรมดาไม่ต้องมีสมาชิกนำเป็น 1</li>
+            <li>ลืมดำเนินการแถวกับหลักขวาสุดของเมทริกซ์แต่งเติมด้วย</li>
+            <li>เมื่อได้แถว <code>[0 0 0 | b]</code> โดย b ≠ 0 ต้องสรุปว่า "ไม่มีผลเฉลย" ไม่ใช่ "มีตัวแปรเสรี"</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec2" class="card">
+        <h2>2. การแยกตัวประกอบและการแปลงเชิงเส้น</h2>
+
+        <h3>2.1 การแปลงเชิงเส้นและเมทริกซ์มาตรฐาน</h3>
+        <ul>
+          <li><strong>matrix transformation</strong>: <code>T(x) = Ax</code> โดย A เป็น m×n, T: R^n → R^m</li>
+          <li><strong>linear transformation</strong>: <code>T(u + v) = T(u) + T(v)</code> และ <code>T(cu) = cT(u)</code> (รวมเขียนได้ <code>T(cu + dv) = cT(u) + dT(v)</code>)</li>
+          <li>ผลตามทันที: <code>T(0) = 0</code> และ <code>T(-v) = -T(v)</code>, เป็นวิธีเช็กเร็วว่า T ไม่ใช่การแปลงเชิงเส้น</li>
+          <li>ทุกการแปลงเมทริกซ์เป็นการแปลงเชิงเส้น และทุกการแปลงเชิงเส้นเป็นการแปลงเมทริกซ์</li>
+          <li>ตัวอย่างไม่เป็นการแปลงเชิงเส้น: <code>T(x) = sin x</code>, <code>T(x) = |x| + |y|</code>, <code>T(x1,x2) = (x1+x2, x2+4)</code> (เพราะ T(0) ≠ 0)</li>
+        </ul>
+        <p><strong>เมทริกซ์มาตรฐาน (standard matrix)</strong> ของ T:</p>
+<pre><code>A = [ T(e1)  T(e2)  ...  T(en) ]     (หลักที่ j = T(ej) เมื่อ ej มาจากหลัก j ของ In)</code></pre>
+        <p>เพราะ <code>x = x1e1 + x2e2 + ...</code> ดังนั้น <code>T(x) = x1T(e1) + x2T(e2) + ... = Ax</code> ถ้าโจทย์ให้ T(e1), T(e2), ... มาต่อเรียงหลักจะได้ A ทันที</p>
+        <div class="keypoints"><div class="kp-title">สมบัติทั่วถึง (onto) และหนึ่งต่อหนึ่ง (one-to-one)</div>
+          <ul>
+            <li><strong>T ทั่วถึง R^m</strong> ⟺ หลักของ A แผ่ทั่ว R^m ⟺ A มี pivot ใน<strong>ทุกแถว</strong></li>
+            <li><strong>T มีสมบัติ 1-1</strong> ⟺ <code>T(x) = 0</code> มีเพียงผลเฉลยชัด ⟺ หลักของ A อิสระเชิงเส้น ⟺ A มี pivot ใน<strong>ทุกหลัก</strong></li>
+            <li>ผลตามทันที: ไม่มีการแปลงเชิงเส้น R^3 → R^5 ที่ทั่วถึงได้ (pivot มีได้ไม่เกิน 3 แต่มี 5 แถว)</li>
+          </ul>
+        </div>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย (2.1)</div>
+          <ul>
+            <li>สลับเงื่อนไข "pivot ทุกแถว" (ทั่วถึง) กับ "pivot ทุกหลัก" (1-1)</li>
+            <li>วิธีจำ: 1-1 ต้อง "ยิงคนละเป้าหมาย" → ดูหลัก (จำนวนเวกเตอร์/ตัวแปร), ทั่วถึงต้อง "ครอบคลุมทุกแถว" → ดูแถว</li>
+          </ul>
+        </div>
+
+        <h3>2.2 ปริภูมิย่อย, Col A, Nul A, ฐานหลัก และ Rank</h3>
+        <p><strong>ปริภูมิย่อย (subspace)</strong> H ของ R^m ต้องมี 3 สมบัติ: (1) <code>0 ∈ H</code> (2) ปิดบวก: u, v ∈ H ⇒ u+v ∈ H (3) ปิดคูณสเกลาร์: u ∈ H ⇒ cu ∈ H โดย <code>Span{v1, ..., vp}</code> เป็นปริภูมิย่อยเสมอ</p>
+        <ul>
+          <li><strong>Col A (column space)</strong> = Span ของหลักของ A = <code>{Ax : x ∈ R^n}</code> เป็นเรนจ์ของการแปลง <code>x → Ax</code></li>
+          <li><strong>Nul A (null space)</strong> = เซตผลเฉลยของ <code>Ax = 0</code> เป็นปริภูมิย่อยของ <strong>R^n</strong></li>
+          <li><code>b ∈ Col A</code> ⟺ ระบบ <code>Ax = b</code> มีผลเฉลย</li>
+          <li><strong>ฐานหลัก (basis)</strong> ของ H = เซตที่ (1) อิสระเชิงเส้น และ (2) แผ่ทั่ว H, ฐานหลักมาตรฐานของ R^m = {e1, ..., em}</li>
+          <li><strong>ฐานหลักของ Col A</strong> = เซตของหลักตัวหลักของ <strong>A ต้นฉบับ</strong> (ไม่ใช่หลักของรูปลดรูป)</li>
+          <li><strong>ฐานหลักของ Nul A</strong> = เวกเตอร์ที่ได้จากตัวแปรเสรีหลังลดรูปเป็นขั้นบันไดลดรูป</li>
+        </ul>
+        <div class="keypoints"><div class="kp-title">Rank และ Nullity</div>
+          <ul>
+            <li><code>rank A = dim Col A</code> = จำนวนหลักตัวหลัก</li>
+            <li><code>nullity A = dim Nul A</code> = จำนวนตัวแปรเสรี = จำนวนหลักที่ไม่ใช่หลักตัวหลัก</li>
+            <li><strong>Rank Theorem</strong>: <code>rank A + nullity A = n</code> (จำนวนหลัก) เช่น A ขนาด 10×12 ที่ nullity = 7 ⇒ rank = 12 - 7 = 5</li>
+          </ul>
+        </div>
+        <p><strong>วิธีหาฐานหลัก Col A, Nul A, rank, nullity ทีละขั้น:</strong></p>
+        <ol>
+          <li>ลดรูป A จนได้รูปขั้นบันได แล้วดูว่าหลักใดเป็นหลักตัวหลัก</li>
+          <li><strong>Col A</strong>: หยิบหลักจาก <strong>A เดิม</strong>ที่ตำแหน่งเดียวกับหลักตัวหลักมาเป็นฐานหลัก, <code>rank A</code> = จำนวนหลักตัวหลัก</li>
+          <li><strong>Nul A</strong>: ลดรูปต่อจนขั้นบันไดลดรูป แก้ <code>Ax = 0</code> เขียนตัวแปรพื้นฐานในรูปตัวแปรเสรี รวมเป็นเวกเตอร์อิงตัวแปรเสรี, <code>nullity A</code> = จำนวนเวกเตอร์ในฐานหลัก</li>
+          <li>ตรวจ: rank + nullity = จำนวนหลัก</li>
+        </ol>
+        <p>ตัวอย่างคำนวณเต็มขั้นตอนดูที่ <a href="#q20">ข้อ 20 ของแบบทดสอบ</a></p>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย (2.2)</div>
+          <ul>
+            <li>เอาหลักของรูปลดรูปมาเป็นฐานหลัก Col A: ผิด! ต้องใช้หลักของ<strong>เมทริกซ์ต้นฉบับ</strong></li>
+            <li>จำ Rank Theorem เป็น "rank + nullity = จำนวนแถว": ผิด! ต้องเป็นจำนวน<strong>หลัก</strong></li>
+            <li>ลืมว่า Nul A เป็นปริภูมิย่อยของ <strong>R^n</strong> (มิติเท่าจำนวนหลัก) ไม่ใช่ R^m</li>
+          </ul>
+        </div>
+
+        <h3>2.3 เมทริกซ์ผกผัน (Inverse Matrix)</h3>
+        <p>A ขนาด n มี <strong>inverse</strong> C เมื่อ <code>AC = In = CA</code> เขียน C = A<sup>-1</sup> (มีได้ตัวเดียว) มี inverse เรียก <strong>nonsingular (ไม่เอกฐาน)</strong> ไม่มีเรียก <strong>singular (เอกฐาน)</strong></p>
+        <p><strong>สูตร 2×2 (จำทันที):</strong></p>
+<pre><code>A = [[a, b], [c, d]]   จะได้   A^-1 = (1/(ad - bc)) · [[ d, -b ], [ -c, a ]]   เมื่อ ad - bc ≠ 0</code></pre>
+        <p>เทคนิค: สลับสมาชิกบนเส้นทแยงมุมหลัก, เปลี่ยนเครื่องหมายสมาชิกนอกเส้นทแยงมุม, หารด้วย determinant</p>
+        <div class="example"><div class="ex-title">ตัวอย่าง: หา inverse ของเมทริกซ์ 2×2 และใช้แก้ระบบ</div>
+          <ol>
+            <li>ให้ <code>A = [[2, 5], [-3, -7]]</code>, คำนวณ det = 2(-7) - 5(-3) = -14 + 15 = 1 ≠ 0 จึงมี inverse</li>
+            <li>สลับทแยงหลัก เปลี่ยนเครื่องหมายนอกทแยง หารด้วย 1: <code>A^-1 = [[-7, -5], [3, 2]]</code></li>
+            <li>ใช้แก้ระบบ <code>2x1 + 5x2 = -1</code>, <code>-3x1 - 7x2 = 1</code> ซึ่งเป็น <code>Ax = b</code> เมื่อ b = (-1, 1)</li>
+            <li><code>x = A^-1 b = [[-7, -5], [3, 2]] · [[-1], [1]] = [[7 - 5], [-3 + 2]] = [[2], [-1]]</code></li>
+            <li>ได้ x1 = 2, x2 = -1 (ตรวจ: 2(2) + 5(-1) = -1 และ -3(2) - 7(-1) = 1 ถูกต้อง)</li>
+          </ol>
+        </div>
+        <div class="keypoints"><div class="kp-title">สมบัติของ inverse</div>
+          <ul>
+            <li><code>(A^-1)^-1 = A</code> และ <code>(A^T)^-1 = (A^-1)^T</code></li>
+            <li><strong><code>(AB)^-1 = B^-1 A^-1</code></strong> (กลับอันดับเหมือน transpose)</li>
+            <li><code>(kA)^-1 = (1/k)A^-1</code> และ <code>AI = IA = A</code>, <code>AA^-1 = A^-1 A = I</code></li>
+            <li><strong>elementary matrix</strong> = เมทริกซ์ได้จาก I โดยการดำเนินการแถว 1 ครั้ง, การคูณด้านซ้าย EA ให้ผลเท่ากับดำเนินการแถวนั้นกับ A</li>
+          </ul>
+        </div>
+        <p><strong>วิธีหา inverse ขนาด n (วิธีเมทริกซ์แต่งเติม):</strong> (1) เขียน <code>[A | In]</code> (2) ดำเนินการแถวจนด้านซ้ายเป็น In ด้านขวาคือ A<sup>-1</sup> (3) ถ้าลดรูปซ้ายไม่ได้ In (มีแถวศูนย์) แสดงว่า A ไม่มี inverse</p>
+        <details class="more"><summary>อ่านเพิ่ม: ทฤษฎีบทเมทริกซ์หาตัวผกผันได้ (Invertible Matrix Theorem)</summary>
+          <div>
+            <p>สำหรับ A ขนาด n ข้อความต่อไปนี้<strong>สมมูลกันทั้งหมด</strong> (จริงพร้อมกันหรือเท็จพร้อมกัน):</p>
+            <ol>
+              <li>A หา inverse ได้</li>
+              <li>A ∼ In (สมมูลแถวกับเมทริกซ์เอกลักษณ์)</li>
+              <li>A มี pivot ครบ n ตำแหน่ง</li>
+              <li><code>Ax = 0</code> มีเพียงผลเฉลยชัด</li>
+              <li>หลักของ A อิสระเชิงเส้น</li>
+              <li><code>x → Ax</code> มีสมบัติ 1-1</li>
+              <li><code>Ax = b</code> มีผลเฉลยทุก b</li>
+              <li>หลักของ A แผ่ทั่ว R^n</li>
+              <li><code>x → Ax</code> ทั่วถึง</li>
+              <li>มี C ที่ CA = In / มี D ที่ AD = In</li>
+              <li>A^T หา inverse ได้</li>
+              <li>หลักของ A เป็นฐานหลักของ R^n</li>
+              <li>Col A = R^n</li>
+              <li>rank A = n</li>
+              <li>Nul A = {0}</li>
+              <li>nullity A = 0</li>
+            </ol>
+          </div>
+        </details>
+        <div class="example"><div class="ex-title">ตัวอย่าง: เช็กเร็วว่า A หา inverse ได้หรือไม่</div>
+          <ol>
+            <li>หา h ที่ทำให้ <code>[[1, -7, h], [2, 1, 1], [1, 3, 2]]</code> หา inverse ได้</li>
+            <li>ลดรูป: R2 - 2R1 ได้ <code>[0, 15, 1-2h]</code>, R3 - R1 ได้ <code>[0, 10, 2-h]</code></li>
+            <li>R3 - (2/3)R2 ได้แถวสุดท้าย <code>[0, 0, (h+4)/3]</code></li>
+            <li>จะมี pivot ครบ 3 ตำแหน่งก็ต่อเมื่อ h + 4 ≠ 0 ดังนั้น <strong>h ≠ -4</strong></li>
+          </ol>
+        </div>
+
+        <h3>2.4 ดีเทอร์มิแนนต์ (Determinant)</h3>
+        <ul>
+          <li><strong>minor</strong> <code>Mij(A)</code> = เมทริกซ์ที่ได้จากการตัดแถว i และหลัก j ออก</li>
+          <li><strong>cofactor</strong>: <code>Cij(A) = (-1)^(i+j) · det Mij(A)</code> (ตารางเครื่องหมาย + - + / - + - / + - +)</li>
+          <li><code>det A</code> หาได้จากการกระจายโคแฟกเตอร์ (cofactor expansion) ตามแถวใด ๆ หรือหลักใด ๆ: <code>det A = ai1·Ci1 + ai2·Ci2 + ... + ain·Cin</code></li>
+        </ul>
+        <p><strong>กรณีพื้นฐาน:</strong></p>
+        <ul>
+          <li>1×1: <code>det [a11] = a11</code> / 2×2: <code>det [[a,b],[c,d]] = ad - bc</code></li>
+          <li>3×3 สูตรลัด (แนวเฉียง): <code>det = (a11a22a33 + a12a23a31 + a13a21a32) - (a31a22a13 + a32a23a11 + a33a21a12)</code></li>
+          <li><strong>เมทริกซ์สามเหลี่ยม (triangular)</strong>: det = ผลคูณของสมาชิกบนเส้นทแยงมุมหลัก</li>
+          <li>เทคนิค: กระจายตามแถว/หลักที่มีศูนย์มากที่สุดเพื่อประหยัดการคำนวณ (โปรแกรมหาดีเทอร์มิแนนต์ที่ใช้ในชั้นเรียนก็ป้อนแถว/หลัก/สมาชิกแล้วคำนวณด้วยหลักการเดียวกัน)</li>
+        </ul>
+        <div class="example"><div class="ex-title">ตัวอย่าง: det ของเมทริกซ์สามเหลี่ยม</div>
+          <ol>
+            <li><code>det [[-4, 0, 0, 0], [0, 2, 0, 0], [1, 2, -3, 0], [-2, 4, 2, -1]]</code> เป็น lower triangular</li>
+            <li>det = ผลคูณทแยงมุมหลัก = (-4)(2)(-3)(-1) = <strong>-24</strong></li>
+          </ol>
+        </div>
+        <p><strong>สมบัติของ determinant กับการดำเนินการแถว:</strong></p>
+        <table>
+          <tr><th>การกระทำ</th><th>ผลต่อ det</th></tr>
+          <tr><td>สลับสองแถว <code>R_pq</code></td><td>det เปลี่ยนเครื่องหมาย</td></tr>
+          <tr><td><code>R_p + cR_q</code></td><td>det ไม่เปลี่ยนแปลง</td></tr>
+          <tr><td>คูณแถวด้วย c <code>cR_p</code></td><td>det คูณด้วย c</td></tr>
+          <tr><td>สองแถวเหมือนกัน</td><td>det = 0</td></tr>
+        </table>
+        <p><strong>สมบัติพีชคณิต:</strong> <code>det A = det A^T</code>, <code>det(AB) = det A · det B</code>, <code>det(A^k) = (det A)^k</code>, <strong><code>det(cA) = c^n · det A</code></strong> (n = ขนาดเมทริกซ์), A ไม่เอกฐาน ⟺ <strong>det A ≠ 0</strong>, ถ้า det ≠ 0 จะได้ <code>det(A^-1) = 1/det A</code></p>
+        <div class="example"><div class="ex-title">ตัวอย่าง: ใช้สมบัติของ determinant</div>
+          <ol>
+            <li>ให้ det A = 2, det B = 3, det C = 4 (ทุกตัวขนาด 3×3) หา <code>det(2AB^T C^-1)</code></li>
+            <li><code>det(2AB^T C^-1) = 2^3 · det A · det B^T · det C^-1</code></li>
+            <li><code>= 8 · 2 · 3 · (1/4) = 12</code> (ใช้ det B^T = det B และ det C^-1 = 1/det C)</li>
+          </ol>
+        </div>
+        <div class="example"><div class="ex-title">ตัวอย่าง: cofactor expansion ทีละบรรทัด</div>
+          <ol>
+            <li>หา <code>det [[1, 5, 0], [0, -3, 1], [2, 4, -1]]</code> กระจายตามแถว 1 (มีศูนย์ 1 ตัว)</li>
+            <li>det = 1·C11 + 5·C12 + 0·C13</li>
+            <li>C11 = (+1)·det[[-3, 1], [4, -1]] = (3 - 4) = -1</li>
+            <li>C12 = (-1)·det[[0, 1], [2, -1]] = -(0 - 2) = 2</li>
+            <li>det = 1·(-1) + 5·(2) + 0 = -1 + 10 = <strong>9</strong></li>
+          </ol>
+        </div>
+        <p><strong>เมทริกซ์ผูกพัน (adjoint) adj A</strong> = transpose ของเมทริกซ์โคแฟกเตอร์ <code>[Cij(A)]^T</code> มีทฤษฎี <code>A(adj A) = (adj A)A = (det A)·In</code> จึงได้สูตร inverse <code>A^-1 = (adj A)/(det A)</code> เมื่อ det A ≠ 0</p>
+        <div class="example"><div class="ex-title">ตัวอย่าง: กฎของคราเมอร์ (Cramer's Rule)</div>
+          <ol>
+            <li>แก้ <code>Ax = b</code> เมื่อ det A ≠ 0 โดย <code>xi = det(Ai) / det(A)</code> เมื่อ Ai = เอาหลักที่ i ของ A เปลี่ยนเป็นเวกเตอร์ b</li>
+            <li>ระบบ <code>x1 - x2 + 2x3 = -2</code>, <code>3x1 - 2x2 + 4x3 = -5</code>, <code>2x2 - 5x3 = 2</code></li>
+            <li>คำนวณได้ det A = -1, det A1 = 1, det A2 = -1, det A3 = 0</li>
+            <li>x1 = 1/(-1) = -1, x2 = (-1)/(-1) = 1, x3 = 0/(-1) = 0</li>
+            <li>ผลเฉลย <strong>x = (-1, 1, 0)</strong></li>
+          </ol>
+        </div>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย (2.4)</div>
+          <ul>
+            <li>ลืมเครื่องหมาย <code>(-1)^(i+j)</code> ของ cofactor (ลำดับเครื่องหมาย + - + / - + - / + - +)</li>
+            <li>คิดว่า <code>det(cA) = c·det A</code> จริง ๆ ต้องเป็น <strong>c^n · det A</strong></li>
+            <li>adj A คือ transpose ของเมทริกซ์โคแฟกเตอร์ ลืม transpose บ่อยมาก</li>
+            <li>Cramer ใช้ได้เฉพาะเมื่อ <strong>det A ≠ 0 และจำนวนสมการ = จำนวนตัวแปร</strong> เท่านั้น</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec3" class="card">
+        <h2>3. Eigenvalue และ Diagonalization</h2>
+
+        <h3>3.1 เวกเตอร์พิกัดและเมทริกซ์ของการแปลงคนละฐานหลัก</h3>
+        <ul>
+          <li><strong>เวกเตอร์พิกัด</strong>: ถ้า B = {v1, ..., vp} เป็นฐานหลักของ H และ <code>x = c1v1 + ... + cpvp</code> (ตัวเดียว) แล้ว <code>[x]_B = (c1, ..., cp)</code></li>
+          <li><strong>เมทริกซ์ของ T สัมพัทธ์กับฐานหลัก B และ C</strong>: <code>[T]_CB = [ [T(v1)]_C  [T(v2)]_C ... [T(vn)]_C ]</code> ใช้สูตร <strong><code>[T(x)]_C = [T]_CB · [x]_B</code></strong></li>
+          <li>การประกอบ (composition): <code>[T∘S]_DB = [T]_DC [S]_CB</code> และ <code>[T^-1]_B = ([T]_B)^-1</code></li>
+          <li><strong>เมทริกซ์การเปลี่ยนพิกัด</strong> <code>P_{B→B'} = [ [v1]_B' [v2]_B' ... [vp]_B' ]</code> ทำให้ <code>[x]_B' = P_{B→B'}[x]_B</code> และสองทิศเป็น inverse กัน</li>
+          <li>ความสัมพันธ์เมทริกซ์คนละฐานหลัก: <strong><code>[T]_B' = P^-1 [T]_B P</code></strong> เมทริกซ์แบบนี้เรียกว่า คล้ายกัน (similar)</li>
+        </ul>
+
+        <h3>3.2 Eigenvalue, Eigenvector และการแปลงเป็นทแยงมุม</h3>
+        <div class="keypoints"><div class="kp-title">นิยามสำคัญ</div>
+          <ul>
+            <li>จำนวนจริง λ เป็น <strong>eigenvalue</strong> ของ A เมื่อ <code>Ax = λx</code> มีผลเฉลยไม่ชัด, เวกเตอร์ไม่ศูนย์ในผลเฉลยนั้นคือ <strong>eigenvector</strong> สมนัยกับ λ</li>
+            <li><strong>สมการลักษณะเฉพาะ</strong>: <code>det(A - λIn) = 0</code> / <strong>พหุนามลักษณะเฉพาะ</strong>: <code>det(A - λIn)</code> ดีกรี n</li>
+            <li><strong>ปริภูมิลักษณะเฉพาะ (eigenspace)</strong>: <code>A_λ = Nul(A - λIn)</code> = {0} + eigenvector ทั้งหมดของ λ</li>
+            <li>เช็กว่า λ เป็น eigenvalue: ดูว่า <code>det(A - λI) = 0</code> หรือไม่ (ถ้า ≠ 0 แปลว่าไม่ใช่ เพราะมีแต่ผลเฉลยชัด)</li>
+            <li>เช็กว่า v เป็น eigenvector: คูณ Av แล้วดูว่าได้ทวีคูณของ v หรือไม่</li>
+          </ul>
+        </div>
+        <p><strong>วิธีหา eigenvalue / eigenvector ทีละขั้น:</strong></p>
+        <ol>
+          <li>คำนวณ <code>det(A - λI)</code> แล้วแก้ = 0 จะได้ λ (นับซ้ำได้)</li>
+          <li>สำหรับแต่ละ λ แก้ระบบเอกพันธุ์ <code>(A - λI)x = 0</code> โดยลดรูปเป็นขั้นบันไดลดรูป</li>
+          <li>เขียนผลเฉลยเป็น parametric vector form จะได้ฐานหลักของ eigenspace</li>
+        </ol>
+        <div class="example"><div class="ex-title">ตัวอย่าง: หา eigenvalues และ eigenvectors ของ A = [[7, 2], [-4, 1]]</div>
+          <ol>
+            <li><code>A - λI = [[7-λ, 2], [-4, 1-λ]]</code></li>
+            <li><code>det(A - λI) = (7-λ)(1-λ) + 8 = λ² - 8λ + 15 = (λ - 3)(λ - 5) = 0</code> จึงได้ λ = 3, 5</li>
+            <li>λ = 3: <code>A - 3I = [[4, 2], [-4, -2]] ∼ [[1, 1/2], [0, 0]]</code> ได้ x1 = -(1/2)x2 เลือก x2 = 2 ได้ v = (-1, 2)</li>
+            <li>λ = 5: <code>A - 5I = [[2, 2], [-4, -4]] ∼ [[1, 1], [0, 0]]</code> ได้ x1 = -x2 เลือก x2 = 1 ได้ v = (-1, 1)</li>
+            <li>eigenspace ของ λ = 3 คือ Span{(-1, 2)} และของ λ = 5 คือ Span{(-1, 1)}</li>
+          </ol>
+        </div>
+        <p><strong>เมทริกซ์คล้าย (similar matrices)</strong>: A คล้าย B เมื่อมี P ไม่เอกฐานที่ <code>B = P^-1AP</code> เมทริกซ์คล้ายกันมีพหุนามลักษณะเฉพาะและ eigenvalue ชุดเดียวกัน แต่มี characteristic polynomial เดียวกันไม่จำเป็นต้องคล้ายกัน</p>
+        <div class="exam-box"><div class="kp-title">มักออกสอบ: ทฤษฎีบทการแปลงเป็นทแยงมุม (Diagonalization Theorem)</div>
+          <ul>
+            <li>A ขนาด n <strong>แปลงเป็นทแยงมุมได้ (diagonalizable)</strong> ⟺ มี eigenvector อิสระเชิงเส้น n ตัว ⟺ มี P ไม่เอกฐานและ D ทแยงมุมที่ <code>A = PDP^-1</code></li>
+            <li>หลักของ P = eigenvector, สมาชิกทแยงมุมของ D = eigenvalue <strong>ที่สมนัยกันตามลำดับ</strong></li>
+            <li>ถ้า A มี eigenvalue ต่างกัน n ค่า → แปลงเป็นทแยงมุมได้ทันที</li>
+            <li>ถ้ามี eigenvalue ซ้ำ: ต้องมี <code>nullity(A - λk·I) = จำนวนการซ้ำของ λk</code> ทุกตัว (หรือผลรวมมิติ eigenspace = n) จึง diagonalizable</li>
+            <li>เวกเตอร์ลักษณะเฉพาะที่สมนัยกับ eigenvalue ต่างกัน เป็นเซตอิสระเชิงเส้น</li>
+          </ul>
+        </div>
+        <p><strong>วิธีแปลงเป็นทแยงมุมทีละขั้น:</strong> (1) หา <code>det(A - λI) = 0</code> ได้ eigenvalues นับซ้ำ (2) หาฐานหลักของ eigenspace แต่ละ λ (3) เช็กว่ารวมแล้วได้ eigenvector อิสระ n ตัว (4) เรียง eigenvector เป็นหลักของ P และ eigenvalue ที่จับคู่กันเป็นทแยงมุมของ D จะได้ <code>P^-1AP = D</code></p>
+        <p><strong>ประโยชน์: คำนวณ A^k เร็ว</strong> เพราะ <code>A = PDP^-1</code> และ <code>D^k = diag(λ1^k, ..., λn^k)</code> จึงได้ <code>A^k = P D^k P^-1</code> สำหรับตัวอย่างเมทริกซ์ A = [[7, 2], [-4, 1]] ข้างบน ให้ P = [[-1, -1], [2, 1]], D = [[3, 0], [0, 5]] และมีสูตรปิดของ A^k ตามที่แสดงใน <a href="#q23">เฉลยข้อ 23</a></p>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย (บทที่ 3)</div>
+          <ul>
+            <li><strong>เวกเตอร์ศูนย์ไม่ใช่ eigenvector</strong> (แต่ eigenvalue เป็น 0 ได้, เกิดเมื่อ A เอกฐาน: <code>A เอกฐาน ⟺ 0 เป็น eigenvalue</code>)</li>
+            <li>จับคู่หลักของ P กับทแยงมุมของ D ไม่ตรงลำดับกัน</li>
+            <li>ตรวจ diagonalizable แล้วสรุปแค่ "มี eigenvalue ครบ n ตัว" โดยไม่เช็กว่า eigenspace มีมิติพอ (λ ซ้ำต้อง nullity = จำนวนซ้ำ)</li>
+            <li>เลือก eigenvector เป็นเศษส่วนเปลี่ยว ๆ ทั้งที่คูณด้วยจำนวนเต็มให้สะอาดได้ เช่น (1/3, 1) คูณ 3 เป็น (1, 3), ทำได้เพราะ eigenvector เป็นพหุคูณสเกลาร์กันได้</li>
+          </ul>
+        </div>
+
+        <h3>3.3 ระบบสมการเชิงอนุพันธ์ (Systems of Differential Equations)</h3>
+        <p>ระบบ <code>x' = Ax</code> เมื่อ A diagonalizable มี eigenvector vi สมนัยกับ λi จะได้ผลเฉลยทั่วไป:</p>
+<pre><code>x(t) = C1·e^(λ1·t)·v1 + C2·e^(λ2·t)·v2 + ... + Cn·e^(λn·t)·vn</code></pre>
+        <p><strong>วิธีทำทีละขั้น:</strong> (1) เขียนเป็น <code>x' = Ax</code> (2) หา eigenvalues/vectors (3) เขียนผลเฉลยทั่วไป (4) ถ้ามีเงื่อนไขเริ่มต้น x(0) ให้แทน t = 0 แล้วแก้ระบบหา C_i ตัวอย่างคำนวณเต็มดูที่ <a href="#q24">ข้อ 24 ของแบบทดสอบ</a></p>
+      </section>
+
+      <section id="sec4" class="card">
+        <h2>4. Orthogonality</h2>
+
+        <h3>4.1 ผลคูณภายในและเซตเชิงตั้งฉาก</h3>
+        <ul>
+          <li><strong>ผลคูณจุด (dot product)</strong>: <code>u·v = u^T v = u1v1 + u2v2 + ... + unvn</code> (เป็นจำนวนจริง), สลับที่และแจกแจงได้, <code>u·u ≥ 0</code> และ <code>u·u = 0 ⟺ u = 0</code></li>
+          <li><strong>ความยาว/นอร์ม</strong>: <code>‖v‖ = √(v·v) = √(v1² + ... + vn²)</code>, <code>v·v = ‖v‖²</code>, <code>‖cv‖ = |c|·‖v‖</code></li>
+          <li><strong>เวกเตอร์หนึ่งหน่วย</strong> ทิศเดียวกับ v คือ <code>v/‖v‖</code> / <strong>ระยะทาง</strong> ระหว่าง x, y คือ <code>‖x - y‖</code> / <strong>ตั้งฉาก (orthogonal)</strong> ⟺ <code>u·v = 0</code></li>
+          <li><strong>เซตเชิงตั้งฉาก</strong> = คู่ใดคู่หนึ่งต่างกันตั้งฉากกัน / <strong>เซตเชิงตั้งฉากปรกติ (orthonormal)</strong> = ตั้งฉาก + ทุกตัวยาว 1 หน่วย</li>
+        </ul>
+        <div class="keypoints"><div class="kp-title">ทฤษฎีสำคัญ</div>
+          <ul>
+            <li>เซตเชิงตั้งฉากที่ไม่มีเวกเตอร์ศูนย์ → <strong>อิสระเชิงเส้นเสมอ</strong> → เป็นฐานหลักของ Span ของมัน</li>
+            <li>ฐานหลักเชิงตั้งฉากทำให้แยกพิกัดง่าย: <code>y = (y·u1)/(u1·u1) · u1 + (y·u2)/(u2·u2) · u2 + ... + (y·up)/(up·up) · up</code></li>
+            <li>เมทริกซ์ U มีหลัก orthonormal ⟺ <strong><code>U^T U = In</code></strong></li>
+            <li>ถ้า U จัตุรัสเรียก เมทริกซ์เชิงตั้งฉาก (orthogonal matrix) มี <code>U^-1 = U^T</code> และรักษาความยาว/มุม (<code>‖Ux‖ = ‖x‖</code>, <code>Ux·Uy = x·y</code>)</li>
+          </ul>
+        </div>
+
+        <h3>4.2 การฉายเชิงตั้งฉากและกระบวนการ Gram-Schmidt</h3>
+        <ul>
+          <li><strong>ส่วนเติมเต็มเชิงตั้งฉาก (orthogonal complement)</strong> <code>H⊥ = { z : z ตั้งฉากกับทุกเวกเตอร์ใน H }</code> เป็นปริภูมิย่อยและ <code>H ∩ H⊥ = {0}</code></li>
+          <li>ถ้า H = Col A แล้ว <strong><code>H⊥ = Nul(A^T)</code></strong> เป็นเครื่องมือหลักในการหาฐานหลักของ H⊥ (ลดรูป A^T แก้ระบบเอกพันธุ์)</li>
+        </ul>
+        <p><strong>การแยกเชิงตั้งฉาก (Orthogonal Decomposition)</strong> ให้ {u1, ..., up} เป็นฐานหลักเชิงตั้งฉากของ H และ y ใด ๆ:</p>
+<pre><code>y = ŷ + z      โดย  ŷ = proj_H y = Σ (y·ui)/(ui·ui) · ui   อยู่ใน H
+                    z = y - ŷ                              อยู่ใน H⊥</code></pre>
+        <p>ŷ คือจุดบน H ใกล้ y ที่สุด (Best Approximation Theorem) และ <code>‖y - ŷ‖</code> คือระยะทางจาก y ไป H</p>
+        <p><strong>กระบวนการ Gram-Schmidt</strong> แปลงฐานหลักใด ๆ เป็นฐานหลักเชิงตั้งฉาก:</p>
+<pre><code>v1 = x1
+v2 = x2 - (x2·v1)/(v1·v1) · v1
+v3 = x3 - (x3·v1)/(v1·v1) · v1 - (x3·v2)/(v2·v2) · v2
+...
+vk = xk - ผลรวม (xk·vi)/(vi·vi) · vi   (i = 1, ..., k-1)</code></pre>
+        <p>จากนั้นทำให้เป็น orthonormal โดยหารด้วย <code>‖vi‖</code> และ <strong>Span คงเดิม</strong> ตัวอย่างคำนวณเต็มดูที่ <a href="#q21">ข้อ 21 ของแบบทดสอบ</a></p>
+        <p><strong>การแยกตัวประกอบ QR (QR Factorization)</strong>: ถ้าหลักของ A (m×n) อิสระ จะได้ <code>A = QR</code> เมื่อ Q (m×n) มีหลักเป็นฐานหลักเชิงตั้งฉากปรกติของ Col A และ R (n×n) เป็นเมทริกซ์สามเหลี่ยมบนไม่เอกฐาน ทแยงมุมเป็นบวก หาได้จาก <strong><code>R = Q^T A</code></strong></p>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย (4.2)</div>
+          <ul>
+            <li>ลืมตรวจว่าผลลัพธ์ Gram-Schmidt ตั้งฉากจริง (เช็ก <code>v1·v2 = 0</code> ทุกครั้ง)</li>
+            <li>คูณเวกเตอร์ด้วยสเกลาร์เพื่อล้างเศษส่วนได้ (Span ไม่เปลี่ยน) แต่ถ้าจะต่อไปขั้นถัดไปต้องใช้เวกเตอร์ชุดที่เลือกนั้นต่อเนื่อง</li>
+            <li>สับสนว่า z = y - ŷ อยู่ใน H: จริง ๆ z ∈ <strong>H⊥</strong></li>
+            <li>ใน QR ลืมว่า R = Q^T A และ Q ต้องมีหลักหนึ่งหน่วย (normalize ก่อน)</li>
+          </ul>
+        </div>
+
+        <h3>4.3 ปัญหากำลังสองน้อยสุด (Least-Squares)</h3>
+        <p>เมื่อระบบ <code>Ax = b</code> ไม่มีผลเฉลย (b ไม่อยู่ใน Col A) ให้หา x̂ ที่ทำให้ <code>‖b - Ax̂‖</code> น้อยที่สุด เรียก x̂ ว่า <strong>ผลเฉลยกำลังสองน้อยสุด (least-squares solution)</strong></p>
+        <div class="keypoints"><div class="kp-title">ทฤษฎีบทหลัก: สมการปรกติ (normal equations)</div>
+          <ul>
+            <li>x̂ เป็น least-squares solution ⟺ x̂ แก้ <strong><code>A^T A x̂ = A^T b</code></strong> (ระบบนี้ต้องกันเสมอ)</li>
+            <li>ค่าคลาดเคลื่อน (least-squares error) = <code>‖b - Ax̂‖</code></li>
+            <li>กรณีพิเศษ: ถ้าหลักของ A ตั้งฉากกันเอง หา x̂ ได้เร็วโดยฉาย: <code>b̂ = Σ (b·ui)/(ui·ui)·ui = Ax̂</code></li>
+          </ul>
+        </div>
+        <p><strong>วิธีทำทีละขั้น:</strong> (1) คำนวณ <code>A^T A</code> และ <code>A^T b</code> (2) แก้ระบบ <code>A^T A x̂ = A^T b</code> ด้วยการลดรูปหรือ inverse (3) ถ้าต้องการ คำนวณ error <code>‖b - Ax̂‖</code></p>
+        <p><strong>เส้นกำลังสองน้อยสุด (least-squares line)</strong> จากจุดข้อมูล (a1,b1), ..., (an,bn) หาเส้น <code>y = β0 + β1x</code> โดยสร้าง A หลักแรกเป็น 1 หมด หลักสองเป็นค่า x, β = (β0, β1), b = (b1, ..., bn) แล้วแก้ <code>A^T A β̂ = A^T b</code></p>
+        <div class="example"><div class="ex-title">ตัวอย่าง: หาเส้นกำลังสองน้อยสุดจากจุด (0,1), (1,1), (2,2), (3,2)</div>
+          <ol>
+            <li>สร้าง <code>A = [[1, 0], [1, 1], [1, 2], [1, 3]]</code> และ <code>b = (1, 1, 2, 2)</code></li>
+            <li><code>A^T A = [[4, 6], [6, 14]]</code> และ <code>A^T b = (6, 11)</code></li>
+            <li>แก้ <code>[[4, 6], [6, 14]] β̂ = (6, 11)</code> ได้ <code>β̂ = (0.9, 0.4)</code></li>
+            <li>เส้นกำลังสองน้อยสุดคือ <strong>y = 0.9 + 0.4x</strong></li>
+          </ol>
+        </div>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย (4.3)</div>
+          <ul>
+            <li>ไปแก้ <code>Ax = b</code> ตรง ๆ (ซึ่งไม่มีผลเฉลย) แทนที่จะแก้ <code>A^T A x̂ = A^T b</code></li>
+            <li>ลืม transpose เขียนเป็น <code>A A^T</code>: ผิด ต้องเป็น <strong>A^T A</strong> (ผลคูณแบบ n×n)</li>
+            <li>error เป็นระยะทาง (ต้องถอดราก) ไม่ใช่กำลังสอง</li>
+          </ul>
+        </div>
+
+        <h3>4.4 การแปลงเป็นทแยงมุมของเมทริกซ์สมมาตร</h3>
+        <p><strong>เมทริกซ์สมมาตร (symmetric matrix)</strong>: <code>A^T = A</code> (a_ij = a_ji)</p>
+        <div class="keypoints"><div class="kp-title">ทฤษฎีบทเชิงสเปกตรัม (Spectral Theorem)</div>
+          <ul>
+            <li>ปริภูมิลักษณะเฉพาะที่สมนัยกับ eigenvalue ต่างกันของเมทริกซ์สมมาตร <strong>ตั้งฉากกัน</strong></li>
+            <li>A เป็นสมมาตร ⟺ A orthogonally diagonalizable คือมี P เชิงตั้งฉากปรกติ (<code>P^-1 = P^T</code>) ที่ <code>A = PDP^-1 = PDP^T</code></li>
+            <li>eigenvalues ของเมทริกซ์สมมาตรเป็นจำนวนจริงทั้งหมด และมิติของ eigenspace = จำนวนซ้ำของราก</li>
+          </ul>
+        </div>
+        <p><strong>วิธีแปลงเมทริกซ์สมมาตรเป็นทแยงมุมเชิงตั้งฉาก ทีละขั้น:</strong> (1) หา eigenvalues จาก <code>det(A - λI) = 0</code> (2) หาฐานหลักของแต่ละ eigenspace (3) ถ้า eigenspace ใดมีมิติ &gt; 1 ใช้ Gram-Schmidt ทำให้ตั้งฉาก (4) normalize ทุกเวกเตอร์ให้ยาว 1 เรียงเป็นหลักของ P (5) D = diag(eigenvalues ที่จับคู่ตามลำดับกับหลักของ P) จะได้ <code>A = PDP^T</code> ตัวอย่างคำนวณเต็มดูที่ <a href="#q25">ข้อ 25 ของแบบทดสอบ</a></p>
+        <p><strong>การแยกเชิงสเปกตรัม (spectral decomposition)</strong> เขียน A ซ้ำได้เป็น <code>A = λ1·u1u1^T + λ2·u2u2^T + ... + λn·unun^T</code> เมื่อ ui เป็น eigenvector หนึ่งหน่วย เซตของ eigenvalue ทั้งหมดเรียกว่า <strong>สเปกตรัม (spectrum)</strong> ของ A</p>
+
+        <h3>4.5 รูปแบบกำลังสอง (Quadratic Forms)</h3>
+        <p>ให้ A เป็นเมทริกซ์สมมาตร ฟังก์ชัน <code>Q(x) = x^T A x</code> เรียก<strong>รูปแบบกำลังสอง</strong> การเขียนเมทริกซ์ของ Q จากพจน์:</p>
+        <ul>
+          <li>สัมประสิทธิ์ของ <code>x1², x2², ...</code> → ลงทแยงมุมหลัก</li>
+          <li>พจน์ไขว้ (cross-product term) <code>2c·xi·xj</code> → ใส่ c ลงตำแหน่งสมมาตร (i,j) และ (j,i) เช่น <code>Q = 3x1² + 6x2² - 4x1x2</code> → <code>A = [[3, -2], [-2, 6]]</code></li>
+        </ul>
+        <p><strong>ทฤษฎีบทแกนมุขสำคัญ (Principal Axis Theorem)</strong>: เปลี่ยนตัวแปร <code>x = Py</code> (P เชิงตั้งฉากปรกติที่ทำให้ <code>P^T AP = D</code>) จะได้ <code>x^T A x = y^T D y = λ1y1² + λ2y2² + ...</code> หมดพจน์ไขว้ ใช้จำแนกรูปกรวย เช่น <code>3x1² + 6x2² - 4x1x2 = 14</code> → <code>2y1² + 7y2² = 14</code> (วงรี)</p>
+        <p><strong>การจำแนกประเภทด้วย eigenvalues ของเมทริกซ์ของ Q:</strong></p>
+        <table>
+          <tr><th>Q(x) = x^T A x</th><th>เงื่อนไข</th></tr>
+          <tr><td>บวกแน่นอน (positive definite)</td><td>eigenvalues ทุกตัว &gt; 0</td></tr>
+          <tr><td>บวกกึ่งแน่นอน (positive semidefinite)</td><td>ทุกตัว ≥ 0</td></tr>
+          <tr><td>ลบแน่นอน (negative definite)</td><td>ทุกตัว &lt; 0</td></tr>
+          <tr><td>ลบกึ่งแน่นอน</td><td>ทุกตัว ≤ 0</td></tr>
+          <tr><td>ไม่แน่นอน (indefinite)</td><td>มีทั้งบวกและลบ</td></tr>
+        </table>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย (4.5)</div>
+          <ul>
+            <li>เขียนสัมประสิทธิ์พจน์ไขว้ลงเมทริกซ์แบบไม่หาร 2 เช่น -4x1x2 ต้องลงเป็น -2 ในเมทริกซ์ เพราะเมทริกซ์นับสองทาง</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec5" class="card">
+        <h2>5. ปริภูมิเวกเตอร์นามธรรม</h2>
+
+        <h3>5.1 ฟีลด์ ปริภูมิเวกเตอร์ และปริภูมิย่อย</h3>
+        <ul>
+          <li><strong>ฟีลด์ (field) F</strong>: เซตที่มีการบวก/คูณครบสมบัติ (ปิด, เปลี่ยนหมู่, สลับที่, เอกลักษณ์ 0 และ 1, ตัวผกผัน, แจกแจง) เช่น Q, R, C และ <code>F_p = {0, 1, ..., p-1}</code> (เลขคณิตมอดุโล p เมื่อ p เป็นจำนวนเฉพาะ)</li>
+          <li><strong>ปริภูมิเวกเตอร์ V เหนือฟีลด์ F</strong>: เซตพร้อมการบวกและการคูณสเกลาร์ที่สอดคล้องสมบัติ: ปิดบวก, เปลี่ยนหมู่, มีเวกเตอร์ศูนย์, สลับที่, มีตัวผกผันการบวก และ <code>c(v1+v2) = cv1+cv2</code>, <code>(c1c2)v = c1(c2v)</code>, <code>(c1+c2)v = c1v+c2v</code>, <code>1v = v</code> รวมทั้ง <code>0v = 0</code>, <code>(-1)v = -v</code></li>
+          <li><strong>ตัวอย่างปริภูมิเวกเตอร์</strong>: <code>M_{m,n}(F)</code> (เมทริกซ์ m×n), <code>F^m</code>, ปริภูมิลำดับ <code>F^N</code>, ปริภูมิฟังก์ชัน <code>F^S</code>, <strong>ปริภูมิพหุนาม</strong> <code>F_n[x]</code> (ดีกรีไม่เกิน n), ผลคูณตรง <code>V1 × ... × Vn</code></li>
+          <li><strong>ปริภูมิย่อย W ของ V</strong>: ต้องมี <code>0_V ∈ W</code> และปิดภายใต้ <code>v1 + c·v2</code> (เช็ก 2 อย่างพอ)</li>
+          <li><strong>Span, อิสระเชิงเส้น, ฐานหลัก (อิสระ + แผ่ทั่ว), มิติ</strong> นิยามเหมือนบทที่ 1-2 แต่ใช้กับวัตถุนามธรรมได้ทั้งหมด</li>
+        </ul>
+        <div class="exam-box"><div class="kp-title">มักออกสอบ: มิติที่ควรจำ</div>
+          <ul>
+            <li><code>dim M_{m,n}(F) = mn</code></li>
+            <li><code>dim F_n[x] = n + 1</code> (ฐานหลักมาตรฐาน {1, x, x², ..., x^n})</li>
+            <li><code>F[x]</code> (พหุนามทุกดีกรี) ไม่มีมิติจำกัด</li>
+            <li>C เหนือ R มีฐานหลัก {1, i}</li>
+          </ul>
+        </div>
+
+        <h3>5.2 การแปลงเชิงเส้นบนปริภูมินามธรรม</h3>
+        <ul>
+          <li>T: V → W เป็น<strong>การแปลงเชิงเส้น</strong> ⟺ <code>T(u+v) = T(u)+T(v)</code> และ <code>T(cv) = cT(v)</code></li>
+          <li>นิยาม T ได้โดยกำหนดค่าบน<strong>ฐานหลัก</strong>เท่านั้น (มี T ตามกำหนดนี้ตัวเดียวและมีอยู่เสมอ)</li>
+          <li><strong>เคอร์เนล (kernel)</strong>: <code>ker T = {v : T(v) = 0_W}</code> เป็นปริภูมิย่อยของ V</li>
+          <li><strong>เรนจ์ (range)</strong>: <code>range T = {T(v) : v ∈ V}</code> เป็นปริภูมิย่อยของ W</li>
+          <li>T มีสมบัติ <strong>1-1 ⟺ ker T = {0}</strong> / <strong>ทั่วถึง ⟺ range T = W ⟺ rank T = dim W</strong></li>
+          <li><code>nullity T = dim ker T</code>, <code>rank T = dim range T</code></li>
+          <li><strong>สมสัณฐาน (isomorphic)</strong> <code>V ≅ W</code>: มี T ที่ 1-1 และทั่วถึง ⟺ <code>dim V = dim W</code> (มิติจำกัด), ปริภูมิมิติ n ใด ๆ สมสัณฐานกับ F^n</li>
+          <li><strong>ปริภูมิคู่เสมอกัน (dual space)</strong> <code>V* = L(V, F)</code> = เซตของ linear functional, มีฐานหลักคู่เสมอกัน (dual basis) และ <code>V ≅ V*</code></li>
+          <li>เมทริกซ์ของ T สัมพัทธ์กับฐานหลัก <code>[T]_CB</code> ทำงานเหมือนบทที่ 3 และ <code>L(V,W) ≅ M_{m,n}(F)</code></li>
+        </ul>
+
+        <h3>5.3 ปริภูมิผลคูณภายใน (Inner Product Space)</h3>
+        <ul>
+          <li><strong>ผลคูณภายใน</strong> ⟨u,v⟩ ต้องมีสมบัติ: (1) ⟨u,u⟩ ≥ 0 และ = 0 ⟺ u = 0 (2) แจกแจง (3) ⟨cv,w⟩ = c⟨v,w⟩ (4) ⟨v,w⟩ = ⟨w,v⟩ (สังยุค conjugate กรณีเชิงซ้อน)</li>
+          <li>ตัวอย่าง: ผลคูณมาตรฐาน Σ ui·vi, ผลคูณถ่วงน้ำหนัก Σ ai·ui·vi, ⟨f,g⟩ = ∫ f(x)g(x)dx บน C0[a,b]</li>
+          <li><strong>นอร์ม</strong>: <code>‖v‖ = √⟨v,v⟩</code></li>
+          <li><strong>อสมการโคชี-ชวาร์ซ</strong>: <code>|⟨u,v⟩| ≤ ‖u‖‖v‖</code> / <strong>อสมการสามเหลี่ยม</strong>: <code>‖u+v‖ ≤ ‖u‖ + ‖v‖</code></li>
+          <li>เซตเชิงตั้งฉาก (ไม่มีศูนย์) อิสระเชิงเส้น และมี Gram-Schmidt เวอร์ชันทั่วไป</li>
+        </ul>
+<pre><code>v_k = x_k - Σ (⟨x_k, v_i⟩ / ⟨v_i, v_i⟩) · v_i   (i รวมทุกค่าน้อยกว่า k)</code></pre>
+        <p>ปริภูมิผลคูณภายในมิติจำกัดจึงมีฐานหลักเชิงตั้งฉากปรกติเสมอ</p>
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย (บทที่ 5)</div>
+          <ul>
+            <li>จำ dim F_n[x] เป็น n: ผิด! ต้องเป็น n + 1 เพราะนับพจน์ {1, x, ..., x^n}</li>
+            <li>เช็กปริภูมิย่อยลืมดูว่า <code>0_V ∈ W</code> ก่อน ถ้า 0 ไม่อยู่ก็จบ ไม่เป็นปริภูมิย่อยทันที</li>
+            <li>สับสนว่า ker T เป็นปริภูมิย่อยของ W: จริง ๆ ker T เป็นปริภูมิย่อยของ V ส่วน range T เป็นปริภูมิย่อยของ W</li>
+            <li>ตัดสินสมสัณฐานโดยไม่ดูมิติ: V ≅ W เมื่อมิติเท่ากัน (กรณีมิติจำกัด) เท่านั้น</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sec6" class="card">
+        <h2>สูตรที่ต้องจำก่อนสอบ (40 สูตร)</h2>
+        <table>
+          <tr><th style="width:44%">สูตร</th><th style="width:28%">ใช้เมื่อไร</th><th style="width:28%">ข้อควรระวัง</th></tr>
+          <tr><th colspan="3">ระบบเชิงเส้นและแรงก์</th></tr>
+          <tr>
+            <td>1. แถวรูป <code>[0 0 ... 0 | b]</code> เมื่อ b ≠ 0 ⇒ ไม่มีผลเฉลย / มีตัวแปรเสรี ⇒ ผลเฉลยอนันต์ชุด / ไม่มีตัวแปรเสรี ⇒ ชุดเดียว</td>
+            <td>ตัดสินจำนวนผลเฉลยจากรูปขั้นบันไดของเมทริกซ์แต่งเติม</td>
+            <td>แถว [0 ... 0 | b] คือกรณี "ไม่ต้องกัน" ไม่ใช่ "มีตัวแปรเสรี"</td>
+          </tr>
+          <tr>
+            <td>2. <code>Ax = b</code> มีผลเฉลยทุก b ⟺ หลักแผ่ทั่ว ⟺ A มี pivot ทุกแถว / หลักอิสระ ⟺ pivot ทุกหลัก</td>
+            <td>ตรวจการแผ่ทั่ว, อิสระเชิงเส้นของหลัก, การเป็น onto/1-1</td>
+            <td>อย่าสลับ "ทุกแถว" (แผ่ทั่ว) กับ "ทุกหลัก" (อิสระ)</td>
+          </tr>
+          <tr>
+            <td>3. <code>rank A + nullity A = n</code> (จำนวนหลัก)</td>
+            <td>โจทย์ให้ nullity แล้วให้หา rank หรือกลับกัน</td>
+            <td>n คือจำนวนหลัก ไม่ใช่จำนวนแถว</td>
+          </tr>
+          <tr>
+            <td>4. ผลเฉลยระบบไม่เอกพันธุ์: <code>x = p + vh</code></td>
+            <td>เขียนเซตผลเฉลยทั้งหมดของ <code>Ax = b</code></td>
+            <td>p ต้องเป็นผลเฉลยเฉพาะของ Ax = b ส่วน vh มาจาก Ax = 0</td>
+          </tr>
+          <tr>
+            <td>5. เซตมี <code>0</code> หรือมี p &gt; m เวกเตอร์ใน R^m ⇒ ไม่อิสระเชิงเส้น</td>
+            <td>เช็กความไม่อิสระเร็ว ๆ โดยไม่ต้องลดรูป</td>
+            <td>p &lt; m ไม่ได้แปลว่าอิสระ ต้องลดรูปเช็ก</td>
+          </tr>
+          <tr><th colspan="3">เมทริกซ์, transpose และ inverse</th></tr>
+          <tr>
+            <td>6. <code>(AB)^T = B^T A^T</code> และ <code>(AB)^-1 = B^-1 A^-1</code></td>
+            <td>กระจาย transpose หรือ inverse ของผลคูณเมทริกซ์</td>
+            <td>ต้องกลับอันดับผลคูณเสมอ</td>
+          </tr>
+          <tr>
+            <td>7. <code>A^-1 = (1/(ad-bc))·[[d,-b],[-c,a]]</code> สำหรับ 2×2, หาได้ ⟺ det ≠ 0</td>
+            <td>หา inverse ของเมทริกซ์ 2×2</td>
+            <td>สลับทแยงหลัก เปลี่ยนเครื่องหมายนอกทแยง หารด้วย det, ad - bc = 0 คือไม่มี inverse</td>
+          </tr>
+          <tr>
+            <td>8. หา inverse ขนาด n: ลดรูป <code>[A | I] → [I | A^-1]</code></td>
+            <td>หา inverse ของเมทริกซ์จัตุรัสขนาด n</td>
+            <td>ถ้าด้านซ้ายลดไม่ได้ I (มีแถวศูนย์) = ไม่มี inverse</td>
+          </tr>
+          <tr>
+            <td>9. <code>Ax = b</code> เมื่อ A invertible ⇒ <code>x = A^-1 b</code></td>
+            <td>แก้ระบบสมการด้วยเมทริกซ์ผกผัน</td>
+            <td>ใช้ได้เมื่อ A มี inverse เท่านั้น ผลลัพธ์คือผลเฉลยชุดเดียว</td>
+          </tr>
+          <tr><th colspan="3">ดีเทอร์มิแนนต์</th></tr>
+          <tr>
+            <td>10. <code>det [[a,b],[c,d]] = ad - bc</code> / เมทริกซ์สามเหลี่ยม: det = ผลคูณทแยงมุมหลัก</td>
+            <td>คำนวณ det พื้นฐาน หรือเมทริกซ์สามเหลี่ยม</td>
+            <td>สับสน ad - bc เป็น ac - bd พบบ่อย</td>
+          </tr>
+          <tr>
+            <td>11. <code>Cij = (-1)^(i+j)·det Mij</code>, <code>det A = Σ aj·Cij</code> (กระจายแถว/หลักใดก็ได้)</td>
+            <td>หา det ด้วย cofactor expansion</td>
+            <td>ลืมเครื่องหมาย (-1)^(i+j), ควรเลือกแถว/หลักที่มีศูนย์มากที่สุด</td>
+          </tr>
+          <tr>
+            <td>12. สลับแถว → det เปลี่ยนเครื่องหมาย / <code>Rp+cRq</code> → คงเดิม / คูณแถว c → det คูณ c</td>
+            <td>ทำเมทริกซ์เป็นสามเหลี่ยมก่อนหา det</td>
+            <td>จำนวนครั้งที่สลับแถวเป็นเลขคี่/คู่ มีผลกับเครื่องหมายสุดท้าย</td>
+          </tr>
+          <tr>
+            <td>13. <code>det(AB) = det A·det B</code>, <code>det(A^T) = det A</code>, <code>det(cA) = c^n det A</code>, <code>det(A^k) = (det A)^k</code>, <code>det(A^-1) = 1/det A</code></td>
+            <td>โจทย์ให้ det ของ A, B แล้วถาม det ของนิพจน์</td>
+            <td>det(cA) = c^n det A ไม่ใช่ c·det A, det(B^T) = det B</td>
+          </tr>
+          <tr>
+            <td>14. <code>A^-1 = (adj A)/(det A)</code> โดย <code>adj A = [Cij]^T</code></td>
+            <td>หา inverse ด้วยวิธี adjoint หรือพิสูจน์สมบัติ</td>
+            <td>adj A คือ transpose ของเมทริกซ์โคแฟกเตอร์ ลืม transpose ได้บ่อย</td>
+          </tr>
+          <tr>
+            <td>15. กฎของคราเมอร์: <code>xi = det(Ai)/det(A)</code></td>
+            <td>แก้ Ax = b เมื่อ det A ≠ 0</td>
+            <td>Ai คือหลักที่ i ของ A เปลี่ยนเป็น b, ต้องมี #สมการ = #ตัวแปร และ det ≠ 0</td>
+          </tr>
+          <tr><th colspan="3">Eigen และ diagonalization</th></tr>
+          <tr>
+            <td>16. <code>det(A - λI) = 0</code> → eigenvalues, eigenspace <code>A_λ = Nul(A - λI)</code></td>
+            <td>หา eigenvalue และฐานหลักของ eigenspace</td>
+            <td>เวกเตอร์ศูนย์ไม่ใช่ eigenvector, eigenvalue 0 เกิดเมื่อ A เอกฐาน</td>
+          </tr>
+          <tr>
+            <td>17. 2×2: พหุนามลักษณะเฉพาะ = <code>λ² - (tr A)λ + det A</code></td>
+            <td>หา eigenvalue ของเมทริกซ์ 2×2 อย่างเร็ว</td>
+            <td>ใช้ผลบวกราก = tr A, ผลคูณราก = det A ตรวจคำตอบได้</td>
+          </tr>
+          <tr>
+            <td>18. eigenvector ของ λ ต่างกัน → อิสระเชิงเส้น / <code>A เอกฐาน ⟺ 0 เป็น eigenvalue</code></td>
+            <td>ตัดสินความอิสระของ eigenvector หรือความเอกฐาน</td>
+            <td>ใช้ได้เฉพาะ eigenvalue ที่ "ต่างกัน" เท่านั้น</td>
+          </tr>
+          <tr>
+            <td>19. <code>A = PDP^-1</code> ได้ ⟺ มี eigenvector อิสระ n ตัว ⟺ <code>nullity(A - λI) = จำนวนซ้ำของ λ</code> ทุกตัว</td>
+            <td>ตรวจว่า diagonalizable ได้หรือไม่</td>
+            <td>มี eigenvalue ครบ n ค่าอย่างเดียวไม่พอ ต้องเช็กมิติ eigenspace</td>
+          </tr>
+          <tr>
+            <td>20. <code>A^k = P D^k P^-1</code></td>
+            <td>หากำลังสูงของเมทริกซ์</td>
+            <td>P, D ต้องจับคู่ตามลำดับ, D^k = diag(λ1^k, ..., λn^k)</td>
+          </tr>
+          <tr>
+            <td>21. <code>x' = Ax</code>: <code>x(t) = C1 e^(λ1t) v1 + ... + Cn e^(λnt) vn</code></td>
+            <td>หาผลเฉลยทั่วไปของระบบสมการเชิงอนุพันธ์</td>
+            <td>มีเงื่อนไขเริ่มต้นต้องแทน t = 0 แล้วแก้หาค่า C</td>
+          </tr>
+          <tr>
+            <td>22. เมทริกซ์คล้าย: <code>B = P^-1 A P</code> → characteristic polynomial/eigenvalue เดียวกัน</td>
+            <td>เทียบเมทริกซ์คนละฐานหลัก</td>
+            <td>พหุนามเหมือนกัน ไม่จำเป็นต้องคล้ายกัน</td>
+          </tr>
+          <tr><th colspan="3">เวกเตอร์และความตั้งฉาก</th></tr>
+          <tr>
+            <td>23. <code>u·v = u^T v</code>, <code>‖v‖ = √(v·v)</code>, ตั้งฉาก ⟺ <code>u·v = 0</code>, unit vector = <code>v/‖v‖</code></td>
+            <td>คำนวณพื้นฐานเรื่องเรขาคณิตเชิงเส้น</td>
+            <td>‖cv‖ = |c|·‖v‖, ระยะทางระหว่าง x, y = ‖x - y‖</td>
+          </tr>
+          <tr>
+            <td>24. ฐานหลักเชิงตั้งฉาก: <code>y = Σ (y·ui/‖ui‖²) ui</code></td>
+            <td>แยก y ตามพิกัดบนฐานหลักเชิงตั้งฉาก</td>
+            <td>สูตรนี้ใช้ได้เฉพาะเมื่อฐานหลักตั้งฉากกันเท่านั้น</td>
+          </tr>
+          <tr>
+            <td>25. หา H⊥ เมื่อ H = Col A: แก้ <code>A^T z = 0</code> (H⊥ = Nul A^T)</td>
+            <td>หาฐานหลักของปริภูมิเติมเต็มเชิงตั้งฉาก</td>
+            <td>ต้อง transpose ก่อนลดรูป ไม่ใช่แก้ Az = 0</td>
+          </tr>
+          <tr>
+            <td>26. ฉาย: <code>proj_H y = Σ (y·ui/‖ui‖²) ui</code>, <code>z = y - ŷ ∈ H⊥</code>, ระยะทางไป H = <code>‖y - ŷ‖</code></td>
+            <td>หาจุดบน H ที่ใกล้ y ที่สุด</td>
+            <td>z อยู่ใน H⊥ ไม่ใช่ H</td>
+          </tr>
+          <tr>
+            <td>27. Gram-Schmidt: <code>vk = xk - Σ (xk·vi/‖vi‖²) vi</code></td>
+            <td>แปลงฐานหลักใด ๆ เป็นฐานหลักเชิงตั้งฉาก</td>
+            <td>เช็ก vi·vj = 0 ทุกขั้น, ขั้นถัดไปใช้เวกเตอร์ชุดที่เลือกต่อเนื่อง</td>
+          </tr>
+          <tr>
+            <td>28. QR: <code>A = QR</code>, Q หลัก orthonormal, <code>R = Q^T A</code></td>
+            <td>แยกตัวประกอบ QR เมื่อหลักของ A อิสระ</td>
+            <td>Q ต้อง normalize หลักเป็นหนึ่งหน่วยก่อนคำนวณ R</td>
+          </tr>
+          <tr>
+            <td>29. U มีหลัก orthonormal ⟺ <code>U^T U = I</code>, U จัตุรัส (เชิงตั้งฉาก) ⇒ <code>U^-1 = U^T</code></td>
+            <td>ทำงานกับเมทริกซ์เชิงตั้งฉาก</td>
+            <td>สมบัติ U^-1 = U^T ใช้ได้เมื่อ U จัตุรัสเท่านั้น</td>
+          </tr>
+          <tr><th colspan="3">Least squares</th></tr>
+          <tr>
+            <td>30. สมการปรกติ: <code>A^T A x̂ = A^T b</code>, error = <code>‖b - Ax̂‖</code>, เส้นกำลังสองน้อยสุด: A หลักแรกเป็น 1 หมด หลักสองเป็นค่า x</td>
+            <td>เมื่อ Ax = b ไม่มีผลเฉลย หรือหาเส้นสมเหตุผลจากข้อมูล</td>
+            <td>แก้ A^T A x̂ = A^T b ไม่ใช่ Ax = b, error ต้องถอดราก</td>
+          </tr>
+          <tr><th colspan="3">เมทริกซ์สมมาตรและรูปแบบกำลังสอง</th></tr>
+          <tr>
+            <td>31. A สมมาตร ⟺ <code>A^T = A</code> ⟺ orthogonally diagonalizable: <code>A = PDP^T</code> (P เชิงตั้งฉากปรกติ)</td>
+            <td>diagonalize เมทริกซ์สมมาตร</td>
+            <td>P ต้อง normalize ทุกหลักจึงได้ P^-1 = P^T</td>
+          </tr>
+          <tr>
+            <td>32. eigenspace ต่างค่าของเมทริกซ์สมมาตรตั้งฉากกัน, eigenvalues เป็นจำนวนจริงทั้งหมด</td>
+            <td>ตรวจหรือใช้สมบัติของเมทริกซ์สมมาตร</td>
+            <td>ไม่รับประกันว่า eigenvalue ไม่ซ้ำ (มีรากซ้ำได้)</td>
+          </tr>
+          <tr>
+            <td>33. Spectral decomposition: <code>A = Σ λi ui ui^T</code></td>
+            <td>เขียน A ในรูปผลรวมของโปรเจกชัน</td>
+            <td>ui ต้องเป็น eigenvector หนึ่งหน่วยเท่านั้น</td>
+          </tr>
+          <tr>
+            <td>34. รูปแบบกำลังสอง: พจน์ <code>2c·xi·xj</code> → ตำแหน่ง (i,j), (j,i) ใส่ c / <code>x^T A x</code> → <code>y^T D y</code> เมื่อ <code>x = Py</code></td>
+            <td>เขียนเมทริกซ์ของ Q หรือกำจัดพจน์ไขว้</td>
+            <td>สัมประสิทธิ์พจน์ไขว้ต้องหาร 2 ก่อนลงเมทริกซ์</td>
+          </tr>
+          <tr>
+            <td>35. บวกแน่นอน ⟺ eigenvalue ทุกตัว &gt; 0 / ลบแน่นอน ⟺ ทุกตัว &lt; 0 / ไม่แน่นอน ⟺ มีทั้งบวกและลบ</td>
+            <td>จำแนกประเภทรูปแบบกำลังสอง</td>
+            <td>ต้องดู eigenvalue ของเมทริกซ์ของ Q เท่านั้น</td>
+          </tr>
+          <tr><th colspan="3">ปริภูมิเวกเตอร์นามธรรม</th></tr>
+          <tr>
+            <td>36. <code>dim M_{m,n} = mn</code>, <code>dim F_n[x] = n+1</code>, <code>dim R^n = n</code></td>
+            <td>หามิติของปริภูมิเวกเตอร์ทั่วไป</td>
+            <td>F_n[x] คือดีกรี "ไม่เกิน" n จึงมีฐานหลัก {1, x, ..., x^n} รวม n+1 ตัว</td>
+          </tr>
+          <tr>
+            <td>37. ปริภูมิย่อย: เช็ก <code>0 ∈ W</code> และปิดการรวมเชิงเส้น</td>
+            <td>พิสูจน์หรือหักล้างว่า W เป็นปริภูมิย่อย</td>
+            <td>ถ้า 0 ไม่อยู่ใน W ไม่เป็นปริภูมิย่อยทันที</td>
+          </tr>
+          <tr>
+            <td>38. <code>ker T</code> เป็นปริภูมิย่อย, <code>T 1-1 ⟺ ker T = {0}</code>, ทั่วถึง ⟺ <code>rank T = dim W</code></td>
+            <td>ตรวจสมบัติของการแปลงเชิงเส้นนามธรรม</td>
+            <td>ker เป็นปริภูมิย่อยของ V, range เป็นปริภูมิย่อยของ W</td>
+          </tr>
+          <tr>
+            <td>39. <code>V ≅ W</code> ⟺ <code>dim V = dim W</code></td>
+            <td>ตัดสินความสมสัณฐานของปริภูมิมิติจำกัด</td>
+            <td>ใช้ได้กับปริภูมิมิติจำกัดเท่านั้น</td>
+          </tr>
+          <tr>
+            <td>40. Cauchy-Schwarz: <code>|⟨u,v⟩| ≤ ‖u‖‖v‖</code></td>
+            <td>ทำงานในปริภูมิผลคูณภายในทุกชนิด</td>
+            <td>ใช้ได้กับผลคูณภายในใด ๆ รวมถึงแบบอินทิกรัล</td>
+          </tr>
+        </table>
+        <div class="keypoints"><div class="kp-title">ตรวจ 3 อย่างนี้ก่อนส่งข้อสอบทุกข้อ</div>
+          <ol>
+            <li>det 2×2: ad - bc เครื่องหมายตรงไหนผิดบ้าง</li>
+            <li>เมื่อจับคู่ P กับ D: หลักที่ i ของ P = eigenvector ของสมาชิกทแยงมุมที่ i ของ D (ตำแหน่งตรงกัน)</li>
+            <li>แก้ระบบเสร็จ แทนค่ากลับสมการเดิมตรวจอย่างน้อย 1 สมการ</li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="quiz" class="card quiz" data-quiz>
+        <h2>แบบทดสอบ 25 ข้อ</h2>
+        <div class="quiz-status"></div>
+        <p>ปรนัย 15 ข้อ (กดตัวเลือกเพื่อเช็กคำตอบ) + อัตนัยคำนวณ 10 ข้อ (กดดูเฉลยละเอียด) ระดับความยาก: ง่าย 10 ข้อ, กลาง 10 ข้อ, ยาก 5 ข้อ พยายามทำเองก่อนดูเฉลย</p>
+
+        <div class="q" id="q1" data-answer="A">
+          <p class="q-text">ข้อ 1) เมทริกซ์ A = [[2, 0, -1], [5, 3, 4]] มีมิติ (dimension) เท่าใด และสมาชิกตำแหน่ง a23 มีค่าเท่าใด</p>
+          <button class="choice" data-k="A">มิติ 2×3, a23 = 4</button>
+          <button class="choice" data-k="B">มิติ 3×2, a23 = 3</button>
+          <button class="choice" data-k="C">มิติ 2×3, a23 = -1</button>
+          <button class="choice" data-k="D">มิติ 6, a23 = 4</button>
+          <div class="q-explain">สมาชิกเรียง 2 แถว 3 หลัก จึงมีมิติ 2×3 ตำแหน่ง a23 คือแถวที่ 2 หลักที่ 3 = 4 ข้อผิดพลาดที่พบบ่อย: สลับลำดับแถว-หลัก จำไว้ว่า a_ij = แถว i หลัก j</div>
+        </div>
+
+        <div class="q" id="q2" data-answer="B">
+          <p class="q-text">ข้อ 2) ข้อใด<strong>ไม่ใช่</strong>การดำเนินการแถวขั้นมูลฐาน (elementary row operation)</p>
+          <button class="choice" data-k="A">สลับแถวที่ 1 กับแถวที่ 3</button>
+          <button class="choice" data-k="B">คูณแถวที่ 2 ด้วย 0 แล้วแทนแถวที่ 2 เดิม</button>
+          <button class="choice" data-k="C">เปลี่ยนแถวที่ 1 เป็น (แถวที่ 1) + (-2)×(แถวที่ 3)</button>
+          <button class="choice" data-k="D">คูณแถวที่ 4 ด้วย 5</button>
+          <div class="q-explain">การดำเนินการแถวขั้นมูลฐานมี 3 แบบ: สับเปลี่ยน (R_pq), แทนที่ (R_p + cR_q), ปรับมาตรา (cR_p เมื่อ c ≠ 0) การคูณแถวด้วย 0 ทำให้ข้อมูลสูญหาย (แถวที่มีข้อมูลกลายเป็น 0 ล้วน) จึงไม่ใช่การดำเนินการแถวขั้นมูลฐาน ส่วนข้อ D ใช้ c = 5 ≠ 0 จึงทำได้</div>
+        </div>
+
+        <div class="q" id="q3" data-answer="C">
+          <p class="q-text">ข้อ 3) รูปขั้นบันไดของเมทริกซ์แต่งเติมของระบบเชิงเส้นมีแถวสุดท้ายเป็น [0 0 0 0 | 7] ระบบนี้มีผลเฉลยอย่างไร</p>
+          <button class="choice" data-k="A">มีผลเฉลยชุดเดียว</button>
+          <button class="choice" data-k="B">มีผลเฉลยอนันต์ชุด</button>
+          <button class="choice" data-k="C">ไม่มีผลเฉลย (ระบบไม่ต้องกัน)</button>
+          <button class="choice" data-k="D">ตัดสินไม่ได้ ต้องลดรูปต่อเป็นขั้นบันไดลดรูปก่อน</button>
+          <div class="q-explain">โดยทฤษฎีบทการมีจริง (Existence Theorem) ระบบเชิงเส้นมีผลเฉลย ก็ต่อเมื่อหลักทางขวาสุดของเมทริกซ์แต่งเติมไม่เป็นหลักตัวหลัก แถว [0 0 0 0 | 7] สมนัยกับสมการ 0 = 7 ซึ่งเป็นเท็จ จึงไม่ต้องกันและไม่มีผลเฉลย</div>
+        </div>
+
+        <div class="q" id="q4" data-answer="B">
+          <p class="q-text">ข้อ 4) เมทริกซ์ใด<strong>เป็น</strong>เมทริกซ์ขั้นบันไดลดรูป (reduced echelon form)</p>
+          <button class="choice" data-k="A">[[1, 2, 3], [0, 2, 4], [0, 0, 0]]</button>
+          <button class="choice" data-k="B">[[1, 0, 3], [0, 1, 2], [0, 0, 0]]</button>
+          <button class="choice" data-k="C">[[0, 1, 2], [1, 0, 3]]</button>
+          <button class="choice" data-k="D">[[1, 0, 0], [0, 1, 0], [0, 0, 2]]</button>
+          <div class="q-explain">ข้อ B มี 1 ตัวนำ (leading 1) ทุกแถวที่มีตัวไม่ศูนย์ และสมาชิกอื่นในหลักที่มี 1 ตัวนำเป็น 0 หมด จึงเป็นขั้นบันไดลดรูป ส่วน A: สมาชิกนำแถว 2 เป็น 2 ไม่ใช่ 1 จึงเป็นขั้นบันไดธรรมดาเท่านั้น, C: สมาชิกนำของแถวล่าง (หลัก 1) อยู่ทางซ้ายของแถวบน (หลัก 2) จึงไม่ใช่ขั้นบันได, D: ทแยงมุมมี 2 ไม่ใช่ 1 ตัวนำ จึงเป็นขั้นบันไดธรรมดา</div>
+        </div>
+
+        <div class="q" id="q5" data-answer="A">
+          <p class="q-text">ข้อ 5) ข้อความใดทำให้เซตของเวกเตอร์ {v1, v2, ..., vp} ไม่อิสระเชิงเส้น (linearly dependent) <strong>โดยทันที</strong></p>
+          <button class="choice" data-k="A">เซตนี้มีเวกเตอร์ศูนย์ 0 เป็นสมาชิก</button>
+          <button class="choice" data-k="B">ทุกเวกเตอร์มีสมาชิกเป็นจำนวนเต็ม</button>
+          <button class="choice" data-k="C">จำนวนเวกเตอร์น้อยกว่ามิติของปริภูมิ</button>
+          <button class="choice" data-k="D">เวกเตอร์สองตัวใด ๆ มีผลรวมเป็นจำนวนเต็มบวก</button>
+          <div class="q-explain">ถ้าเซตมีเวกเตอร์ศูนย์ ให้ถ่วงน้ำหนักตัวนั้นด้วยจำนวนไม่ศูนย์และตัวอื่นด้วย 0 จะได้การรวมเชิงเส้น = 0 ที่ไม่ชัดเสมอ จึงไม่อิสระเชิงเส้น ข้อสังเกตอีกอันที่ทำให้ไม่อิสระคือจำนวนเวกเตอร์ p มากกว่ามิติ m (ไม่ใช่น้อยกว่าอย่างข้อ C)</div>
+        </div>
+
+        <div class="q" id="q6" data-answer="B">
+          <p class="q-text">ข้อ 6) จงหาค่า det A เมื่อ A = [[3, 1], [1, 2]]</p>
+          <button class="choice" data-k="A">7</button>
+          <button class="choice" data-k="B">5</button>
+          <button class="choice" data-k="C">-5</button>
+          <button class="choice" data-k="D">6</button>
+          <div class="q-explain">det A = (3)(2) - (1)(1) = 6 - 1 = 5 ใช้สูตร ad - bc อย่าลืมลบพจน์หลัง</div>
+        </div>
+
+        <div class="q" id="q7" data-answer="B">
+          <p class="q-text">ข้อ 7) ให้ A เป็นเมทริกซ์ 3×4 ข้อใดสมมูลกับข้อความ "หลักของ A แผ่ทั่ว R^3"</p>
+          <button class="choice" data-k="A">A มีตำแหน่งตัวหลัก (pivot) ในทุกหลัก</button>
+          <button class="choice" data-k="B">A มีตำแหน่งตัวหลักในทุกแถว และสมการ Ax = b มีผลเฉลยสำหรับทุก b ∈ R^3</button>
+          <button class="choice" data-k="C">A มีหลักอิสระเชิงเส้น 4 หลัก</button>
+          <button class="choice" data-k="D">rank A = 4</button>
+          <div class="q-explain">โดยทฤษฎีบท 1.3.4: สำหรับแต่ละ b ∈ R^m สมการ Ax = b มีผลเฉลย ⟺ หลักของ A แผ่ทั่ว R^m ⟺ A มีตำแหน่งตัวหลักในทุกแถว ระวัง: "pivot ทุกหลัก" คือเงื่อนไขของความเป็น 1-1/อิสระเชิงเส้น ไม่ใช่การแผ่ทั่ว และ A ขนาด 3×4 มีหลัก 4 หลัก แต่มีแถวแค่ 3 แถว pivot ทุกหลักจึงเป็นไปไม่ได้ (ข้อ A, C, D จึงไม่ได้)</div>
+        </div>
+
+        <div class="q" id="q8" data-answer="B">
+          <p class="q-text">ข้อ 8) ให้ A เป็นเมทริกซ์ 10×12 ซึ่งมี nullity A = 7 จงหา rank A</p>
+          <button class="choice" data-k="A">3</button>
+          <button class="choice" data-k="B">5</button>
+          <button class="choice" data-k="C">7</button>
+          <button class="choice" data-k="D">12</button>
+          <div class="q-explain">ทฤษฎีบทแรงก์ (Rank Theorem): rank A + nullity A = n = จำนวนหลัก จึงได้ rank A = 12 - 7 = 5 ระวังอย่าใช้จำนวนแถว 10 ไปลบ</div>
+        </div>
+
+        <div class="q" id="q9" data-answer="D">
+          <p class="q-text">ข้อ 9) ตามทฤษฎีบทเมทริกซ์หาตัวผกผันได้ (Invertible Matrix Theorem) ข้อใด<strong>ไม่สมมูล</strong>กับ "A (ขนาด n) หาเมทริกซ์ผกผันได้"</p>
+          <button class="choice" data-k="A">Nul A = {0}</button>
+          <button class="choice" data-k="B">nullity A = 0</button>
+          <button class="choice" data-k="C">rank A = n</button>
+          <button class="choice" data-k="D">nullity A = n</button>
+          <div class="q-explain">ทฤษฎีบทเมทริกซ์หาตัวผกผันได้: A หา inverse ได้ ⟺ rank A = n ⟺ nullity A = 0 ⟺ Nul A = {0} ส่วน "nullity A = n" แปลว่า Nul A = R^n ซึ่งเกิดกับเมทริกซ์ศูนย์ ไม่สมมูลกับการหา inverse ได้</div>
+        </div>
+
+        <div class="q" id="q10" data-answer="C">
+          <p class="q-text">ข้อ 10) ให้ A, B เป็นเมทริกซ์จัตุรัส 3×3 เมื่อ det A = 2 และ det B = 3 จะได้ det(2AB^T) มีค่าเท่าใด</p>
+          <button class="choice" data-k="A">24</button>
+          <button class="choice" data-k="B">12</button>
+          <button class="choice" data-k="C">48</button>
+          <button class="choice" data-k="D">36</button>
+          <div class="q-explain"><code>det(2AB^T) = 2^3 · det A · det(B^T) = 8 · 2 · 3 = 48</code> กับดักที่พบบ่อย: det(cA) = c^n · det A โดย n = 3 จึงต้องคูณ 2^3 = 8 ไม่ใช่ 2 และ det B^T = det B เสมอ</div>
+        </div>
+
+        <div class="q" id="q11" data-answer="A">
+          <p class="q-text">ข้อ 11) เมทริกซ์ A มีพหุนามลักษณะเฉพาะ det(A - λI2) = λ² - 11λ + 18 eigenvalues ของ A คือชุดใด</p>
+          <button class="choice" data-k="A">λ = 2, 9</button>
+          <button class="choice" data-k="B">λ = -2, -9</button>
+          <button class="choice" data-k="C">λ = 3, 6</button>
+          <button class="choice" data-k="D">λ = 11, 18</button>
+          <div class="q-explain">แยกตัวประกอบ: λ² - 11λ + 18 = (λ - 2)(λ - 9) = 0 จึงได้ λ = 2, 9 ตรวจ: ผลบวกราก = 11 = สัมประสิทธิ์ลบของ λ และผลคูณราก = 18 = ค่าคงตัว ถูกต้อง</div>
+        </div>
+
+        <div class="q" id="q12" data-answer="B">
+          <p class="q-text">ข้อ 12) เมทริกซ์จัตุรัสขนาด n จะแปลงเป็นทแยงมุมได้ (diagonalizable) เมื่อใด</p>
+          <button class="choice" data-k="A">มี eigenvalues ต่างกัน n ค่าเสมอ</button>
+          <button class="choice" data-k="B">มีเวกเตอร์ลักษณะเฉพาะ (eigenvector) ที่อิสระเชิงเส้น n ตัว</button>
+          <button class="choice" data-k="C">มี eigenvalue ซ้ำไม่เกิน 1 คู่</button>
+          <button class="choice" data-k="D">det A ≠ 0 เสมอ</button>
+          <div class="q-explain">ทฤษฎีบทการแปลงเป็นทแยงมุม (Diagonalization Theorem): A แปลงเป็นทแยงมุมได้ ⟺ มีเวกเตอร์ลักษณะเฉพาะที่อิสระเชิงเส้น n ตัว (จึงนำมาเรียงเป็นหลักของ P ไม่เอกฐานได้) ข้อ A เป็นเงื่อนไขเพียงพอแต่ไม่จำเป็น (λ ซ้ำก็ diagonalizable ได้ถ้า eigenspace มีมิติพอ) และข้อ D ไม่เกี่ยว (A เอกฐานที่มี 0 เป็น eigenvalue ก็ diagonalizable ได้)</div>
+        </div>
+
+        <div class="q" id="q13" data-answer="B">
+          <p class="q-text">ข้อ 13) ให้ A เป็นเมทริกซ์ 4×4 มี eigenvalues λ = 2, 2, 1, -1 และ nullity(A - 2I4) = 2 ข้อสรุปใดถูกต้อง</p>
+          <button class="choice" data-k="A">A แปลงเป็นทแยงมุมไม่ได้ เพราะมี eigenvalue ซ้ำ</button>
+          <button class="choice" data-k="B">A แปลงเป็นทแยงมุมได้ เพราะ nullity ของทุก eigenvalue เท่ากับจำนวนการซ้ำ (รวมแล้วได้เวกเตอร์ลักษณะเฉพาะอิสระ 4 ตัว)</button>
+          <button class="choice" data-k="C">A แปลงเป็นทแยงมุมได้ต่อเมื่อ det A ≠ 0</button>
+          <button class="choice" data-k="D">ไม่มีข้อมูลเพียงพอจะตัดสิน</button>
+          <div class="q-explain">λ = 2 ซ้ำ 2 ครั้ง ต้องการ nullity(A - 2I4) = 2 ซึ่งโจทย์ให้เท่ากับ 2 พอดี ส่วน λ = 1 และ -1 ไม่ซ้ำ จึงมี eigenvector อิสระอย่างน้อยตัวละ 1 โดยปริภูมิลักษณะเฉพาะต่างค่าต่างจากกัน รวมมิติ eigenspace = 2 + 1 + 1 = 4 = n จึงมี eigenvector อิสระ 4 ตัว และแปลงเป็นทแยงมุมได้</div>
+        </div>
+
+        <div class="q" id="q14" data-answer="D">
+          <p class="q-text">ข้อ 14) ให้ A เป็นเมทริกซ์สมมาตร (symmetric) ขนาด n ตามทฤษฎีบทเชิงสเปกตรัม (Spectral Theorem) ข้อใด<strong>ไม่จริง</strong></p>
+          <button class="choice" data-k="A">eigenvalues ของ A เป็นจำนวนจริงทั้งหมด</button>
+          <button class="choice" data-k="B">ปริภูมิลักษณะเฉพาะที่สมนัยกับ eigenvalues ต่างกันจะตั้งฉากกัน</button>
+          <button class="choice" data-k="C">มีเมทริกซ์เชิงตั้งฉากปรกติ P ที่ทำให้ P^T A P เป็นเมทริกซ์ทแยงมุม</button>
+          <button class="choice" data-k="D">eigenvalues ของ A ต้องแตกต่างกันทั้งหมด (ไม่มีรากซ้ำ)</button>
+          <div class="q-explain">Spectral Theorem รับประกันข้อ A, B, C ทั้งหมด แต่ไม่รับประกันว่า eigenvalue ไม่ซ้ำ เมทริกซ์สมมาตรมีรากซ้ำได้ (แต่จะได้ eigenspace มิติเท่าจำนวนซ้ำ และยัง orthogonally diagonalizable ได้เสมอ) เช่น [[2, 0], [0, 2]]</div>
+        </div>
+
+        <div class="q" id="q15" data-answer="C">
+          <p class="q-text">ข้อ 15) รูปแบบกำลังสอง (quadratic form) Q(x1, x2) = 3x1² + 6x2² - 4x1x2 มีเมทริกซ์ A = [[3, -2], [-2, 6]] ซึ่งมี eigenvalues λ = 2, 7 Q จัดเป็นรูปแบบกำลังสองชนิดใด</p>
+          <button class="choice" data-k="A">ลบแน่นอน (negative definite)</button>
+          <button class="choice" data-k="B">ไม่แน่นอน (indefinite)</button>
+          <button class="choice" data-k="C">บวกแน่นอน (positive definite)</button>
+          <button class="choice" data-k="D">บวกกึ่งแน่นอน (positive semidefinite)</button>
+          <div class="q-explain">Q บวกแน่นอน ⟺ eigenvalues ของเมทริกซ์ของ Q เป็นบวกทุกตัว เมื่อ λ = 2, 7 &gt; 0 ทั้งคู่ จึงเป็นรูปแบบกำลังสองแบบบวกแน่นอน (positive definite)</div>
+        </div>
+
+        <h3>ส่วนที่ 2 อัตนัยคำนวณ (ข้อ 16-25)</h3>
+
+        <div class="q" id="q16">
+          <p class="q-text">ข้อ 16) จงหา det A และ A<sup>-1</sup> เมื่อ</p>
+<pre><code>A = [[ 2,  5],
+     [-3, -7]]</code></pre>
+          <details class="more"><summary>ดูเฉลย</summary>
+            <div>
+              <ol>
+                <li>det A = (2)(-7) - (5)(-3) = -14 + 15 = <strong>1</strong></li>
+                <li>ใช้สูตร inverse 2×2 (สลับทแยงหลัก, เปลี่ยนเครื่องหมายนอกทแยง, หารด้วย det):</li>
+              </ol>
+<pre><code>A^-1 = (1/1) · [[-7, -5], [ 3,  2]] = [[-7, -5],
+                                        [ 3,  2]]</code></pre>
+              <ol start="3">
+                <li>ตรวจ: A·A^-1 = [[2(-7)+5(3), 2(-5)+5(2)], [-3(-7)+(-7)(3), -3(-5)+(-7)(2)]] = [[1, 0], [0, 1]] ถูกต้อง</li>
+              </ol>
+            </div>
+          </details>
+        </div>
+
+        <div class="q" id="q17">
+          <p class="q-text">ข้อ 17) จงใช้เมทริกซ์ผกผันแก้ระบบเชิงเส้นต่อไปนี้</p>
+<pre><code>2x1 +  5x2 = -1
+-3x1 - 7x2 =  1</code></pre>
+          <details class="more"><summary>ดูเฉลย</summary>
+            <div>
+              <ol>
+                <li>เขียนเป็นสมการเมทริกซ์ <code>Ax = b</code> เมื่อ A = [[2, 5], [-3, -7]], b = (-1, 1)</li>
+                <li>จากข้อ 16 ได้ A^-1 = [[-7, -5], [3, 2]] ดังนั้น</li>
+              </ol>
+<pre><code>x = A^-1 b = [[-7, -5], [3, 2]] · [[-1], [1]] = [[7 - 5],  [-3 + 2]] = [[ 2],
+                                                                          [-1]]</code></pre>
+              <ol start="3">
+                <li><strong>คำตอบ: x1 = 2, x2 = -1</strong> (ตรวจย้อนกลับ: 2(2) + 5(-1) = -1 และ -3(2) - 7(-1) = 1 ถูกต้อง)</li>
+              </ol>
+            </div>
+          </details>
+        </div>
+
+        <div class="q" id="q18">
+          <p class="q-text">ข้อ 18) จงแก้ระบบเชิงเส้นต่อไปนี้โดยลดรูปเมทริกซ์แต่งเติม แล้วเขียนเซตผลเฉลย</p>
+<pre><code>x1 +  x2 - x3 = 1
+2x1 + x2 - 3x3 = 2
+     x2 - 5x3 = 6</code></pre>
+          <details class="more"><summary>ดูเฉลย</summary>
+            <div>
+              <ol>
+                <li>เขียนเมทริกซ์แต่งเติมและลดรูปทีละขั้น (รายละเอียดเต็มเหมือนตัวอย่างในหัวข้อ 1.1):</li>
+              </ol>
+<pre><code>[[1,  1, -1,  1],      [[1,  1, -1,  1],
+ [2,  1, -3,  2],  ~    [0, -1, -1,  0],   (R2 - 2R1)
+ [0,  1, -5,  6]]       [0,  1, -5,  6]]
+
+~ [[1,  1, -1,  1],     ~ [[1, 1, -1,  1],
+   [0,  1,  1,  0],        [0, 1,  1,  0],   (คูณแถว 2 ด้วย -1, ตามด้วย R3 - R2)
+   [0,  0, -6,  6]]        [0, 0, -6,  6]]
+
+~ [[1,  1, -1,  1],     ~ [[1, 0, 0, -1],
+   [0,  1,  1,  0],        [0, 1, 0,  1],   (R3 / (-6) แล้วกำจัดเหนือ: R1 + R3, R2 - R3, R1 - R2)
+   [0,  0,  1, -1]]        [0, 0, 1, -1]]</code></pre>
+              <ol start="2">
+                <li>รูปขั้นบันไดลดรูปสุดท้าย <code>[[1, 0, 0, -1], [0, 1, 0, 1], [0, 0, 1, -1]]</code> ให้ x1 = -1, x2 = 1, x3 = -1</li>
+                <li>ไม่มีตัวแปรเสรี จึงมีผลเฉลยชุดเดียว <strong>เซตผลเฉลย = {(-1, 1, -1)}</strong></li>
+                <li>ตรวจ: แทนสมการแรก (-1) + (1) - (-1) = 1 ถูกต้อง</li>
+              </ol>
+            </div>
+          </details>
+        </div>
+
+        <div class="q" id="q19">
+          <p class="q-text">ข้อ 19) ให้ v = (1, 0, -2, 2) ∈ R^4 จงหา ‖v‖ และเวกเตอร์หนึ่งหน่วยในทิศทางเดียวกับ v</p>
+          <details class="more"><summary>ดูเฉลย</summary>
+            <div>
+              <ol>
+                <li>‖v‖ = √(1² + 0² + (-2)² + 2²) = √(1 + 0 + 4 + 4) = √9 = <strong>3</strong></li>
+                <li>เวกเตอร์หนึ่งหน่วยทิศเดียวกับ v = v/‖v‖ = <strong>(1/3, 0, -2/3, 2/3)</strong></li>
+              </ol>
+            </div>
+          </details>
+        </div>
+
+        <div class="q" id="q20">
+          <p class="q-text">ข้อ 20) จงหาฐานหลักสำหรับปริภูมิหลัก (Col A) และปริภูมิสู่ศูนย์ (Nul A) พร้อมทั้งหา rank A และ nullity A เมื่อ</p>
+<pre><code>A = [[ 1, -3, -2],
+     [ 0,  1, -1],
+     [-2,  3,  7]]</code></pre>
+          <details class="more"><summary>ดูเฉลย</summary>
+            <div>
+              <ol>
+                <li>ลดรูป A จนได้รูปขั้นบันได</li>
+              </ol>
+<pre><code>[[ 1, -3, -2],      [[ 1, -3, -2],      [[1, -3, -2],
+ [ 0,  1, -1],   ~   [ 0,  1, -1],   ~   [0,  1, -1],    หลักตัวหลัก = หลัก 1, 2
+ [-2,  3,  7]]       [ 0, -3,  3]]       [0,  0,  0]]     (R3 + 2R1 แล้ว R3 + 3R2)</code></pre>
+              <ol start="2">
+                <li><strong>ฐานหลักของ Col A</strong> = หลักตัวหลักของ A ต้นฉบับ: หลัก 1 และหลัก 2 → <strong>{(1, 0, -2), (-3, 1, 3)}</strong></li>
+                <li><strong>rank A</strong> = จำนวนหลักตัวหลัก = <strong>2</strong></li>
+                <li><strong>Nul A</strong>: ลดรูปต่อเป็นขั้นบันไดลดรูป [[1, 0, -5], [0, 1, -1], [0, 0, 0]] แก้ได้ x1 = 5x3, x2 = x3, x3 เป็นตัวแปรเสรี ⟹ x = x3·(5, 1, 1) ฐานหลักของ Nul A = <strong>{(5, 1, 1)}</strong></li>
+                <li><strong>nullity A</strong> = <strong>1</strong> และตรวจ Rank Theorem: 2 + 1 = 3 = จำนวนหลัก ถูกต้อง</li>
+              </ol>
+            </div>
+          </details>
+        </div>
+
+        <div class="q" id="q21">
+          <p class="q-text">ข้อ 21) ให้ H = Span{(1, 2, 0), (1, 2, -3)} จงใช้กระบวนการกราม-ชมิดต์ (Gram-Schmidt process) สร้างฐานหลักเชิงตั้งฉากสำหรับ H</p>
+          <details class="more"><summary>ดูเฉลย</summary>
+            <div>
+              <ol>
+                <li>ให้ x1 = (1, 2, 0), x2 = (1, 2, -3)</li>
+                <li>v1 = x1 = (1, 2, 0)</li>
+                <li>คำนวณพจน์ฉาย: x2·v1 = 1(1) + 2(2) + (-3)(0) = 5 และ v1·v1 = 1 + 4 + 0 = 5</li>
+                <li>v2 = x2 - (x2·v1)/(v1·v1) · v1 = (1, 2, -3) - (5/5)(1, 2, 0) = (1, 2, -3) - (1, 2, 0) = <strong>(0, 0, -3)</strong></li>
+                <li>ตรวจ: v1·v2 = 0 + 0 + 0 = 0 ตั้งฉากจริง และ Span{v1, v2} = Span{x1, x2} = H</li>
+                <li><strong>ฐานหลักเชิงตั้งฉากของ H = {(1, 2, 0), (0, 0, -3)}</strong> (ถ้าต้องการ orthonormal ต่อ: (1/√5)(1, 2, 0) และ (0, 0, -1))</li>
+              </ol>
+            </div>
+          </details>
+        </div>
+
+        <div class="q" id="q22">
+          <p class="q-text">ข้อ 22) จงหาผลเฉลยกำลังสองน้อยสุด (least-squares solution) ของระบบเชิงเส้น Ax = b เมื่อ</p>
+<pre><code>A = [[-1,  2],       b = [4, 1, 2]
+     [ 2, -3],
+     [-1,  3]]</code></pre>
+          <details class="more"><summary>ดูเฉลย</summary>
+            <div>
+              <ol>
+                <li>สร้างสมการปรกติ (normal equations) <code>A^T A x̂ = A^T b</code></li>
+              </ol>
+<pre><code>A^T A = [[-1, 2, -1],  · [[-1,  2],   = [[  6, -11],
+          [ 2, -3,  3]]    [ 2, -3],      [-11,  22]]
+                           [-1,  3]]
+
+A^T b  = [[-1, 2, -1],  · [4]  =  [ -4 + 2 - 2 ]  =  [-4]
+          [ 2, -3,  3]]    [1]     [ 8 - 3 + 6 ]     [11]
+                           [2]</code></pre>
+              <ol start="2">
+                <li>แก้ระบบ <code>[[6, -11], [-11, 22]] x̂ = (-4, 11)</code> โดย det = 6(22) - (-11)(-11) = 132 - 121 = 11</li>
+              </ol>
+<pre><code>x̂ = (1/11) · [[22, 11], [11, 6]] · [[-4], [11]]
+  = (1/11) · [[-88 + 121], [-44 + 66]]
+  = (1/11) · [[33], [22]]
+  = [[3], [2]]</code></pre>
+              <ol start="3">
+                <li><strong>ผลเฉลยกำลังสองน้อยสุด x̂ = (3, 2)</strong></li>
+                <li>ถ้าถามค่าคลาดเคลื่อน: Ax̂ = (-1(3)+2(2), 2(3)-3(2), -1(3)+3(2)) = (1, 0, 3) ดังนั้น b - Ax̂ = (4, 1, 2) - (1, 0, 3) = (3, 1, -1) จึงได้ ‖(3, 1, -1)‖ = √11</li>
+              </ol>
+            </div>
+          </details>
+        </div>
+
+        <div class="q" id="q23">
+          <p class="q-text">ข้อ 23) จงแปลงเมทริกซ์ A เป็นเมทริกซ์ทแยงมุม นั่นคือหาเมทริกซ์ไม่เอกฐาน P และเมทริกซ์ทแยงมุม D ที่ทำให้ A = PDP<sup>-1</sup> พร้อมทั้งเขียนสูตรของ A<sup>k</sup> เมื่อ</p>
+<pre><code>A = [[ 7, 2],
+     [-4, 1]]</code></pre>
+          <details class="more"><summary>ดูเฉลย</summary>
+            <div>
+              <ol>
+                <li><strong>ขั้นที่ 1</strong> หา eigenvalues:</li>
+              </ol>
+<pre><code>det(A - λI) = (7-λ)(1-λ) - (2)(-4) = λ² - 8λ + 15 = (λ - 3)(λ - 5) = 0
+จึงได้  λ = 3, 5</code></pre>
+              <ol start="2">
+                <li><strong>ขั้นที่ 2</strong> หา eigenvector:</li>
+              </ol>
+              <ul>
+                <li>λ = 3: (A - 3I) = [[4, 2], [-4, -2]] ∼ [[1, 1/2], [0, 0]] → x1 = -(1/2)x2 → v1 = <strong>(-1, 2)</strong> (คูณ 2 จาก (-1/2, 1))</li>
+                <li>λ = 5: (A - 5I) = [[2, 2], [-4, -4]] ∼ [[1, 1], [0, 0]] → x1 = -x2 → v2 = <strong>(-1, 1)</strong></li>
+              </ul>
+              <ol start="3">
+                <li><strong>ขั้นที่ 3</strong> เรียงหลักของ P ตาม eigenvector และ D ตามคู่ของมัน:</li>
+              </ol>
+<pre><code>P = [[-1, -1],      D = [[3, 0],
+     [ 2,  1]]           [0, 5]]</code></pre>
+              <ol start="4">
+                <li>ตรวจ P ไม่เอกฐาน: det P = (-1)(1) - (-1)(2) = 1 ≠ 0 และ A = PDP^-1 เมื่อ P^-1 = [[1, 1], [-2, -1]]</li>
+                <li><strong>ขั้นที่ 4</strong> สูตร A^k:</li>
+              </ol>
+<pre><code>A^k = P D^k P^-1
+
+    =  [[-1, -1],   [[3^k,    0],   [[1,   1],
+        [ 2,  1]] ·  [  0,  5^k]] · [-2,  -1]]
+
+    = [[ -3^k + 2·5^k ,  -3^k + 5^k    ],
+       [ 2·3^k - 2·5^k ,  2·3^k - 5^k ]]      สำหรับทุกจำนวนเต็มบวก k</code></pre>
+            </div>
+          </details>
+        </div>
+
+        <div class="q" id="q24">
+          <p class="q-text">ข้อ 24) จงหาผลเฉลยทั่วไปของระบบสมการเชิงอนุพันธ์ต่อไปนี้</p>
+<pre><code>x1' =  x1 -  x2
+x2' = 2x1 + 4x2</code></pre>
+          <details class="more"><summary>ดูเฉลย</summary>
+            <div>
+              <ol>
+                <li><strong>ขั้นที่ 1</strong> เขียนเป็น x' = Ax เมื่อ A = [[1, -1], [2, 4]]</li>
+                <li><strong>ขั้นที่ 2</strong> หา eigenvalues:</li>
+              </ol>
+<pre><code>det(A - λI) = (1-λ)(4-λ) + 2 = λ² - 5λ + 6 = (λ - 2)(λ - 3) = 0   จึงได้  λ = 2, 3</code></pre>
+              <ol start="3">
+                <li><strong>ขั้นที่ 3</strong> หา eigenvector:</li>
+              </ol>
+              <ul>
+                <li>λ = 2: (A - 2I) = [[-1, -1], [2, 2]] → x1 + x2 = 0 → v1 = <strong>(-1, 1)</strong></li>
+                <li>λ = 3: (A - 3I) = [[-2, -1], [2, 1]] → 2x1 + x2 = 0 → v2 = <strong>(-1, 2)</strong></li>
+              </ul>
+              <ol start="4">
+                <li><strong>ขั้นที่ 4</strong> เขียนผลเฉลยทั่วไป:</li>
+              </ol>
+<pre><code>x(t) = C1·e^(2t)·(-1, 1) + C2·e^(3t)·(-1, 2)     (C1, C2 เป็นจำนวนจริง)</code></pre>
+              <ol start="5">
+                <li>นั่นคือ x1(t) = -C1·e^(2t) - C2·e^(3t), x2(t) = C1·e^(2t) + 2·C2·e^(3t)</li>
+              </ol>
+            </div>
+          </details>
+        </div>
+
+        <div class="q" id="q25">
+          <p class="q-text">ข้อ 25) จงแปลงเมทริกซ์สมมาตร A ต่อไปนี้เป็นทแยงมุมเชิงตั้งฉาก นั่นคือหาเมทริกซ์เชิงตั้งฉากปรกติ P (P<sup>-1</sup> = P<sup>T</sup>) และเมทริกซ์ทแยงมุม D ที่ทำให้ A = PDP<sup>T</sup> เมื่อ</p>
+<pre><code>A = [[ 2,  3,  3],
+     [ 3, -1,  0],
+     [ 3,  0, -1]]</code></pre>
+          <details class="more"><summary>ดูเฉลย</summary>
+            <div>
+              <ol>
+                <li><strong>ขั้นที่ 1</strong> หา eigenvalues (A เป็นสมมาตร):</li>
+              </ol>
+<pre><code>det(A - λI) = (λ + 1)(λ + 4)(5 - λ) = 0   จึงได้  λ = -1, -4, 5</code></pre>
+              <ol start="2">
+                <li><strong>ขั้นที่ 2</strong> หา eigenvector ของแต่ละค่า (แก้ (A - λI)x = 0):</li>
+              </ol>
+              <ul>
+                <li>λ = -1: A + I = [[3, 3, 3], [3, 0, 0], [3, 0, 0]] → x1 = 0, x2 + x3 = 0 → <strong>v1 = (0, -1, 1)</strong></li>
+                <li>λ = -4: A + 4I = [[6, 3, 3], [3, 3, 0], [3, 0, 3]] → x1 + x3 = 0, x2 - x3 = 0 → <strong>v2 = (-1, 1, 1)</strong></li>
+                <li>λ = 5: A - 5I = [[-3, 3, 3], [3, -6, 0], [3, 0, -6]] → x1 = 2x3, x2 = x3 → <strong>v3 = (2, 1, 1)</strong></li>
+              </ul>
+              <ol start="3">
+                <li><strong>ขั้นที่ 3</strong> ตรวจความตั้งฉาก (จะตั้งฉากกันเองเพราะ A สมมาตรและ λ ต่างค่ากัน): v1·v2 = 0 - 1 + 1 = 0, v1·v3 = 0 - 1 + 1 = 0, v2·v3 = -2 + 1 + 1 = 0 ทุกคู่ตั้งฉาก</li>
+                <li><strong>ขั้นที่ 4</strong> normalize (‖v1‖ = √2, ‖v2‖ = √3, ‖v3‖ = √6) แล้วเรียงเป็นหลักของ P:</li>
+              </ol>
+<pre><code>      [[     0      , -1/√3 , 2/√6 ]
+P =    [ -1/√2      ,  1/√3 , 1/√6 ]        (P^-1 = P^T)
+       [  1/√2      ,  1/√3 , 1/√6 ]
+
+D = [[-1,  0, 0],
+     [ 0, -4, 0],
+     [ 0,  0, 5]]        จึงได้  A = PDP^T</code></pre>
+              <ol start="5">
+                <li>หมายเหตุ: ถ้าโจทย์ต้องการเพียง P ไม่ orthonormal ก็ใช้ P = [[0, -1, 2], [-1, 1, 1], [1, 1, 1]], D = diag(-1, -4, 5) ได้เช่นกัน แต่โจทย์ข้อนี้ระบุให้ "เชิงตั้งฉาก" จึงต้อง normalize ทุกหลัก</li>
+              </ol>
+            </div>
+          </details>
+        </div>
+
+        <button class="quiz-reset">ลองทำใหม่ทั้งชุด</button>
+      </section>
+    </article>
+  </main>
+</div>
+<script src="assets/site.js"></script>
+</body>
+</html>

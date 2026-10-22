@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operating Systems Lab (05506007) | ติวสอบ ปี 2 เทอม 1</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-subject="oslab">
+<header class="topbar">
+  <a class="brand" href="index.html">ติวสอบ <span>ปี 2 เทอม 1</span></a>
+  <nav class="subject-nav">
+    <a href="dsa.html">DSA</a>
+    <a href="os.html">OS</a>
+    <a href="os-2.html">OS (ต่อ)</a>
+    <a href="os-quiz.html">OS ควิซ</a>
+    <a href="oslab.html" class="active">OS Lab</a>
+    <a href="bpm.html">BA/BPM</a>
+    <a href="linear.html">พีชคณิตเชิงเส้น</a>
+    <a href="seminar.html">Seminar</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="toc">
+    <div class="toc-title">สารบัญหน้านี้</div>
+    <a href="#sec1">Virtualization</a>
+    <a href="#sec2">WSL</a>
+    <a href="#sec3">Linux CLI</a>
+    <a href="#sec4">VI Editor</a>
+    <a href="#sec5">Docker พื้นฐาน</a>
+    <a href="#sec6">exec() Family</a>
+    <a href="#quiz">แบบทดสอบ</a>
+  </aside>
+  <main>
+    <article>
+      <h1>Operating Systems Lab (05506007)</h1>
+      <p class="page-sub">สรุป Virtualization, WSL, Linux CLI, VI Editor, Docker และ exec() family พร้อมตารางคำสั่งและแบบทดสอบท้ายหน้า</p>
+
+      <section id="sec1" class="card">
+        <h2>1. Virtualization Technology</h2>
+        <p><strong>Virtualization</strong> คือเทคโนโลยีที่อนุญาตให้ "สร้างเวอร์ชันเสมือน (virtual version) ของทรัพยากร" เช่น เครื่อง server โดยเราสร้าง <strong>Virtual Machine (VM)</strong> ซึ่งเป็นสภาพแวดล้อมที่สมบูรณ์ในตัวเอง (self-contained)</p>
+        <p>นิยมใช้ VM เพื่อทดลองใช้ซอฟต์แวร์ใหม่ ๆ โดยไม่เสี่ยงทำความเสียหายกับ host operating system</p>
+
+        <h3>Hypervisor (Virtual Machine Monitor)</h3>
+        <p>Hypervisor คือซอฟต์แวร์ที่ทำหน้าที่สร้างและจัดการ VM บนเครื่อง host แบ่งเป็น 2 ประเภท</p>
+        <table>
+          <tr><th>ประเภท Hypervisor</th><th>ลักษณะ</th><th>ตัวอย่าง</th></tr>
+          <tr><td><strong>Bare-metal Hypervisor</strong></td><td>ทำงานบนฮาร์ดแวร์ของเครื่องโดยตรง</td><td>VMware ESXi, Microsoft Hyper-V</td></tr>
+          <tr><td><strong>Hosted Hypervisor</strong></td><td>ทำงานบน operating system ที่มีอยู่แล้ว (บน OS อื่น)</td><td>VMware Workstation, Oracle VirtualBox</td></tr>
+        </table>
+
+        <div class="keypoints"><div class="kp-title">ประเด็นสำคัญ</div><ul>
+          <li><strong>WSL (Windows Subsystem for Linux)</strong> คือ virtual machine แบบ <strong>light-weight</strong> ที่ <strong>integrate กับ host อย่างแนบแน่น (tightly integrated)</strong> ดูรายละเอียดในหัวข้อ <a href="#sec2">WSL</a></li>
+          <li>Oracle VirtualBox คือ <strong>cross-platform virtualization application</strong> ติดตั้งได้บนเครื่อง Intel/AMD ที่รัน Windows, Mac, Linux หรือ Solaris และรัน "guest" OS (VM) ในหน้าต่างของ host OS ได้</li>
+        </ul></div>
+
+        <div class="example"><div class="ex-title">ตัวอย่าง: ขั้นตอนติดตั้ง Ubuntu บน Oracle VirtualBox (สรุป)</div><ol>
+          <li><strong>Downloads</strong> : ดาวน์โหลด VirtualBox จากเว็บทางการให้ตรงกับ OS ของ host (เช่น "x86/amd64" for Windows hosts) แล้วติดตั้งแบบค่า default</li>
+          <li><strong>Create Virtual Machine</strong> : กดปุ่ม <code>New</code> ตั้งชื่อ VM (เช่น <code>ubuntu1404</code>) โปรแกรมจะเลือก Type = Linux, Version = Ubuntu (64 bit) ให้เอง จากนั้นตั้ง memory size (ตัวอย่าง: RAM 12GB จัดสรร 8192 MB) และยอมรับ "Create a virtual hard drive now"</li>
+          <li>เปลี่ยน storage type จาก <strong>Dynamically allocated เป็น Fixed size</strong> เพื่อเพิ่ม performance แล้วเลือกขนาด disk (ตัวอย่าง 100 GB)</li>
+          <li><strong>ตั้งค่าก่อนติดตั้ง</strong> : <code>Settings</code> → <code>Storage</code> → เลือก <code>Empty</code> ใต้ Controller:IDE → กดไอคอน CD/DVD เพื่อ mount ไฟล์ Ubuntu ISO (ต้องเป็น 64-bit) และต้องเปิด <strong>VT-x / Virtualization Technology ใน BIOS</strong> ด้วย ที่ <code>System</code> สามารถเพิ่มจำนวน processors ได้ (default = 1, ตัวอย่างเปลี่ยนเป็น 4)</li>
+          <li><strong>Install Ubuntu</strong> : กด <code>Start</code> → "Install Ubuntu" → เลือก <strong>"Erase disk and install Ubuntu"</strong> → Install Now → กรอก name/username/password (user นี้จะมีสิทธิ์ root/sudo) → รอจนเสร็จ → Restart Now → login ด้วย password ที่ตั้งไว้</li>
+          <li><strong>Guest Additions</strong> : หลังติดตั้งถ้าหน้าจอเล็กเกินไป ให้ติดตั้ง Guest Additions ผ่านเมนู <code>Devices &gt; Insert Guest Additions CD images</code> → กด <code>Run</code> → ใส่รหัสผ่าน → รีสตาร์ต (ต้องมีสิทธิ์ sudo/root ถ้าไม่มีใช้ <code>sudo adduser USERNAME sudo</code>)</li>
+        </ol></div>
+
+        <details class="more"><summary>อ่านเพิ่ม: ความสามารถของ Guest Additions และการ Share Folders</summary><div>
+          <p>Guest Additions ให้ความสามารถเพิ่ม 4 อย่าง: <strong>mouse pointer integration, better video support, shared folders, shared clipboard</strong></p>
+          <p>การ Share Folders (ต้องติดตั้ง Guest Additions ก่อน):</p>
+          <ol>
+            <li>ไปที่ <code>Devices &gt; Shared folders settings</code> → เลือก Machine Folders → กดปุ่ม add (+) → เลือกโฟลเดอร์ → ติ๊ก <strong>Auto-mount</strong> และ <strong>Make Permanent</strong></li>
+            <li>เพิ่ม user เข้ากลุ่ม <code>vboxsf</code> (จำเป็นสำหรับใช้ Shared Folder): <code>sudo adduser brb vboxsf</code> (แทน <code>brb</code> ด้วยชื่อ account ใน Ubuntu) แล้วรีสตาร์ต</li>
+            <li>โฟลเดอร์จะปรากฏใน <code>/media/</code> ขึ้นต้นด้วย <code>sf_</code> (เช่น <code>sf_Downloads</code>)</li>
+          </ol>
+        </div></details>
+
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div><ul>
+          <li>VirtualBox จะสร้าง swap partition ขนาดเท่ากับ base memory ที่ใส่ จึงต้องเผื่อขนาด virtual hard drive ให้ใหญ่พอ (แบ่งเป็น root <code>/</code> และ swap)</li>
+          <li>ลืมเปิด VT-x / Virtualization Technology ใน BIOS แล้ว VM จะเริ่ม Ubuntu 64-bit ไม่ได้</li>
+          <li>การใช้ shared folder โดยตรงกับข้อมูลขนาดใหญ่จะ <strong>ลด performance</strong> เมื่อเทียบกับ native (Ubuntu) system</li>
+          <li>ใช้ shared folder ไม่ได้เพราะลืมเพิ่ม user เข้ากลุ่ม <code>vboxsf</code> ก่อน</li>
+        </ul></div>
+
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li>จำแนกประเภท hypervisor: <strong>bare-metal</strong> = VMware ESXi, Microsoft Hyper-V / <strong>hosted</strong> = Oracle VirtualBox, VMware Workstation</li>
+          <li>นิยาม virtualization: การสร้าง virtual version ของทรัพยากร เช่น server บนฮาร์ดแวร์เดียว (ไม่ใช่ dual-boot)</li>
+          <li>WSL ถูกจัดเป็น light-weight VM ที่ tightly integrated กับ host</li>
+          <li>user ที่สร้างระหว่างติดตั้ง Ubuntu จะมีสิทธิ์ root/sudo และความสามารถ 4 อย่างของ Guest Additions</li>
+        </ul></div>
+      </section>
+
+      <section id="sec2" class="card">
+        <h2>2. WSL (Windows Subsystem for Linux)</h2>
+        <p>WSL ให้ developer <strong>รันสภาพแวดล้อม GNU/Linux บน Windows ได้โดยตรง (unmodified)</strong> โดยไม่ต้องใช้ traditional virtual machine หรือ dual-boot ติดตั้ง Linux distributions ได้หลายตัว เช่น Ubuntu, Debian, Kali, OpenSUSE, Arch Linux</p>
+        <p>สิ่งที่ทำได้: รัน command-line tools เช่น <code>grep</code>, <code>sed</code>, <code>awk</code>, รัน Bash scripts, รัน vim, emacs, tmux, ภาษา NodeJS/Python/C/C++/Rust/Go, services อย่าง SSHD, MySQL, Apache, MongoDB, PostgreSQL และติดตั้งซอฟต์แวร์เพิ่มด้วย package manager ของ distro นั้น</p>
+
+        <h3>การติดตั้ง WSL (วิธีปกติ : คำสั่งเดียว)</h3>
+        <p>เปิด <strong>PowerShell หรือ Command Prompt แบบ Run as administrator</strong> แล้วสั่ง:</p>
+        <pre><code>wsl --install</code></pre>
+        <p>คำสั่งนี้ทำงาน 5 อย่างให้อัตโนมัติ:</p>
+        <ol>
+          <li>เปิด optional components: <strong>Windows Subsystem for Linux</strong> และ <strong>Virtual Machine Platform</strong></li>
+          <li>ดาวน์โหลดและติดตั้ง Linux kernel ล่าสุด</li>
+          <li>ตั้ง <strong>WSL 2 เป็น default</strong></li>
+          <li>ดาวน์โหลดและติดตั้ง <strong>Ubuntu</strong> (default distribution) เปลี่ยนได้ด้วย <code>-d</code> เช่น <code>wsl --install -d &lt;Distribution Name&gt;</code></li>
+          <li><strong>restart เครื่อง</strong></li>
+        </ol>
+        <p>เงื่อนไข: Windows 10 version 2004+ (Build 19041+) หรือ Windows 11 / สำหรับ WSL 2 ต้องเป็น Windows 11 หรือ Windows 10 Version 1903 Build 18362 ขึ้นไป (เช็คด้วย <code>winver</code>) / WSL รุ่นแจกผ่าน <strong>Microsoft Store</strong> จะได้รับ update เร็วกว่ารอ OS update (<code>wsl.exe --update</code>)</p>
+
+        <details class="more"><summary>อ่านเพิ่ม: ติดตั้งแบบ manual (Windows เวอร์ชันเก่า)</summary><div>
+          <ol>
+            <li>เปิด "Windows Subsystem for Linux": <code>dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart</code></li>
+            <li>เช็คเงื่อนไข WSL 2 (Build 18362+ สำหรับ x64)</li>
+            <li>เปิด Virtual Machine Platform: <code>dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart</code> แล้ว restart</li>
+            <li>ดาวน์โหลดและรัน <strong>WSL2 Linux kernel update package</strong></li>
+            <li>ตั้ง WSL 2 เป็น default: <code>wsl --set-default-version 2</code></li>
+            <li>ติดตั้ง Linux distribution จาก Microsoft Store (Ubuntu 18.04/20.04/22.04 LTS, Debian, Kali, openSUSE ฯลฯ) → กด "Get" → เปิดครั้งแรกจะให้สร้าง <strong>user account และ password</strong></li>
+          </ol>
+        </div></details>
+
+        <h3>เปรียบเทียบ WSL 1 กับ WSL 2</h3>
+        <p><strong>WSL 2</strong> (ค่า default ของการติดตั้งใหม่) ใช้เทคโนโลยี virtualization รัน <strong>Linux kernel จริง</strong> ภายใน <strong>lightweight utility VM ที่ระบบจัดการให้ (managed VM)</strong> โดย Linux distributions ทำงานเป็น isolated containers ภายใน VM นั้น</p>
+        <table>
+          <tr><th>ประเด็น</th><th>WSL 1</th><th>WSL 2</th></tr>
+          <tr><td>สถาปัตยกรรม</td><td>ใช้ <strong>translation layer</strong> ที่ทีม WSL สร้างขึ้น</td><td>ใช้ Linux kernel จริงใน managed VM</td></tr>
+          <tr><td>System call</td><td>ไม่รองรับเต็ม</td><td><strong>Full system call compatibility</strong></td></tr>
+          <tr><td>File IO</td><td>ช้ากว่า</td><td>เร็วกว่ามาก (unpack tarball เร็วขึ้นถึง 20x, git clone/npm install/cmake เร็วขึ้น 2-5x)</td></tr>
+          <tr><td>เข้าถึงไฟล์ฝั่ง Windows</td><td><strong>เร็วกว่า</strong></td><td>ช้ากว่าข้าม OS file system</td></tr>
+          <tr><td>VMware/VirtualBox</td><td>ทำงานร่วมได้</td><td>WSL 2 ทำงานกับ VMware 15.5.5+ ได้ แต่ VirtualBox 6+ แม้ระบุว่ารองรับก็ยังมีปัญหา (unsupported)</td></tr>
+          <tr><td>systemd / IPv6</td><td>ไม่รองรับ</td><td>รองรับ</td></tr>
+        </table>
+
+        <h3>กรณีที่ควรใช้ WSL 1</h3>
+        <ul>
+          <li>ต้องเก็บ project files ใน Windows file system</li>
+          <li>ต้อง cross-compile ด้วยเครื่องมือ Windows + Linux บนไฟล์เดียวกัน</li>
+          <li>ต้องใช้ serial port หรือมีข้อจำกัดด้าน memory แบบเข้มงวด (cache ของ WSL 2 จะคืน memory ก็ต่อเมื่อ shutdown)</li>
+          <li>ต้องการ IP ร่วม network เดียวกับ host (WSL 2 ใช้ NAT ทำให้ IP เปลี่ยนเมื่อ restart)</li>
+        </ul>
+
+        <h3>คำสั่ง wsl ที่ต้องรู้ (รันใน PowerShell/CMD : ใน Bash ให้ใช้ wsl.exe)</h3>
+        <table>
+          <tr><th>คำสั่ง</th><th>หน้าที่</th><th>ตัวอย่าง</th></tr>
+          <tr><td><code>wsl --install</code></td><td>ติดตั้ง WSL + Ubuntu (default)</td><td><code>wsl --install -d Debian</code></td></tr>
+          <tr><td><code>wsl --list --online</code> (<code>wsl -l -o</code>)</td><td>ดูรายชื่อ distro ที่ติดตั้งได้จาก store</td><td><code>wsl -l -o</code></td></tr>
+          <tr><td><code>wsl --list --verbose</code> (<code>wsl -l -v</code>)</td><td>ดู distro ที่ติดตั้งแล้ว + สถานะ (Running/Stopped) + เวอร์ชัน WSL 1/2</td><td><code>wsl -l -v</code></td></tr>
+          <tr><td><code>wsl --set-version &lt;distro&gt; &lt;1/2&gt;</code></td><td>เปลี่ยนเวอร์ชัน WSL ของ distro</td><td><code>wsl --set-version Ubuntu-20.04 2</code></td></tr>
+          <tr><td><code>wsl --set-default-version &lt;1/2&gt;</code></td><td>ตั้ง default เวอร์ชัน WSL สำหรับ distro ใหม่</td><td><code>wsl --set-default-version 2</code></td></tr>
+          <tr><td><code>wsl --set-default &lt;distro&gt;</code> (<code>wsl -s</code>)</td><td>ตั้ง default distro</td><td><code>wsl -s Debian</code></td></tr>
+          <tr><td><code>wsl -d &lt;distro&gt;</code></td><td>รัน distro ใด ๆ โดยไม่เปลี่ยน default</td><td><code>wsl -d Ubuntu</code></td></tr>
+          <tr><td><code>wsl ~</code></td><td>เริ่มที่ home directory</td><td>-</td></tr>
+          <tr><td><code>wsl --distribution &lt;D&gt; --user &lt;U&gt;</code></td><td>รัน distro ที่ระบุด้วย user ที่ระบุ</td><td><code>wsl --distribution Debian --user root</code></td></tr>
+          <tr><td><code>wsl --update</code></td><td>อัปเดต WSL เป็นเวอร์ชันล่าสุด</td><td>-</td></tr>
+          <tr><td><code>wsl --status</code> / <code>wsl --version</code></td><td>ดูสถานะ / เวอร์ชันของ WSL</td><td>-</td></tr>
+          <tr><td><code>wsl --shutdown</code></td><td>หยุดทุก distro และ WSL 2 utility VM ทันที (จำเป็นเมื่อแก้ <code>.wslconfig</code> ฯลฯ)</td><td>-</td></tr>
+          <tr><td><code>wsl --terminate &lt;distro&gt;</code></td><td>หยุด distro ที่ระบุ</td><td><code>wsl --terminate Ubuntu</code></td></tr>
+          <tr><td><code>wsl --export &lt;distro&gt; &lt;file&gt;</code></td><td>ส่งออก snapshot เป็น tar (หรือ <code>--vhd</code> เป็น .vhdx)</td><td>-</td></tr>
+          <tr><td><code>wsl --import &lt;D&gt; &lt;location&gt; &lt;file&gt;</code></td><td>นำเข้า tar เป็น distro ใหม่</td><td>-</td></tr>
+          <tr><td><code>wsl --unregister &lt;distro&gt;</code></td><td>ยกเลิก/ลบ distro (<strong>ข้อมูลหายถาวร</strong>)</td><td><code>wsl --unregister Ubuntu</code></td></tr>
+          <tr><td><code>wsl --mount &lt;DiskPath&gt;</code></td><td>mount physical disk ใน WSL 2 (default ext4)</td><td>-</td></tr>
+        </table>
+        <p>คำสั่งเก่าที่เลิกใช้ (deprecated): <code>wslconfig.exe</code>, <code>bash</code>, <code>lxrun</code></p>
+
+        <h3>หลังติดตั้ง (Best practices)</h3>
+        <ul>
+          <li>ครั้งแรกจะให้ตั้ง <strong>Linux username/password</strong> (แยกจาก Windows account) user นี้เป็น Linux administrator ใช้ <code>sudo</code> ได้ และเป็น default user ที่ sign-in อัตโนมัติ</li>
+          <li>เปลี่ยน/รีเซ็ตรหัสผ่านด้วย <code>passwd</code> : ถ้าลืมรหัสใช้ <code>wsl -u root</code> (หรือ <code>wsl -d Debian -u root</code>) แล้ว <code>passwd &lt;username&gt;</code></li>
+          <li>อัปเดตแพ็กเกจ (Windows จะไม่อัปเดต Linux ให้อัตโนมัติ): <code>sudo apt update &amp;&amp; sudo apt upgrade</code></li>
+          <li>แนะนำติดตั้ง <strong>Windows Terminal</strong> (เปิดหลาย tab/pane, สลับหลาย distro ได้)</li>
+          <li><strong>การเก็บไฟล์เพื่อ performance ที่ดี:</strong> เก็บ project file ไว้ใน file system เดียวกับเครื่องมือที่ใช้ ถ้าทำงานด้วยเครื่องมือ Linux ให้เก็บใน Linux FS: <code>\\wsl$\&lt;DistroName&gt;\home\&lt;UserName&gt;\Project</code></li>
+          <li>เปิด Windows File Explorer ที่ directory ปัจจุบัน: <code>explorer.exe .</code> : เปิด project ใน VS Code: <code>code .</code></li>
+        </ul>
+
+        <details class="more"><summary>อ่านเพิ่ม: Interoperability ผสมคำสั่ง Windows กับ Linux</summary><div>
+          <ul>
+            <li>รัน Linux tools จาก Windows: <code>wsl ls -la</code> (ทำงานใน working directory เดียวกัน, เป็น default user, sudo/piping/redirect ใช้ได้) เช่น <code>wsl sudo apt-get update</code></li>
+            <li>ผสมคำสั่ง: <code>wsl ls -la | findstr "git"</code> หรือ <code>dir | wsl grep git</code> หรือ <code>ipconfig.exe | grep IPv4 | cut -d: -f2</code></li>
+            <li>รัน Windows tools จาก Linux: พิมพ์ชื่อ + <code>.exe</code> เช่น <code>notepad.exe .bashrc</code>, <code>ping.exe www.microsoft.com</code>, <code>cmd.exe /C dir</code></li>
+            <li>เทียบผลลัพธ์: ใน PowerShell <code>get-date</code> = วันที่ฝั่ง Windows, <code>wsl date</code> = วันที่ฝั่ง Linux</li>
+            <li><strong>WSLENV</strong> ใช้แชร์ environment variables ระหว่าง Windows กับ WSL (มี flag /p, /l, /u, /w)</li>
+          </ul>
+        </div></details>
+
+        <details class="more"><summary>อ่านเพิ่ม: Bash พื้นฐาน, pipe และ redirect บน Ubuntu</summary><div>
+          <pre><code>pwd                      # ดู path ของ directory ปัจจุบัน
+mkdir hello_world        # สร้าง directory ใหม่
+cd hello_world           # เปลี่ยน directory
+ls                       # ดูเนื้อหาใน directory
+ls -l                    # แสดงรายละเอียด (เวลาแก้ไขล่าสุด, permission)
+touch hello_world.txt    # สร้างไฟล์ใหม่
+cat hello_world.txt      # ดูเนื้อหาไฟล์
+code hello_world.txt     # เปิดแก้ไขด้วย VS Code
+notepad.exe hello_world.txt</code></pre>
+          <p>ติดตั้งโปรแกรม: <code>sudo apt-get install &lt;app_name&gt;</code> (Arch: <code>sudo pacman -S</code>, openSUSE: <code>sudo zypper install</code>, Alpine: <code>sudo apk add</code>, RHEL: <code>sudo yum install</code>)</p>
+          <p><strong>Pipe <code>|</code></strong> ส่ง output ของคำสั่งหน้าไปเป็น input ของคำสั่งหลัง:</p>
+          <pre><code>cat fruits.txt | sort           # เรียงลำดับ
+cat fruits.txt | grep P         # ค้นหาบรรทัดที่มี "P"</code></pre>
+          <p><strong>Redirect <code>&gt;</code></strong> ส่ง output ไปยังไฟล์:</p>
+          <pre><code>cat fruits.txt | sort &gt; sorted_fruit.txt</code></pre>
+        </div></details>
+
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div><ul>
+          <li>ถ้า <code>wsl --install</code> แล้วเห็น help text แปลว่า WSL มีอยู่แล้ว : ให้ใช้ <code>wsl --list --online</code> ดู distro แล้ว <code>wsl --install -d &lt;DistroName&gt;</code></li>
+          <li><code>wsl --unregister</code> ลบ distro พร้อมข้อมูล <strong>หายถาวร</strong> ใช้ระวัง</li>
+          <li>ตอนตั้งรหัสผ่าน Linux ครั้งแรกจอจะไม่แสดงอะไรเลยขณะพิมพ์ เรียกว่า <em>blind typing</em> ไม่ใช่คีย์บอร์ดเสีย</li>
+          <li>เห็น <code>/mnt/</code> ใน path (เช่น <code>/mnt/c/Users/...</code>) แปลว่ากำลังทำงานบน mounted drive ฝั่ง Windows ซึ่ง <strong>ช้ากว่า</strong> การเก็บไฟล์ใน Linux FS</li>
+          <li>WSL 2 มีปัญหากับ VirtualBox 6+ แม้ระบุว่ารองรับ (ยังถือว่า unsupported) ส่วน VMware ต้องเป็นเวอร์ชัน 15.5.5 ขึ้นไป</li>
+        </ul></div>
+
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li><code>wsl --install</code> ทำ 5 อย่าง: เปิด feature (WSL + Virtual Machine Platform), ติดตั้ง kernel ล่าสุด, ตั้ง WSL 2 default, ติดตั้ง Ubuntu, ต้อง restart</li>
+          <li>เทียบ WSL 1/WSL 2: WSL 1 ใช้ translation layer, WSL 2 ใช้ Linux kernel จริงใน managed VM ได้ <strong>full system call</strong> และ file IO เร็วกว่า (20x / 2-5x)</li>
+          <li>การเข้าถึงไฟล์ฝั่ง Windows <strong>WSL 1 เร็วกว่า</strong> (จุดนี้ออกสลับกันบ่อย)</li>
+          <li><code>wsl -l -v</code> = ดู distro + สถานะ + เวอร์ชัน, <code>wsl --set-version &lt;distro&gt; 2</code> = เปลี่ยนเวอร์ชัน, <code>wsl --shutdown</code> = หยุดทั้งหมด</li>
+          <li>เงื่อนไขเวอร์ชัน: Windows 10 version 2004+ (Build 19041+) หรือ Windows 11 เช็คด้วย <code>winver</code></li>
+        </ul></div>
+      </section>
+
+      <section id="sec3" class="card">
+        <h2>3. Linux CLI</h2>
+        <h3>โครงสร้างคำสั่ง Linux/UNIX</h3>
+        <pre><code>command [-option(s) [value]] [argument(s)]</code></pre>
+        <p>ตัวอย่าง: <code>ls -l</code> , <code>tree -L 3</code> , <code>cat myFile.txt</code> , <code>ls -alh</code> , <code>watch -n2 uptime</code> , <code>du --max-depth=1 .</code></p>
+
+        <h3>Key Combinations ใน Shell</h3>
+        <table>
+          <tr><th>ปุ่ม</th><th>หน้าที่</th></tr>
+          <tr><td><code>Ctrl+A</code></td><td>ย้าย cursor ไปต้น command line</td></tr>
+          <tr><td><code>Ctrl+C</code></td><td>จบ program ที่กำลังรันและคืน prompt</td></tr>
+          <tr><td><code>Ctrl+D</code></td><td>log out จาก shell session (เท่ากับพิมพ์ <code>exit</code> หรือ <code>logout</code>)</td></tr>
+          <tr><td><code>Ctrl+E</code></td><td>ย้าย cursor ไปท้าย command line</td></tr>
+          <tr><td><code>Ctrl+H</code></td><td>สร้าง backspace character</td></tr>
+          <tr><td><code>Ctrl+L</code></td><td>ล้างหน้าจอ terminal (clear)</td></tr>
+          <tr><td><code>Tab</code></td><td>ทำ command/filename completion (ถ้ามีหลายตัวเลือกจะส่งสัญญาณ bell หรือถามให้แสดงทั้งหมด)</td></tr>
+          <tr><td><code>Tab Tab</code></td><td>แสดงทางเลือกทั้งหมดของ file หรือ command</td></tr>
+        </table>
+        <details class="more"><summary>อ่านเพิ่ม: Shortcuts เพิ่มเติมจาก Unix/Linux Command Reference</summary><div>
+          <ul>
+            <li><code>Ctrl+Z</code> หยุดคำสั่งชั่วคราว (กลับมาด้วย <code>fg</code> ใน foreground หรือ <code>bg</code> ใน background)</li>
+            <li><code>Ctrl+W</code> ลบหนึ่งคำ, <code>Ctrl+U</code> ลบทั้งบรรทัด, <code>Ctrl+R</code> พิมพ์คำสั่งเก่าล่าสุด, <code>!!</code> ทำซ้ำคำสั่งล่าสุด</li>
+          </ul>
+        </div></details>
+
+        <h3>Linux File Permissions และ chmod</h3>
+        <p>File permissions เป็นหัวใจของ <strong>การควบคุมการเข้าถึงและความปลอดภัย</strong> กำหนดว่าใคร read/write/execute ได้ ประกอบด้วย <strong>3 ชุด</strong>:</p>
+        <ul>
+          <li><strong>User (Owner)</strong> : สิ่งที่เจ้าของไฟล์ทำได้</li>
+          <li><strong>Group</strong> : สำหรับสมาชิกกลุ่มของไฟล์</li>
+          <li><strong>Other</strong> : ผู้ใช้อื่นทั้งหมดบนระบบ</li>
+        </ul>
+        <p>โครงสร้าง <code>-rwxrwxrwx</code> : ตัวแรกคือ <strong>file type</strong> (<code>-</code> คือ regular file, <code>d</code> คือ directory) จากนั้น 3 ตัวคือ rwx ของ <strong>owner</strong>, 3 ตัวถัดไปของ <strong>group</strong>, 3 ตัวสุดท้ายของ <strong>other</strong></p>
+        <p><strong>แปลง binary เป็น octal</strong>: บวกค่าของ r (read) = 4, w (write) = 2, x (execute) = 1 ในแต่ละชุด</p>
+        <div class="example"><div class="ex-title">ตัวอย่าง: ถอดรหัส permission เป็นเลข octal</div><ol>
+          <li><code>rwxr-xr--</code> : owner <code>rwx</code> = 4+2+1 = <strong>7</strong>, group <code>r-x</code> = 4+0+1 = <strong>5</strong>, other <code>r--</code> = 4+0+0 = <strong>4</strong> รวมได้ <strong>744</strong></li>
+          <li><code>rwxr-xr-x</code> : (4+2+1)(4+0+1)(4+0+1) = <strong>755</strong> (ตัวอย่างตรงจากสไลด์: 755 = rwx สำหรับ owner, rx สำหรับ group และ world)</li>
+          <li><code>rwxrwxrwx</code> = <strong>777</strong> = read, write, execute สำหรับทุกคน</li>
+        </ol></div>
+        <p><strong>แก้ permission ด้วย <code>chmod</code></strong>:</p>
+        <pre><code>chmod 755 myfile      # ตั้ง permission เป็น 755
+chmod +x myfile       # เพิ่ม execute permission ให้ทุก user</code></pre>
+
+        <h3>ตารางคำสั่งสำคัญ (รวมจากทุก lab)</h3>
+        <table>
+          <tr><th>คำสั่ง</th><th>หน้าที่</th><th>ตัวอย่างการใช้</th></tr>
+          <tr><td><code>pwd</code></td><td>แสดง directory ปัจจุบัน</td><td><code>pwd</code></td></tr>
+          <tr><td><code>ls</code> / <code>ls -al</code></td><td>แสดงรายการไฟล์ (รวม hidden, แบบละเอียด)</td><td><code>ls -alh</code></td></tr>
+          <tr><td><code>cd</code></td><td>เปลี่ยน directory (<code>cd</code> = กลับ home)</td><td><code>cd hello_world</code></td></tr>
+          <tr><td><code>mkdir</code></td><td>สร้าง directory</td><td><code>mkdir lab1</code></td></tr>
+          <tr><td><code>touch</code></td><td>สร้าง/อัปเดตไฟล์</td><td><code>touch note.txt</code></td></tr>
+          <tr><td><code>cp</code></td><td>copy ไฟล์/directory</td><td><code>cp -r dir1 dir2</code></td></tr>
+          <tr><td><code>mv</code></td><td>move/rename ไฟล์</td><td><code>mv file1 file2</code></td></tr>
+          <tr><td><code>rm</code></td><td>ลบไฟล์/directory</td><td><code>rm -rf dir</code></td></tr>
+          <tr><td><code>cat</code></td><td>แสดงเนื้อหาไฟล์ / รับ input ลงไฟล์</td><td><code>cat myFile.txt</code>, <code>cat &gt; file</code></td></tr>
+          <tr><td><code>head</code> / <code>tail</code></td><td>ดู 10 บรรทัดแรก/ท้าย</td><td><code>tail -f file</code></td></tr>
+          <tr><td><code>grep</code></td><td>ค้นหา pattern</td><td><code>cat fruits.txt | grep P</code></td></tr>
+          <tr><td><code>sort</code></td><td>เรียงลำดับ</td><td><code>cat fruits.txt | sort</code></td></tr>
+          <tr><td><code>chmod</code></td><td>แก้ file permission</td><td><code>chmod 755 myfile</code>, <code>chmod +x myfile</code></td></tr>
+          <tr><td><code>man</code></td><td>แสดง manual ของคำสั่ง</td><td><code>man chmod</code></td></tr>
+          <tr><td><code>ps</code> / <code>top</code></td><td>แสดง process ที่ทำงานอยู่</td><td><code>top</code></td></tr>
+          <tr><td><code>kill</code> / <code>killall</code></td><td>จบ process</td><td><code>kill 1234</code></td></tr>
+          <tr><td><code>df</code> / <code>du</code> / <code>free</code></td><td>ดู disk / directory / memory usage</td><td><code>du --max-depth=1 .</code></td></tr>
+          <tr><td><code>sudo apt update &amp;&amp; sudo apt upgrade</code></td><td>อัปเดตแพ็กเกจ (Ubuntu/Debian)</td><td>-</td></tr>
+          <tr><td><code>sudo apt-get install &lt;app&gt;</code></td><td>ติดตั้งโปรแกรม</td><td><code>sudo apt-get install vim</code></td></tr>
+          <tr><td><code>passwd</code></td><td>เปลี่ยนรหัสผ่าน</td><td><code>passwd &lt;username&gt;</code></td></tr>
+          <tr><td><code>wsl</code> (จาก Windows)</td><td>รันคำสั่ง Linux จาก PowerShell/CMD</td><td><code>wsl ls -la</code>, <code>wsl -l -v</code></td></tr>
+          <tr><td>pipe <code>|</code></td><td>ต่อ output ไปเป็น input</td><td><code>dir | wsl grep git</code></td></tr>
+          <tr><td>redirect <code>&gt;</code></td><td>บันทึก output ลงไฟล์</td><td><code>cat f.txt | sort &gt; out.txt</code></td></tr>
+        </table>
+
+        <details class="more"><summary>อ่านเพิ่ม: คำสั่งแยกหมวดจาก Unix/Linux Command Reference</summary><div>
+          <ul>
+            <li><strong>File commands</strong>: <code>ls</code>, <code>ls -al</code>, <code>cd dir</code>, <code>cd</code>, <code>pwd</code>, <code>mkdir dir</code>, <code>rm file</code>, <code>rm -r dir</code>, <code>rm -f file</code>, <code>rm -rf dir</code>, <code>cp file1 file2</code>, <code>cp -r dir1 dir2</code>, <code>mv file1 file2</code> (rename/move), <code>ln -s file link</code>, <code>touch file</code>, <code>cat &gt; file</code> (รับ standard input ลงไฟล์), <code>more file</code>, <code>head file</code>, <code>tail file</code>, <code>tail -f file</code> (ดูไฟล์ขณะโตขึ้น)</li>
+            <li><strong>System info</strong>: <code>date</code>, <code>cal</code>, <code>uptime</code>, <code>w</code> (ใคร online), <code>whoami</code>, <code>finger user</code>, <code>uname -a</code>, <code>cat /proc/cpuinfo</code>, <code>cat /proc/meminfo</code>, <code>man command</code>, <code>df</code>, <code>du</code>, <code>free</code>, <code>whereis app</code>, <code>which app</code></li>
+            <li><strong>Process management</strong>: <code>ps</code>, <code>top</code>, <code>kill pid</code>, <code>killall proc</code>, <code>bg</code>, <code>fg</code>, <code>fg a</code></li>
+            <li><strong>SSH</strong>: <code>ssh user@host</code>, <code>ssh -p port user@host</code>, <code>ssh-copy-id user@host</code></li>
+            <li><strong>Searching</strong>: <code>grep pattern files</code>, <code>grep -r pattern dir</code>, <code>command | grep pattern</code>, <code>locate file</code></li>
+            <li><strong>Compression</strong>: <code>tar cf file.tar files</code>, <code>tar xf file.tar</code>, <code>tar czf file.tar.gz files</code>, <code>tar xzf file.tar.gz</code>, <code>tar cjf file.tar.bz2</code>, <code>tar xjf file.tar.bz2</code>, <code>gzip file</code>, <code>gzip -d file.gz</code></li>
+            <li><strong>Network</strong>: <code>ping host</code>, <code>whois domain</code>, <code>dig domain</code>, <code>dig -x host</code>, <code>wget file</code>, <code>wget -c file</code> (ดาวน์โหลดต่อ)</li>
+            <li><strong>Installation</strong>: <code>./configure</code> → <code>make</code> → <code>make install</code> (ติดตั้งจาก source), <code>dpkg -i pkg.deb</code> (Debian), <code>rpm -Uvh pkg.rpm</code> (RPM)</li>
+          </ul>
+        </div></details>
+
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li>โครงสร้างคำสั่ง: <code>command [-option(s) [value]] [argument(s)]</code></li>
+          <li>ค่า permission: r=4, w=2, x=1 : <code>rwxr-xr-x</code> = 755, <code>rwxrwxrwx</code> = 777 และถอดรหัสเป็นเลข octal ได้</li>
+          <li><code>chmod +x myfile</code> = เพิ่ม execute ให้ทุก user, <code>chmod 777</code> = rwx ทุกชุด</li>
+          <li>file type ตัวแรกของ <code>-rwxrwxrwx</code>: <code>-</code> = regular file, <code>d</code> = directory</li>
+          <li>ปุ่มลัด: <code>Ctrl+C</code> จบ program, <code>Ctrl+D</code> log out, <code>Ctrl+L</code> clear, <code>Tab</code> completion</li>
+        </ul></div>
+      </section>
+
+      <section id="sec4" class="card">
+        <h2>4. VI/VIM Editor</h2>
+        <p><strong>vi (visual editor)</strong> คือ <strong>default editor ที่มากับ UNIX operating system</strong> มี 3 mode หลัก:</p>
+        <ul>
+          <li><strong>Command mode</strong> : คำสั่งที่กระทำต่อไฟล์ (vi เริ่มต้นที่ mode นี้)</li>
+          <li><strong>Insert mode</strong> : ข้อความที่พิมพ์จะถูกใส่ลงไฟล์</li>
+          <li><strong>Visual mode</strong> : ใช้ mark/select ข้อความในไฟล์</li>
+        </ul>
+        <p>การสลับ mode: เข้า Insert mode กด <code>i</code> : เข้า Visual mode กด <code>v</code> หรือ <code>Ctrl+V</code> (visual block) : เข้า Command(line) mode พิมพ์ <code>:</code> : กลับ Normal mode กด <code>esc</code></p>
+        <p>รูปแบบคำสั่ง: <code>vi filename</code> และ <code>[count][command]</code> (count ทำให้คำสั่งทำงานซ้ำ เช่น <code>5dd</code>)</p>
+
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div><ul>
+          <li>ออกจาก input mode ได้ด้วยปุ่ม <strong>Esc เท่านั้น</strong> (กด RETURN ไม่ได้ผล)</li>
+          <li><code>:q</code> ถ้ายังไม่ได้ save จะไม่ยอมออก ต้องใช้ <code>:q!</code> เพื่อออกโดยไม่บันทึก</li>
+          <li>สับสน <code>p</code> (วางหลัง cursor) กับ <code>P</code> (วางหน้า cursor) และ <code>u</code> (undo ครั้งล่าสุด) กับ <code>U</code> (undo ทั้งบรรทัด)</li>
+        </ul></div>
+
+        <h3>เริ่มและออกจาก vi</h3>
+        <table>
+          <tr><th>คำสั่ง</th><th>หน้าที่</th></tr>
+          <tr><td><code>vi filename</code></td><td>เปิดแก้ไข filename เริ่มที่บรรทัด 1</td></tr>
+          <tr><td><code>vi -r filename</code></td><td>กู้คืนไฟล์ที่กำลังแก้ค้างไว้ตอนระบบ crash</td></tr>
+          <tr><td><code>:x&lt;Return&gt;</code> หรือ <code>:wq&lt;Return&gt;</code></td><td>บันทึกไฟล์แล้วออก</td></tr>
+          <tr><td><code>:q&lt;Return&gt;</code></td><td>ออกจาก vi</td></tr>
+          <tr><td><code>:q!&lt;Return&gt;</code></td><td>ออกทั้งที่ยังไม่ได้บันทึกการแก้ไข</td></tr>
+          <tr><td><code>ZZ</code></td><td>เหมือน <code>:wq</code> (บันทึกแล้วออก)</td></tr>
+        </table>
+
+        <h3>การเลื่อน cursor</h3>
+        <table>
+          <tr><th>คีย์</th><th>หน้าที่</th></tr>
+          <tr><td><code>0</code> (zero)</td><td>ไปต้นบรรทัดปัจจุบัน</td></tr>
+          <tr><td><code>$</code></td><td>ไปท้ายบรรทัดปัจจุบัน</td></tr>
+          <tr><td><code>w</code> / <code>b</code></td><td>ไปต้นคำถัดไป / ย้อนไปต้นคำก่อนหน้า</td></tr>
+          <tr><td><code>:0</code> หรือ <code>1G</code></td><td>ไปบรรทัดแรกของไฟล์</td></tr>
+          <tr><td><code>:n</code> หรือ <code>nG</code></td><td>ไปบรรทัดที่ n</td></tr>
+          <tr><td><code>:$</code> หรือ <code>G</code></td><td>ไปบรรทัดสุดท้ายของไฟล์</td></tr>
+          <tr><td><code>H</code> / <code>M</code> / <code>L</code></td><td>บนสุด / กลาง / ล่างสุดของจอ</td></tr>
+          <tr><td><code>h</code> / <code>j</code> / <code>k</code> / <code>l</code></td><td>ซ้าย / ลง / ขึ้น / ขวา 1 ตัวอักษร</td></tr>
+          <tr><td><code>/string</code> / <code>?string</code></td><td>ค้นหาไปข้างหน้า / ข้างหลัง (<code>n</code> ค้นซ้ำ, <code>N</code> ค้นย้อน)</td></tr>
+        </table>
+
+        <h3>การใส่/แก้ไข/ลบข้อความ</h3>
+        <table>
+          <tr><th>คำสั่ง</th><th>หน้าที่</th></tr>
+          <tr><td><code>i</code> / <code>I</code></td><td>แทรกข้อความ <strong>หน้า</strong> cursor / ที่ <strong>ต้นบรรทัด</strong> (จนกว่าจะกด Esc)</td></tr>
+          <tr><td><code>a</code> / <code>A</code></td><td>เพิ่มข้อความ <strong>หลัง</strong> cursor / ที่ <strong>ท้ายบรรทัด</strong></td></tr>
+          <tr><td><code>o</code> / <code>O</code></td><td>เปิดบรรทัดใหม่ <strong>ใต้</strong> / <strong>เหนือ</strong> บรรทัดปัจจุบัน</td></tr>
+          <tr><td><code>:r file</code></td><td>แทรกเนื้อหาไฟล์หลังบรรทัดปัจจุบัน</td></tr>
+          <tr><td><code>cw</code>, <code>cc</code>, <code>c$</code></td><td>แก้คำ / แก้ทั้งบรรทัด / แก้จนถึงท้ายบรรทัด (จบด้วย Esc)</td></tr>
+          <tr><td><code>rc</code>, <code>R</code>, <code>s</code>, <code>S</code></td><td>แทนที่ 1 ตัวอักษรด้วย c / พิมพ์ทับ / แทนที่ 1 ตัวด้วยข้อความ / แทนที่ท้ายบรรทัด</td></tr>
+          <tr><td><code>.</code></td><td>ทำคำสั่งแก้ไขล่าสุดซ้ำ</td></tr>
+          <tr><td><code>x</code></td><td>ลบ 1 ตัวอักษรใต้ cursor</td></tr>
+          <tr><td><code>dd</code> หรือ <code>ndd</code></td><td>ลบบรรทัดปัจจุบัน / ลบ n บรรทัด (เช่น <code>5dd</code> ลบ 5 บรรทัด)</td></tr>
+          <tr><td><code>dw</code>, <code>dnw</code>, <code>db</code>, <code>D</code></td><td>ลบคำ / ลบ n คำ / ลบคำก่อนหน้า / ลบจนถึงท้ายบรรทัด</td></tr>
+          <tr><td><code>d)</code></td><td>ลบจนถึงท้ายประโยค</td></tr>
+        </table>
+
+        <h3>การ copy/paste และ undo</h3>
+        <table>
+          <tr><th>คำสั่ง</th><th>หน้าที่</th></tr>
+          <tr><td><code>yy</code> หรือ <code>Y</code></td><td>copy (yank) บรรทัดปัจจุบันเข้า general buffer</td></tr>
+          <tr><td><code>yNy</code> (เช่น <code>3yy</code>)</td><td>copy N บรรทัดนับจากบรรทัดปัจจุบัน</td></tr>
+          <tr><td><code>p</code> / <code>P</code></td><td>วาง buffer <strong>หลัง</strong> / <strong>หน้า</strong> cursor</td></tr>
+          <tr><td><code>u</code></td><td>undo การแก้ไขล่าสุด (simple toggle)</td></tr>
+          <tr><td><code>U</code></td><td>undo ทุกการแก้ไขในบรรทัด</td></tr>
+          <tr><td><code>J</code></td><td>รวม (join) บรรทัด</td></tr>
+        </table>
+
+        <h3>Visual mode และ Command-line mode</h3>
+        <ul>
+          <li>กด <code>v</code> → Visual mode (mark ตามบรรทัด, สถานะแสดง -- VISUAL LINE --)</li>
+          <li>กด <code>Ctrl+V</code> → Visual Block mode (mark เป็นบล็อก, สถานะแสดง -- VISUAL BLOCK --)</li>
+          <li>Command-line mode ใช้รันคำสั่งขั้นสูง: <code>:w</code> บันทึก buffer ลงไฟล์, <code>:q</code> ปิดโปรแกรม, <code>:%s/old/new/g</code> ค้นหาและแทนที่ old ด้วย new <strong>ทุกจุดในเอกสาร</strong></li>
+        </ul>
+        <p>รูปแบบ search &amp; replace: <code>:[address]s/old_text/new_text/</code> โดย address ได้แก่ <code>.</code> = บรรทัดปัจจุบัน, <code>n</code> = บรรทัดที่ n, <code>.+m</code> = บรรทัดปัจจุบันบวก m, <code>$</code> = บรรทัดสุดท้าย, <code>/string/</code> = บรรทัดที่มี string, <code>%</code> = ทั้งไฟล์, <code>[addr1],[addr2]</code> = ช่วง</p>
+        <div class="example"><div class="ex-title">ตัวอย่าง: search and replace ใน vi</div><ol>
+          <li><code>:.,.+10s/Banana/Kumquat</code> : แทนที่จุดแรกใน 11 บรรทัดนับจากบรรทัดปัจจุบัน</li>
+          <li><code>:%s/apple/pear/g</code> : แทนที่ apple ด้วย pear ทุกจุดในไฟล์</li>
+          <li><code>:%s/.$//</code> : ลบตัวอักษรสุดท้ายของทุกบรรทัด (เช่น ตัด ^M จากการ transfer ไฟล์)</li>
+        </ol></div>
+        <details class="more"><summary>อ่านเพิ่ม: Regular expressions, คำสั่งจัดการไฟล์, parameters และการ scroll</summary><div>
+          <ul>
+            <li>Regular expressions: <code>^</code> ต้นบรรทัด, <code>$</code> ท้ายบรรทัด, <code>.</code> ตัวอักษรใด ๆ, <code>*</code> ตัวอักษรก่อนหน้าซ้ำ, <code>.*</code> ทุกอย่าง</li>
+            <li>คำสั่งจัดการไฟล์: <code>:w name</code> (save เป็นชื่อใหม่), <code>:sh</code> (ไปรัน shell command, กลับด้วย Ctrl+D)</li>
+            <li>Parameters: <code>:set number</code> / <code>:set nonumber</code> (แสดงเลขบรรทัด), <code>:set autoindent</code>, <code>:set showmatch</code>, <code>:set showmode</code>, <code>:set list</code>, <code>:set all</code></li>
+            <li>ย้ายข้อความข้ามไฟล์: <code>vi old</code> → <code>"a10yy</code> (yank 10 บรรทัดเข้า buffer a) → <code>:w</code> → <code>:e new</code> → <code>"ap</code></li>
+            <li>Scroll หน้าจอ: <code>Ctrl+D</code>/<code>Ctrl+U</code> (ครึ่งจอลง/ขึ้น), <code>Ctrl+F</code>/<code>Ctrl+B</code> (เลื่อนหน้า), <code>z&lt;CR&gt;</code>/<code>z.</code>/<code>z-</code> (จัดบรรทัดปัจจุบันไปบน/กลาง/ล่างของจอ), <code>Ctrl+G</code> (แสดงเลขบรรทัดปัจจุบันและข้อมูลไฟล์)</li>
+          </ul>
+        </div></details>
+
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li>3 mode และปุ่มสลับ: <code>i</code> = insert, <code>v</code>/<code>Ctrl+V</code> = visual/visual block, <code>:</code> = command-line, <code>esc</code> = กลับ normal</li>
+          <li>บันทึกแล้วออก: <code>:wq</code>, <code>:x</code>, <code>ZZ</code> : ออกไม่บันทึก: <code>:q!</code></li>
+          <li><code>ndd</code> ลบ n บรรทัด (<code>5dd</code> = ลบ 5 บรรทัด), <code>yNy</code> copy n บรรทัด (<code>3yy</code>), <code>p</code>/<code>P</code> วาง, <code>u</code> undo</li>
+          <li><code>:%s/old/new/g</code> = แทนที่ทุกจุดในไฟล์ (% = ทั้งไฟล์, g = ทุกจุดในบรรทัด)</li>
+          <li><code>vi -r filename</code> กู้ไฟล์ค้างหลัง crash, <code>:set number</code> แสดงเลขบรรทัด</li>
+        </ul></div>
+      </section>
+
+      <section id="sec5" class="card">
+        <h2>5. Docker พื้นฐาน</h2>
+        <p><strong>Docker</strong> คือ platform ที่ช่วย developer <strong>package application พร้อม dependencies, libraries และ configurations ทั้งหมดไว้ในหน่วยเดียวเรียกว่า "container"</strong> ทำให้ app <strong>portable</strong> และรันได้ <strong>consistent ในทุกสภาพแวดล้อม</strong> การรัน Docker ได้ 2 ทาง: <strong>Docker Desktop</strong> หรือ <strong>Docker CLI</strong></p>
+
+        <h3>Image vs Container</h3>
+        <ul>
+          <li><strong>Docker Image</strong> = read-only template ที่มีคำสั่งสำหรับสร้าง container : image เป็น <strong>immutable</strong> (แก้ไม่ได้ ถ้าต้องแก้ต้อง build image ใหม่)</li>
+          <li><strong>Docker Container (Instance)</strong> = <strong>runnable instance ของ image</strong> : จาก image เดียวสร้าง container ได้หลายตัว : container คือ isolated environment ที่ app ทำงานอยู่</li>
+          <li><strong>Docker Hub</strong> (hub.docker.com) = container registry ที่ใหญ่ที่สุดในโลก ใช้เก็บ/จัดการ/แชร์ image และมี official images สำเร็จรูปมากมาย</li>
+        </ul>
+
+        <h3>Virtualization vs Containerization</h3>
+        <table>
+          <tr><th>ประเด็น</th><th>Virtualization</th><th>Containerization</th></tr>
+          <tr><td><strong>Isolation</strong></td><td>VM และ OS ถูก isolate เต็มรูปแบบ</td><td>isolate containers กับ host OS และระหว่างกัน (แต่ถ้า attacker คุม host ได้ container ทั้งหมดมีความเสี่ยง)</td></tr>
+          <tr><td><strong>Different OS</strong></td><td>host ได้หลาย OS สมบูรณ์ แต่ละอันมี kernel ของตัวเอง</td><td>ทุก container รันผ่าน <strong>user mode บน OS เดียว</strong></td></tr>
+          <tr><td><strong>Guest support</strong></td><td>ใช้ OS ได้หลากหลายบนเครื่องเดียว</td><td>ขึ้นกับ host OS : Linux container รันบน Windows ไม่ได้ (และกลับกัน)</td></tr>
+          <tr><td><strong>Deployment</strong></td><td>แต่ละ VM มี hypervisor ของตัวเอง</td><td>ใช้ <strong>Docker</strong> deploy container เดี่ยว หรือ <strong>Kubernetes</strong> orchestrate หลาย container หลายเครื่อง</td></tr>
+        </table>
+
+        <h3>คำสั่ง Docker CLI</h3>
+        <table>
+          <tr><th>กลุ่ม</th><th>คำสั่ง → หน้าที่</th></tr>
+          <tr><td><strong>Container Management</strong></td><td><code>docker run</code> สร้างและสตาร์ต container ใหม่ • <code>docker create</code> สร้างโดยไม่สตาร์ต • <code>docker start</code> เริ่ม container ที่หยุดอยู่ • <code>docker stop</code> หยุด container • <code>docker restart</code> รีสตาร์ต • <code>docker rm</code> ลบ container • <code>docker ps</code> แสดงรายการ container ที่กำลังรัน</td></tr>
+          <tr><td><strong>Image Management</strong></td><td><code>docker build</code> build image จาก Dockerfile • <code>docker pull</code> ดึง image จาก registry • <code>docker push</code> ส่ง image ขึ้น registry • <code>docker images</code> แสดง image ในเครื่อง • <code>docker rmi</code> ลบ image</td></tr>
+          <tr><td><strong>Network / Volume</strong></td><td><code>docker network</code> จัดการ network • <code>docker volume</code> จัดการ volume</td></tr>
+          <tr><td><strong>System Info</strong></td><td><code>docker version</code> • <code>docker info</code> • <code>docker config</code></td></tr>
+        </table>
+
+        <h3>Dockerfile</h3>
+        <p>Docker <strong>build image โดยการอ่าน instruction จาก Dockerfile</strong> ("It all starts with a Dockerfile")</p>
+        <table>
+          <tr><th>Instruction</th><th>หน้าที่</th></tr>
+          <tr><td><code>FROM &lt;image&gt;</code></td><td>กำหนด base image</td></tr>
+          <tr><td><code>RUN &lt;command&gt;</code></td><td>รันคำสั่งใน layer ใหม่บน image ปัจจุบันแล้ว commit ผลลัพธ์</td></tr>
+          <tr><td><code>WORKDIR &lt;directory&gt;</code></td><td>ตั้ง working directory ให้ RUN/CMD/ENTRYPOINT/COPY/ADD ที่ตามมา</td></tr>
+          <tr><td><code>COPY &lt;src&gt; &lt;dest&gt;</code></td><td>copy ไฟล์/โฟลเดอร์จาก src ใส่ filesystem ของ container ที่ path dest</td></tr>
+          <tr><td><code>CMD &lt;command&gt;</code></td><td>กำหนด default program เมื่อสตาร์ต container (<strong>1 Dockerfile มีได้ 1 CMD : ถ้ามีหลายอันจะใช้เฉพาะอันสุดท้าย</strong>)</td></tr>
+        </table>
+        <p>Instruction เพิ่มเติมที่พบในสไลด์: <code>MAINTAINER</code> (ผู้ดูแล), <code>ENV</code> (ตั้ง environment variable), <code>ADD</code> (คล้าย COPY เช่น <code>ADD database.sql /docker-entrypoint-initdb.d</code>), <code>EXPOSE</code> (ประกาศ port)</p>
+
+        <div class="example"><div class="ex-title">ตัวอย่าง: Dockerfile ของ Node.js (พร้อม .dockerignore ที่มี node_modules, npm-debug.log)</div><ol>
+          <li>เขียน Dockerfile:
+<pre><code>FROM node:18-alpine
+WORKDIR /nodejs_test
+COPY package.json .
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["node", "app.js"]</code></pre></li>
+          <li>build แล้วรัน:
+<pre><code>$ docker build -t nodejs-app .
+$ docker run -d -p 8080:3000 nodejs-app</code></pre></li>
+          <li>สังเกต <code>-p</code> = จับคู่ port: <code>8080:3000</code> แปลว่า port 8080 ของ host → port 3000 ของ container, <code>-d</code> = รันแบบ detached (background)</li>
+        </ol></div>
+
+        <details class="more"><summary>อ่านเพิ่ม: ตัวอย่าง Dockerfile Python Flask และ mysql + phpMyAdmin</summary><div>
+          <p><strong>Python Flask บน Ubuntu:</strong></p>
+          <pre><code># syntax=docker/dockerfile:1
+FROM ubuntu:22.04
+RUN apt-get update &amp;&amp; apt-get install -y python3 python3-pip
+RUN pip install flask==3.0.*
+COPY hello.py /
+ENV FLASK_APP=hello
+EXPOSE 8000
+CMD ["flask", "run", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
+          <pre><code>$ docker build -t py-test:latest .
+$ docker run -p 127.0.0.1:8000:8000 py-test:latest</code></pre>
+          <p><strong>mysql (มี database.sql สำหรับสร้าง database/table อัตโนมัติ):</strong></p>
+          <pre><code>FROM mysql:8.0.32
+WORKDIR /app
+MAINTAINER anupong.ba@kmitl.ac.th
+ENV MYSQL_ROOT_PASSWORD=123456
+ENV MYSQL_USER=anupong
+ENV MYSQL_PASSWORD=123456
+ADD database.sql /docker-entrypoint-initdb.d
+EXPOSE 3306</code></pre>
+          <pre><code>$ docker build -t mysqldb-test:latest .
+$ docker run --name mysql-server --restart unless-stopped \
+  -d -p 3306:3306 mysqldb-test \
+  --default-authentication-plugin=mysql_native_password
+$ docker run --name phpmyadmin -d \
+  --restart unless-stopped -p 8088:80 \
+  --link mysql-server:db phpmyadmin</code></pre>
+          <p>ตัวเลือกสำคัญ: <code>--name</code> ตั้งชื่อ container, <code>--restart unless-stopped</code> รีสตาร์ตอัตโนมัติ, <code>-d</code> background, <code>-p host:container</code> map port, <code>--link mysql-server:db</code> เชื่อม container (ตั้งชื่อ alias ว่า db)</p>
+          <p><strong>Backup image ไปยัง Docker Hub:</strong> สร้าง repository บน Docker Hub (Public/Private) เช่น <code>py-test</code> แล้ว:</p>
+          <pre><code>$ docker tag py-test abanjong/py-test:latest
+$ docker push abanjong/py-test:latest</code></pre>
+        </div></details>
+
+        <h3>Docker Compose</h3>
+        <p><strong>Docker Compose</strong> คือเครื่องมือสำหรับ <strong>define และรัน multi-container Docker applications</strong> : orchestrate หลาย container เป็น application เดียวที่ coherent ใช้ไฟล์ <strong>YAML</strong> (<code>docker-compose.yml</code>) กำหนด <strong>services, networks, volumes</strong> ของ application</p>
+        <details class="more"><summary>อ่านเพิ่ม: โครงสร้าง docker-compose.yml (mysql + phpMyAdmin)</summary><div>
+          <pre><code>version: '3.7'
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: your_root_password
+      MYSQL_DATABASE: your_database_name
+      MYSQL_USER: your_username
+      MYSQL_PASSWORD: your_password
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: your_root_password
+    ports:
+      - "8080:80"</code></pre>
+          <ul>
+            <li>service db: image mysql, restart policy (รีสตาร์ตอัตโนมัติ), environment variables (root password, database name, username, password), <strong>volumes</strong> (mount <code>./mysql_data</code> เพื่อ persist ข้อมูล), <strong>ports</strong> (3306:3306)</li>
+            <li>service phpmyadmin: restart policy, <strong>depends_on</strong> (ให้เริ่มหลัง mysql), environment (<code>PMA_HOST</code>, root password), ports (host 8080 → container 80)</li>
+          </ul>
+        </div></details>
+        <pre><code>$ docker compose up -d      # เริ่ม containers
+$ docker compose down       # หยุดและลบ containers</code></pre>
+
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div><ul>
+          <li>ไปแก้ค่าใน image ที่ build แล้วไม่ได้ เพราะ image เป็น <strong>immutable</strong> ต้องแก้ Dockerfile แล้ว build ใหม่</li>
+          <li>เขียน <code>CMD</code> หลายบรรทัดใน Dockerfile แล้วคิดว่าทำงานทุกอัน: จริง ๆ <strong>ใช้เฉพาะ CMD ตัวสุดท้าย</strong></li>
+          <li>พยายามรัน Linux container บน Windows host โดยตรงไม่ได้ เพราะ container ทุกตัวรันผ่าน user mode บน OS เดียว (ผูกกับ host OS)</li>
+          <li>สลับลำดับใน <code>-p</code>: รูปแบบคือ <code>-p host:container</code> เช่น <code>-p 8080:3000</code> = host 8080 → container 3000 ไม่ใช่กลับกัน</li>
+        </ul></div>
+
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li>นิยาม: image = read-only template (immutable), container = runnable instance ของ image สร้างหลายตัวจาก image เดียวได้</li>
+          <li>Dockerfile instructions หลัก: <code>FROM</code>, <code>RUN</code>, <code>WORKDIR</code>, <code>COPY</code>, <code>CMD</code> (ใช้เฉพาะอันสุดท้าย) และเสริม <code>MAINTAINER</code>, <code>ENV</code>, <code>ADD</code>, <code>EXPOSE</code></li>
+          <li><code>docker build -t nodejs-app .</code> = build จาก Dockerfile ใน directory ปัจจุบัน / <code>docker run -d -p 8080:3000 nodejs-app</code> = รัน background map port</li>
+          <li><code>docker ps</code> = container ที่รันอยู่, <code>docker images</code>/<code>docker rmi</code> = ดู/ลบ image, <code>docker tag</code> + <code>docker push</code> = backup ขึ้น Docker Hub</li>
+          <li>Docker Compose ใช้ YAML จัดหลาย container: <code>docker compose up -d</code> เริ่ม / <code>docker compose down</code> หยุดและลบ</li>
+        </ul></div>
+      </section>
+
+      <section id="sec6" class="card">
+        <h2>6. exec() Family : การแทนที่ process image ใน Unix</h2>
+        <h3>ทำไมต้องมี exec</h3>
+        <p>ระบบ Unix-like <strong>แยกเรื่อง "สร้าง process" ออกจาก "รัน program อื่น"</strong> โดยมี design idea ว่า:</p>
+        <ul>
+          <li><strong>fork()</strong> สร้าง process ใหม่ (child = สำเนาของ shell)</li>
+          <li><strong>exec()</strong> แทนที่ program ที่ทำงานอยู่ข้างใน process</li>
+          <li>ทั้งคู่รวมกันทำให้ shell เริ่มคำสั่งต่าง ๆ ได้ในขณะที่ยังคุมระบบไว้ได้</li>
+        </ul>
+        <pre><code>Shell process → fork() → Child copy of shell → exec() → New program (ls, gcc, python)</code></pre>
+
+        <h3>สิ่งที่ exec ทำ (execve)</h3>
+        <p>Process <strong>PID 4210</strong> ที่รัน program A (code + data) เมื่อเรียก <code>execve()</code> → ยังเป็น <strong>same PID 4210</strong> แต่กลายเป็น <strong>program B (new code + data)</strong></p>
+        <p>หัวใจสำคัญ: <strong>"The process is not cloned. Its running program is replaced."</strong> : process ไม่ได้ถูกโคลนเพิ่ม แต่ program ที่กำลังรันถูกแทนที่ (PID เดิมยังอยู่)</p>
+        <table>
+          <tr><th>ส่วนของ process</th><th>Before exec (program A)</th><th>After exec (program B)</th></tr>
+          <tr><td><strong>Stack</strong></td><td>argv/env</td><td><strong>new argv/env</strong></td></tr>
+          <tr><td><strong>Heap</strong></td><td>-</td><td><strong>reinitialized</strong></td></tr>
+          <tr><td><strong>Data / BSS</strong></td><td>-</td><td><strong>new values</strong></td></tr>
+          <tr><td><strong>Text</strong></td><td>program A</td><td><strong>program B</strong></td></tr>
+        </table>
+        <p>สรุป: after exec คือ <strong>same process, new program B</strong></p>
+
+        <h3>สมาชิกตระกูล exec และความหมายของตัวอักษร</h3>
+        <p>ตัวอักษรในชื่อบอกวิธีส่ง arguments, การค้นหา program, และ environment:</p>
+        <ul>
+          <li><strong>l = list arguments</strong> (ส่ง argument เป็น list)</li>
+          <li><strong>v = vector / argv[]</strong> (ส่ง argument เป็น array)</li>
+          <li><strong>p = search PATH</strong> (ค้นหา program จาก PATH : ถ้าไม่มี p ต้องระบุ exact path)</li>
+          <li><strong>e = custom envp[]</strong> (ส่ง environment ของตัวเอง)</li>
+        </ul>
+        <table>
+          <tr><th>Function</th><th>Arguments</th><th>Program lookup</th><th>Environment</th></tr>
+          <tr><td><code>execl</code></td><td>list</td><td>exact path</td><td>inherit env</td></tr>
+          <tr><td><code>execv</code></td><td>argv[]</td><td>exact path</td><td>inherit env</td></tr>
+          <tr><td><code>execlp</code></td><td>list</td><td>PATH search</td><td>inherit env</td></tr>
+          <tr><td><code>execvp</code></td><td>argv[]</td><td>PATH search</td><td>inherit env</td></tr>
+          <tr><td><code>execle</code></td><td>list</td><td>exact path</td><td>custom env</td></tr>
+          <tr><td><code>execve</code></td><td>argv[]</td><td>exact path</td><td>custom env (<strong>เป็น system call</strong>)</td></tr>
+        </table>
+
+        <div class="warn-box"><div class="kp-title">ข้อผิดพลาดที่พบบ่อย</div><ul>
+          <li>เข้าใจผิดว่า exec() สร้าง process ใหม่: จริง ๆ <strong>process ไม่ถูกโคลน PID ไม่เปลี่ยน</strong> มีแต่ program ที่รันอยู่ถูกแทนที่ (การสร้าง process คือ fork())</li>
+          <li>ลืมว่า function ที่ไม่มี <code>p</code> (execl, execv, execle, execve) ต้องระบุ <strong>exact path</strong> ของ program ไม่ค้นจาก PATH</li>
+          <li>เขียน exec ใน parent ทั้งที่ต้องการให้ shell ทำงานต่อ: ตามแนวคิด shell จะเรียก exec ใน <strong>child</strong> ที่ได้จาก fork เท่านั้น</li>
+        </ul></div>
+
+        <div class="exam-box"><div class="kp-title">มักออกสอบ</div><ul>
+          <li>ลำดับการทำงานของ shell: Shell process → <code>fork()</code> → Child copy of shell → <code>exec()</code> → New program (ls, gcc, python)</li>
+          <li>หลัง exec: PID เดิมยังอยู่, Text เป็น program ใหม่, Heap reinitialized, Data/BSS ได้ค่าใหม่, Stack ได้ argv/env ใหม่ = <strong>same process, new program</strong></li>
+          <li>ตีความชื่อ: <code>execvp</code> = ส่ง argument แบบ argv[] + ค้นหา program จาก PATH / <code>execle</code> = list + exact path + custom env</li>
+          <li><code>execve</code> เป็น system call ตัวจริงของตระกูล exec</li>
+          <li>fork + exec ทำให้ shell เริ่มคำสั่งได้ในขณะที่ยังคุมระบบ (keep control) ไว้ได้</li>
+        </ul></div>
+      </section>
+
+      <section id="quiz" class="card quiz" data-quiz>
+        <h2>แบบทดสอบ</h2>
+        <div class="quiz-status"></div>
+        <p>คัด 15 ข้อจากชุดเดิม 25 ข้อ: ปรนัย 10 ข้อ (ข้อ 1-10) + อัตนัย 5 ข้อ (ข้อ 11-15) ครอบคลุมทุกหัวข้อ กดตัวเลือกเพื่อตรวจคำตอบทันที ส่วนข้ออัตนัยกด "ดูเฉลย" เปิดดูเอง</p>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">1) Virtualization technology หมายถึงอะไร?</p>
+          <button class="choice" data-k="A">การซื้อเครื่อง server หลายเครื่องมาแยกงานกัน</button>
+          <button class="choice" data-k="B">การสร้าง virtual version ของทรัพยากร เช่น server เพื่อใช้งานบนฮาร์ดแวร์เดียวกัน</button>
+          <button class="choice" data-k="C">การติดตั้งระบบปฏิบัติการ 2 ตัวโดยเปิดเครื่องครั้งละตัว</button>
+          <button class="choice" data-k="D">การแชร์ไฟล์ระหว่าง Windows กับ Linux</button>
+          <div class="q-explain">Virtualization technology อนุญาตให้สร้าง virtual version ของทรัพยากร เช่น server (สไลด์ OS LAB #1) ส่วนตัวเลือก C คือ dual-boot ซึ่งไม่ใช่ virtualization</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">2) ข้อใดคือ Bare-metal Hypervisor?</p>
+          <button class="choice" data-k="A">Oracle VirtualBox</button>
+          <button class="choice" data-k="B">VMware Workstation</button>
+          <button class="choice" data-k="C">VMware ESXi และ Microsoft Hyper-V</button>
+          <button class="choice" data-k="D">Windows Subsystem for Linux</button>
+          <div class="q-explain">Bare-metal Hypervisor รันบนฮาร์ดแวร์ host โดยตรง ตัวอย่างคือ VMware ESXi และ Microsoft Hyper-V ส่วน VirtualBox และ VMware Workstation เป็น Hosted Hypervisor (รันบน OS ที่มีอยู่)</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">3) คำสั่งใดใช้ดูรายการ Linux distribution ที่ติดตั้งแล้ว พร้อมสถานะ (Running/Stopped) และเวอร์ชัน WSL (1/2)?</p>
+          <button class="choice" data-k="A">wsl --list --online</button>
+          <button class="choice" data-k="B">wsl --status</button>
+          <button class="choice" data-k="C">wsl -l -v</button>
+          <button class="choice" data-k="D">wsl --version</button>
+          <div class="q-explain"><code>wsl -l -v</code> (<code>wsl --list --verbose</code>) แสดง distro ที่ติดตั้งแล้ว + สถานะ + เวอร์ชัน WSL ส่วน <code>wsl --list --online</code> แสดงเฉพาะ distro ที่ติดตั้งได้จาก store</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">4) ข้อใดเป็นข้อดีสำคัญของ WSL 2 เมื่อเทียบกับ WSL 1?</p>
+          <button class="choice" data-k="A">เข้าถึงไฟล์ฝั่ง Windows เร็วกว่า</button>
+          <button class="choice" data-k="B">มี Linux kernel จริงใน managed VM ทำให้รองรับ system call ได้ 100%</button>
+          <button class="choice" data-k="C">ใช้ memory น้อยกว่าเสมอ</button>
+          <button class="choice" data-k="D">ทำงานกับ VirtualBox ทุกเวอร์ชันได้ไม่มีปัญหา</button>
+          <div class="q-explain">WSL 2 มี Linux kernel จริง (built by Microsoft) ใน lightweight managed VM จึงได้ full system call compatibility และ file IO เร็วขึ้นมาก ส่วนการเข้าถึงไฟล์ Windows (ตัวเลือก A) กลับเป็น WSL 1 ที่เร็วกว่า</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">5) permission <code>rwxr-xr-x</code> เขียนเป็นเลข octal ได้เท่าใด?</p>
+          <button class="choice" data-k="A">777</button>
+          <button class="choice" data-k="B">644</button>
+          <button class="choice" data-k="C">755</button>
+          <button class="choice" data-k="D">700</button>
+          <div class="q-explain">r=4, w=2, x=1 → rwx = 4+2+1 = 7, r-x = 4+0+1 = 5, r-x = 5 รวมได้ <strong>755</strong> (ในสไลด์ยก <code>rwxr-xr-x</code> = 755 เป็นตัวอย่างตรง ๆ)</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">6) คำสั่งใดใช้ "เพิ่ม execute permission ให้ทุก user" กับไฟล์ myfile?</p>
+          <button class="choice" data-k="A">chmod 777 myfile เท่านั้น</button>
+          <button class="choice" data-k="B">chmod +x myfile</button>
+          <button class="choice" data-k="C">chmod -x myfile</button>
+          <button class="choice" data-k="D">chown +x myfile</button>
+          <div class="q-explain">สไลด์ระบุ "To add execute permission for all users: <code>chmod +x myfile</code>" ส่วน <code>chmod 777</code> คือการตั้ง rwx ให้ทุกคนทั้งชุด</div>
+        </div>
+
+        <div class="q" data-answer="D">
+          <p class="q-text">7) คำสั่งใดใช้ออกจาก vi "โดยไม่บันทึก" การแก้ไข?</p>
+          <button class="choice" data-k="A">:wq</button>
+          <button class="choice" data-k="B">:x</button>
+          <button class="choice" data-k="C">ZZ</button>
+          <button class="choice" data-k="D">:q!</button>
+          <div class="q-explain"><code>:q!</code> = quit vi even though latest changes have not been saved (จากตาราง "To Exit vi") ส่วน <code>:wq</code>, <code>:x</code>, <code>ZZ</code> ล้วนบันทึกแล้วออก</div>
+        </div>
+
+        <div class="q" data-answer="C">
+          <p class="q-text">8) คำสั่ง <code>:%s/apple/pear/g</code> ใน vi ทำอะไร?</p>
+          <button class="choice" data-k="A">ค้นหาคำ apple ในบรรทัดปัจจุบัน</button>
+          <button class="choice" data-k="B">แทนที่ apple ด้วย pear เฉพาะจุดแรกของบรรทัดปัจจุบัน</button>
+          <button class="choice" data-k="C">แทนที่ apple ด้วย pear ทุกจุดในทั้งไฟล์</button>
+          <button class="choice" data-k="D">ลบทุกบรรทัดที่มีคำ apple</button>
+          <div class="q-explain"><code>%</code> คือ address หมายถึงทั้งไฟล์ และ <code>g</code> ทำให้แทนที่ทุก occurrence ในบรรทัด จึงแทนที่ apple เป็น pear ทั้งไฟล์ (ตัวอย่างตรงจาก VI cheat sheet)</div>
+        </div>
+
+        <div class="q" data-answer="B">
+          <p class="q-text">9) ความต่างของ Docker Image กับ Container ข้อใดถูกต้อง?</p>
+          <button class="choice" data-k="A">image คือ runnable instance ของ container</button>
+          <button class="choice" data-k="B">image เป็น read-only template ที่ immutable ส่วน container คือ runnable instance ของ image ที่สร้างได้หลายตัวจาก image เดียว</button>
+          <button class="choice" data-k="C">แก้ไข image ที่สร้างแล้วได้ตลอดเวลา</button>
+          <button class="choice" data-k="D">container 1 ตัวสร้างจาก image ได้ 1 ตัวเท่านั้น</button>
+          <div class="q-explain">Docker Image = read-only template, <strong>immutable</strong> (แก้ไม่ได้ ต้อง build ใหม่) / Container = <strong>runnable instance</strong> ของ image และจาก image เดียวสร้าง container ได้หลายตัว</div>
+        </div>
+
+        <div class="q" data-answer="A">
+          <p class="q-text">10) คำสั่ง <code>docker run -d -p 8080:3000 nodejs-app</code> หมายความว่าอะไร?</p>
+          <button class="choice" data-k="A">รัน container พร้อม map port 8080 ของ host ไปยัง port 3000 ของ container แบบ background (detached)</button>
+          <button class="choice" data-k="B">รัน container พร้อม map port 3000 ของ host ไปยัง port 8080 ของ container</button>
+          <button class="choice" data-k="C">build image ชื่อ nodejs-app จาก port 8080</button>
+          <button class="choice" data-k="D">เปิด 3000 container พร้อมกัน</button>
+          <div class="q-explain">รูปแบบ <code>-p</code> คือ host:container จึง map port 8080 ของ host → port 3000 ของ container และ <code>-d</code> = detached (background) ตามตัวอย่างสไลด์ <code>docker run -d -p 8080:3000 nodejs-app</code></div>
+        </div>
+
+        <div class="q">
+          <p class="q-text">11) (เขียนคำสั่ง) จงเขียนคำสั่งใน PowerShell (Run as administrator) เพื่อ: (1) ติดตั้ง WSL พร้อม Ubuntu และ (2) เปลี่ยน distribution ชื่อ Ubuntu-20.04 ให้ทำงานบน WSL 2</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <pre><code>wsl --install
+wsl --set-version Ubuntu-20.04 2</code></pre>
+            <p><code>wsl --install</code> ติดตั้ง WSL + Ubuntu (default) ต้องรันใน PowerShell/CMD แบบ administrator และ restart เครื่อง / <code>wsl --set-version &lt;distro&gt; &lt;versionNumber&gt;</code> ใช้เปลี่ยนเวอร์ชัน WSL (1 หรือ 2) ของ distro ที่ระบุ</p>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">12) (เขียนคำสั่ง) จงเขียนลำดับคำสั่ง Linux เพื่อ: (1) สร้าง directory ชื่อ <code>lab</code> (2) สร้างไฟล์ชื่อ <code>note.txt</code> ข้างใน directory นั้น และ (3) ตั้ง permission ของ <code>note.txt</code> เป็น <code>rwxr-xr-x</code> (755)</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <pre><code>mkdir lab
+cd lab
+touch note.txt
+chmod 755 note.txt</code></pre>
+            <p><code>mkdir</code> สร้าง directory, <code>touch</code> สร้างไฟล์, <code>chmod 755</code> ตั้ง permission rwxr-xr-x (owner rwx / group r-x / other r-x) : อนุญาตให้ใช้ <code>chmod 755 lab/note.txt</code> ระบุ path แทนการ cd ก็ถูกต้องเช่นกัน</p>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">13) (เขียนคำสั่ง) จงเขียนคำสั่ง Docker เพื่อ: (1) build image ชื่อ <code>webapp</code> จาก Dockerfile ใน directory ปัจจุบัน และ (2) รัน container จาก image นั้นแบบ background โดย map port 8080 ของเครื่องเราไปที่ port 3000 ของ container</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <pre><code>docker build -t webapp .
+docker run -d -p 8080:3000 webapp</code></pre>
+            <p><code>docker build -t &lt;ชื่อ&gt; .</code> อ่าน instruction จาก Dockerfile ใน directory ปัจจุบันแล้วตั้งชื่อ image / <code>docker run -d</code> รันแบบ detached, <code>-p host:container</code> map port (ตามตัวอย่างสไลด์ <code>docker run -d -p 8080:3000 nodejs-app</code>)</p>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">14) ใน vi ต้องการ copy บรรทัดปัจจุบันรวม 3 บรรทัด แล้วนำไปวางหลังบรรทัดปัจจุบัน จะกดคีย์อะไรอย่างไรบ้าง พร้อมอธิบายว่าถ้าวางผิดต้องการยกเลิกจะกดอะไร</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p>กด <code>3yy</code> (yank/copy 3 บรรทัดนับจากบรรทัดปัจจุบันเข้า buffer) แล้วเลื่อน cursor ไปบรรทัดที่ต้องการ แล้วกด <code>p</code> (put/วาง buffer หลัง cursor/บรรทัดปัจจุบัน) : ถ้าวางผิดให้กด <code>u</code> เพื่อ undo สิ่งที่เพิ่งทำ (u = undo last change, เป็น simple toggle)</p>
+          </div></details>
+        </div>
+
+        <div class="q">
+          <p class="q-text">15) (trace ผลโค้ด exec/fork) กำหนดให้ shell ทำงานดังนี้ (แนวคิดตามสไลด์ exec() Family):</p>
+          <pre><code>pid = fork();
+if (pid == 0) {
+    execvp("ls", args);   /* ใน child process */
+}
+/* parent: shell ยังทำงานต่อ */</code></pre>
+          <p class="q-text">จงตอบ: (ก) <code>fork()</code> สร้างอะไรขึ้นมา และ child process ที่ได้เป็นสำเนาของอะไร? (ข) เมื่อ child เรียก <code>execvp("ls", args)</code> PID ของ process จะเปลี่ยนหรือไม่ และอะไรบ้างที่ถูกแทนที่ใน process image? (ค) ชื่อ <code>execvp</code> บอกอะไรเกี่ยวกับวิธีส่ง argument และการค้นหา program? และเพราะเหตุใด shell (parent) จึงยังทำงานต่อได้หลัง exec?</p>
+          <details class="more"><summary>ดูเฉลย</summary><div>
+            <p><strong>(ก)</strong> <code>fork()</code> สร้าง process ใหม่ โดย child เป็น <strong>copy ของ shell process</strong> (child copy of shell) : นี่คือการ "create a process" ที่ Unix แยกออกจากการ "run a different program"</p>
+            <p><strong>(ข)</strong> <strong>PID ไม่เปลี่ยน</strong> : process ไม่ได้ถูกโคลนใหม่ (The process is not cloned) สิ่งที่เกิดคือ <strong>program ที่รันอยู่ถูกแทนที่</strong>: Text เปลี่ยนจาก program เดิมเป็น <code>ls</code>, Heap ถูก reinitialize, Data/BSS ได้ค่าใหม่, Stack ได้ argv/env ใหม่ → same process, new program</p>
+            <p><strong>(ค)</strong> ตัว <strong>v</strong> = ส่ง argument แบบ vector/argv[] (array), ตัว <strong>p</strong> = ค้นหา program จาก PATH (ไม่ต้องระบุ exact path แบบ execv) / shell (parent) ยังทำงานต่อได้เพราะ exec ถูกเรียกใน <strong>child</strong> เท่านั้น : การออกแบบ fork()+exec() ทำให้ shell เริ่มคำสั่ง (เช่น ls, gcc, python) ได้ <strong>ในขณะที่ยังคุมระบบ/ทำงานต่อได้</strong> (keep control) เพราะ program ที่ถูกแทนที่คือของ child ไม่ใช่ของ shell เอง</p>
+          </div></details>
+        </div>
+
+        <button class="quiz-reset">ลองทำใหม่ทั้งชุด</button>
+      </section>
+    </article>
+  </main>
+</div>
+<script src="assets/site.js"></script>
+</body>
+</html>
